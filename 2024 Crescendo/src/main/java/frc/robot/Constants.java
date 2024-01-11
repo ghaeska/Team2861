@@ -51,7 +51,22 @@ public final class Constants {
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
-    // SPARK MAX CAN IDs
+    /*
+    ** Front Left:
+    ** Turning Motor CAN ID: 1
+    ** Driving Motor CAN ID: 2
+    ** Front Right:
+    ** Turning Motor CAN ID: 5
+    ** Driving Motor CAN ID: 6
+    ** Back Left:
+    ** Turning Motor CAN ID: 3
+    ** Driving Motor CAN ID: 4
+    ** Back Right:
+    ** Turning Motor CAN ID: 7
+    ** Driving Motor CAN ID: 8
+    */
+
+    /* SPARK MAX CAN IDs */
     public static final int kFrontLeftDrivingCanId  = 2;
     public static final int kRearLeftDrivingCanId   = 4;
     public static final int kFrontRightDrivingCanId = 6;
@@ -62,8 +77,8 @@ public final class Constants {
     public static final int kFrontRightTurningCanId = 5;
     public static final int kRearRightTurningCanId  = 7;
 
+    /* Gyro CAN ID */
     public static final boolean kGyroReversed = false;
-
     public static final int kGyroCanId = 20;
   }
 
@@ -71,7 +86,7 @@ public final class Constants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 14;
+    public static final int kDrivingMotorPinionTeeth = 13;
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
