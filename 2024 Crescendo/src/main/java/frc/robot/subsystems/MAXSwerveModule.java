@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems;
 
+/* WPI Imports */
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
+/* Rev Robotics Imports */
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
@@ -15,17 +18,24 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
-import frc.robot.Constants.ModuleConstants;
+import frc.robot.SwerveConstants.ModuleConstants;
+//import frc.utils.Conversions;
 
 public class MAXSwerveModule {
+  /* Spark Max controlled Driving and turning Motors/controllers */
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;
 
+  /* Encoders used in each module */
   private final RelativeEncoder m_drivingEncoder;
   private final AbsoluteEncoder m_turningEncoder;
 
+  /* Driving and Turning PID Controllers */
   private final SparkPIDController m_drivingPIDController;
   private final SparkPIDController m_turningPIDController;
+
+  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ModuleConstants.kS, ModuleConstants.kV,
+      ModuleConstants.kA);
 
   private double m_chassisAngularOffset = 0;
   private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
@@ -36,7 +46,11 @@ public class MAXSwerveModule {
    * MAXSwerve Module built with NEOs, SPARKS MAX, and a Through Bore
    * Encoder.
    */
-  public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
+  public MAXSwerveModule( int drivingCANId, 
+                          int turningCANId, 
+                          double chassisAngularOffset
+                        ) 
+  {
     m_drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);
     m_turningSparkMax = new CANSparkMax(turningCANId, MotorType.kBrushless);
 
@@ -115,7 +129,8 @@ public class MAXSwerveModule {
    *
    * @return The current state of the module.
    */
-  public SwerveModuleState getState() {
+  public SwerveModuleState getState() 
+  {
     // Apply chassis angular offset to the encoder position to get the position
     // relative to the chassis.
     return new SwerveModuleState(m_drivingEncoder.getVelocity(),
@@ -127,7 +142,8 @@ public class MAXSwerveModule {
    *
    * @return The current position of the module.
    */
-  public SwerveModulePosition getPosition() {
+  public SwerveModulePosition getPosition() 
+  {
     // Apply chassis angular offset to the encoder position to get the position
     // relative to the chassis.
     return new SwerveModulePosition(
@@ -140,7 +156,8 @@ public class MAXSwerveModule {
    *
    * @param desiredState Desired state with speed and angle.
    */
-  public void setDesiredState(SwerveModuleState desiredState) {
+  public void setDesiredState(SwerveModuleState desiredState) 
+  {
     // Apply chassis angular offset to the desired state.
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
     correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
@@ -158,7 +175,15 @@ public class MAXSwerveModule {
   }
 
   /** Zeroes all the SwerveModule encoders. */
-  public void resetEncoders() {
+  public void resetEncoders() 
+  {
     m_drivingEncoder.setPosition(0);
   }
+
+
+  // public double getDriveMotorPosition()
+  // {
+  //   return Conversions.neoToMeters( m_drivingSparkMax.getAbsoluteEncoder(), , )
+
+  // }
 }
