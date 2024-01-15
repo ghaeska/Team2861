@@ -8,6 +8,9 @@ package frc.robot.subsystems;
 //CTRE Imports
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+//NAVX Imports
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.SPI;
 import frc.robot.SwerveConstants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,6 +50,8 @@ public class DriveSubsystem extends SubsystemBase
 
   // The gyro sensor
   public static final Pigeon2 m_gyro = new Pigeon2( DriveConstants.kGyroCanId );
+
+  //private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -208,8 +214,8 @@ public class DriveSubsystem extends SubsystemBase
                                                               rotDelivered, 
                                                               Rotation2d.fromDegrees( m_gyro.getAngle() * ( DriveConstants.kGyroReversed ? -1.0:1.0 ) ) )
                     : new ChassisSpeeds( xSpeedDelivered, 
-                                          ySpeedDelivered, 
-                                          rotDelivered )
+                                         ySpeedDelivered, 
+                                         rotDelivered )
     );
 
     SwerveDriveKinematics.desaturateWheelSpeeds(

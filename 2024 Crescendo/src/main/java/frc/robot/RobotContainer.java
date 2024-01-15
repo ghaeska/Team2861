@@ -14,8 +14,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
+//import edu.wpi.first.wpilibj.XboxController;
+//import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.SwerveConstants.AutoConstants;
 import frc.robot.SwerveConstants.DriveConstants;
 import frc.robot.SwerveConstants.OIConstants;
@@ -55,12 +55,12 @@ public class RobotContainer
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband( m_driverController.getX(), OIConstants.kDriveDeadband ),
+                -MathUtil.applyDeadband( -m_driverController.getX(), OIConstants.kDriveDeadband ),
                 -MathUtil.applyDeadband( m_driverController.getY(), OIConstants.kDriveDeadband ),
-                -MathUtil.applyDeadband( m_driverController.getZ(), OIConstants.kDriveDeadband ),
+                -MathUtil.applyDeadband( m_driverController.getRawAxis(4), OIConstants.kDriveDeadband ),
                 true, 
                 true),
-            m_robotDrive ) );
+                m_robotDrive ) );
   }
 
   /**
@@ -122,6 +122,6 @@ public class RobotContainer
     m_robotDrive.resetOdometry( exampleTrajectory.getInitialPose() );
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, true, false));
   }
 }
