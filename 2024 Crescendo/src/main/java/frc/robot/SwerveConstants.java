@@ -71,7 +71,7 @@ public class SwerveConstants
     public static final int kRearRightTurningCanId  = 7;
 
     /* Gyro CAN ID */
-    public static final boolean kGyroReversed = true;
+    public static final boolean kGyroReversed = false;
     public static final int kGyroCanId = 20;
   }
 
