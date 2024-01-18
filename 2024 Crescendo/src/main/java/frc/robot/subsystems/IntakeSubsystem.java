@@ -12,7 +12,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class IntakeSubsystem extends SubsystemBase
 {
     private static CANSparkMax
-      m_intakeTest = new CANSparkMax(Constants.intakeTest, MotorType.kBrushless);
+      m_intakeTest = new CANSparkMax(Constants.intakeCanID, MotorType.kBrushless);
 
     public void intakeTestMotor(double testSpeed)
     {
