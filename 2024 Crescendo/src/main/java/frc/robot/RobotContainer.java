@@ -106,10 +106,6 @@ public class RobotContainer
         new Pose2d( 3 , 0, new Rotation2d( 0 ) ),
         config );
 
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints );
-    thetaController.enableContinuousInput( -Math.PI, Math.PI );
-
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
         exampleTrajectory,
         m_robotDrive::getPose, // Functional interface to feed supplier
@@ -125,6 +121,10 @@ public class RobotContainer
     // Reset odometry to the starting pose of the trajectory.
     m_robotDrive.resetOdometry( exampleTrajectory.getInitialPose() );
 
+    // Run path following command, then stop at the end.
+    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, true, false));
+  }
+}
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, true, false));
   }

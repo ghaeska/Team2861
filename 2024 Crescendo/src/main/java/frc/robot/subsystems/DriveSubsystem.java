@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.SwerveConstants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -92,6 +93,8 @@ public class DriveSubsystem extends SubsystemBase
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+        SmartDashboard.putNumber("Swerve Angle", m_gyro.getAngle() );
   }
 
   /**
@@ -221,10 +224,10 @@ public class DriveSubsystem extends SubsystemBase
     SwerveDriveKinematics.desaturateWheelSpeeds(
       swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond );
 
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_rearLeft.setDesiredState(swerveModuleStates[2]);
-    m_rearRight.setDesiredState(swerveModuleStates[3]);
+    m_frontLeft.setDesiredState( swerveModuleStates[0] );
+    m_frontRight.setDesiredState( swerveModuleStates[1] );
+    m_rearLeft.setDesiredState( swerveModuleStates[2] );
+    m_rearRight.setDesiredState( swerveModuleStates[3] );
   }
 
   /**
@@ -268,7 +271,9 @@ public class DriveSubsystem extends SubsystemBase
   /** Zeroes the heading of the robot. */
   public void zeroHeading() 
   {
+    SmartDashboard.getBoolean("Heading Reset", false );
     m_gyro.reset();
+    //m_gyro.setYaw(0);
   }
 
   /**
@@ -278,6 +283,7 @@ public class DriveSubsystem extends SubsystemBase
    */
   public double getHeading() 
   {
+    /* Add the ability to print out the heading into the smartdashboard. */
     return Rotation2d.fromDegrees(m_gyro.getAngle() * ( DriveConstants.kGyroReversed ? -1.0:1.0 ) ).getDegrees();
   }
 

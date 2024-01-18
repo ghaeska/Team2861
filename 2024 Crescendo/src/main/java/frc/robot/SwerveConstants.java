@@ -18,19 +18,32 @@ public class SwerveConstants
 {
   public static final class DriveConstants 
   {
-    // Driving Parameters - Note that these are not the maximum capable speeds of
-    // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    /*
+    ** Driving Parameters - Note that these are not the maximum capable speeds of
+    ** the robot, rather the allowed maximum speeds
+    **
+    ** +---------+-------------+--------------------------------+---------------+
+    ** | Pinion: | Gear Ratio: | Drive Free Speed (NEO, ft/sec) | ( NEO, m/sec) |
+    ** +---------+-------------+--------------------------------+---------------+
+    ** |   12T   |   5.50:1    |            13.51               |     4.11      |
+    ** |   13T   |   5.08:1    |            14.63               |     4.45      |
+    ** |   14T   |   4.71:1    |            15.76               |     4.80      |
+    ** +---------+-------------+--------------------------------+---------------+
+    */
+    public static final double kMaxSpeedMetersPerSecond = 4.45;
 
+    /* Angular speed, I believe the lower the number, the slower the turn. */
+    public static final double kMaxAngularSpeed = 0.5 * Math.PI; // radians per second
+
+    /* Slew rates slow down the initial input from a controller and will ramp up over time. */
     public static final double kDirectionSlewRate = 1.2; // radians per second
     public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
     public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(23.875);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(28.9375);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -39,10 +52,10 @@ public class SwerveConstants
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
     // Angular offsets of the modules relative to the chassis in radians
-    public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
+    public static final double kFrontLeftChassisAngularOffset  = -Math.PI / 2;
     public static final double kFrontRightChassisAngularOffset = 0;
-    public static final double kBackLeftChassisAngularOffset = Math.PI;
-    public static final double kBackRightChassisAngularOffset = Math.PI / 2;
+    public static final double kBackLeftChassisAngularOffset   = Math.PI;
+    public static final double kBackRightChassisAngularOffset  = Math.PI / 2;
 
     /*
     ** Front Left:
@@ -72,7 +85,7 @@ public class SwerveConstants
 
     /* Gyro CAN ID */
     public static final boolean kGyroReversed = true;
-    public static final int kGyroCanId = 20;
+    public static final int kGyroCanId        = 20;
   }
 
   public static final class ModuleConstants 
@@ -128,7 +141,7 @@ public class SwerveConstants
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
+    public static final int kDrivingMotorCurrentLimit = 40; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps  
   }
 
@@ -152,7 +165,9 @@ public class SwerveConstants
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  public static final class NeoMotorConstants {
+  public static final class NeoMotorConstants 
+  {
+    /* Free speed is from NEO Data Sheet REV-21-1650-DS */
     public static final double kFreeSpeedRpm = 5676;
   }
 }
