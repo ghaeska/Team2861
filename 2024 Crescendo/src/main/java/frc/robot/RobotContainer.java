@@ -20,6 +20,7 @@ import frc.robot.SwerveConstants.AutoConstants;
 import frc.robot.SwerveConstants.DriveConstants;
 import frc.robot.SwerveConstants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -36,6 +37,7 @@ public class RobotContainer
 {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
 
   // The driver's controller
   //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -77,6 +79,8 @@ public class RobotContainer
     new JoystickButton( m_driverController, 1 ).whileTrue
                       ( new RunCommand( () -> m_robotDrive.setX(),
                         m_robotDrive ) );
+    new JoystickButton( m_driverController, 2).whileTrue
+                      ( new RunCommand( () -> m_intake.intakeTestMotor (.5) ) );
   }
 
   /**
