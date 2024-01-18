@@ -14,7 +14,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
-//import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController;
+//import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.XboxController.Button;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.SwerveConstants.AutoConstants;
 import frc.robot.SwerveConstants.DriveConstants;
@@ -25,6 +27,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+
+/* Smartdashboard Calls */
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -37,30 +43,88 @@ public class RobotContainer
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
+  public static SendableChooser<Integer> autoChooser = new SendableChooser<>();
+  
+
+  /* Change this to true if you are using a Joystick to drive the robot. */
+  private static final boolean enable_joystick = false;
+  /* Change this to true if you are using the gamepad to drive the robot. */
+  private static final boolean enable_gamepad = false;
+  /* Change this to true if you are using a xbox controller to drive the robot. */
+  private static final boolean enable_xbox = true;
+
   // The driver's controller
   //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
+
+  /* Initialize a controller that is plugged into the defined drive controller port. */
+  Joystick m_driverController = new Joystick( OIConstants.kDriverControllerPort );
+  XboxController m_xboxController = new XboxController( OIConstants.kDriverControllerPort );
+  
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
-    // Configure the button bindings
+    /* Configure the button bindings, as defined. */ 
     configureButtonBindings();
 
-    // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband( -m_driverController.getX(), OIConstants.kDriveDeadband ),
-                -MathUtil.applyDeadband( m_driverController.getY(), OIConstants.kDriveDeadband ),
-                -MathUtil.applyDeadband( m_driverController.getRawAxis(4), OIConstants.kDriveDeadband ),
-                true, 
-                true),
-                m_robotDrive ) );
+    autoChooser.addOption( "Drive", 1 );
+    autoChooser.addOption( "Spin", 2 );
+
+    SmartDashboard.putData(autoChooser);
+
+
+    if( enable_joystick )
+    {
+      // Configure default commands
+        m_robotDrive.setDefaultCommand(
+      // The left stick controls translation of the robot.
+      // Turning is controlled by the X axis of the right stick.       
+      
+      new RunCommand(
+          () -> m_robotDrive.drive(
+              -MathUtil.applyDeadband( -m_driverController.getX(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_driverController.getY(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_driverController.getZ(), OIConstants.kDriveDeadband ),
+              true, 
+              true),
+              m_robotDrive ) );
+    }
+    else if ( enable_gamepad )
+    {
+      // Configure default commands
+        m_robotDrive.setDefaultCommand(
+      // The left stick controls translation of the robot.
+      // Turning is controlled by the X axis of the right stick.       
+      
+      new RunCommand(
+          () -> m_robotDrive.drive(
+              -MathUtil.applyDeadband( -m_driverController.getX(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_driverController.getY(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_driverController.getRawAxis( 4 ), OIConstants.kDriveDeadband ),
+              true, 
+              true),
+              m_robotDrive ) );
+    }
+    else if ( enable_xbox )
+    {
+// Configure default commands
+        m_robotDrive.setDefaultCommand(
+      // The left stick controls translation of the robot.
+      // Turning is controlled by the X axis of the right stick.       
+      
+      new RunCommand(
+          () -> m_robotDrive.drive(
+              -MathUtil.applyDeadband( -m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_xboxController.getLeftY(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_xboxController.getRightX(), OIConstants.kDriveDeadband ),
+              true, 
+              true),
+              m_robotDrive ) );
+    }
+
+    
   }
 
   /**
@@ -74,9 +138,25 @@ public class RobotContainer
    */
   private void configureButtonBindings() 
   {
-    new JoystickButton( m_driverController, 1 ).whileTrue
+    if( m_driverController != null)
+    {
+      new JoystickButton( m_driverController, 1 ).whileTrue
                       ( new RunCommand( () -> m_robotDrive.setX(),
                         m_robotDrive ) );
+      new JoystickButton( m_driverController, 2 ).whileTrue
+                      ( new RunCommand( () -> m_robotDrive.getHeading(),
+                        m_robotDrive ) );
+    }
+    if( m_xboxController != null )
+    {
+      new JoystickButton( m_xboxController, Button.kA.value ).whileTrue
+                        ( new RunCommand( () -> m_robotDrive.setX(),
+                        m_robotDrive ) );
+      new JoystickButton( m_xboxController, Button.kB.value ).whileTrue
+                        ( new RunCommand( () -> m_robotDrive.zeroHeading(),
+                        m_robotDrive ) );
+    }
+    
   }
 
   /**
