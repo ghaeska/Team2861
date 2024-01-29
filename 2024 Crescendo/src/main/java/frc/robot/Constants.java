@@ -38,7 +38,12 @@ public final class Constants
 
   public static class Intake
   {
-    /* Motor ID's */
+    /* Intake PID constants */
+    public static final double k_pivotMotorP = 0.12;
+    public static final double k_pivotMotorI = 0.0;
+    public static final double k_pivotMotorD = 0.001;
+
+    /* Intake Motor ID's */
     public static final int k_IntakeMotorCanId = 10;
     public static final int k_PivotMotorCanId = 11;
 
@@ -59,5 +64,22 @@ public final class Constants
     public static final double k_IntakeIntakeSpeed = 0.7;
     public static final double k_IntakeEjectSpeed = -0.45;
     public static final double k_IntakeFeedShootSpeed = -0.50;
-  }  
+  }
+
+  public static class Shooter
+  {
+    /* Shooter PID constants */
+    public static final double k_ShooterMotorP = 0.00005;
+    public static final double k_ShooterMotorI = 0.0;
+    public static final double k_ShooterMotorD = 0.0;
+    public static final double k_ShooterMotorFF = 0.002;
+
+    /* Shooter Motor ID's */
+    public static final int k_ShooterLeftMotorCanId = 15;
+    public static final int k_ShooterRightMotorCanId = 16;
+
+    /* Shooter Min/Max Outputs */
+    public static final double k_ShooterMinOutput = 0;
+    public static final double k_ShooterMaxOutput = 1;
+  }
 }

@@ -5,26 +5,19 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import frc.utils.Helpers;
 import edu.wpi.first.math.util.Units;
 
 public class Intake extends Subsystem
 {
-  /* Intake PID constants, TODO:GTH move to constants file.  */
-  private static final double k_pivotMotorP = 0.12;
-  private static final double k_pivotMotorI = 0.0;
-  private static final double k_pivotMotorD = 0.001;
-
-  private final PIDController m_pivotPID = new PIDController( k_pivotMotorP, k_pivotMotorI, k_pivotMotorD );
+  private final PIDController m_pivotPID = new PIDController( Constants.Intake.k_pivotMotorP,
+                                                              Constants.Intake.k_pivotMotorI, 
+                                                              Constants.Intake.k_pivotMotorD );
   private final DutyCycleEncoder m_pivotEncoder = new DutyCycleEncoder( Constants.Intake.k_PivotEncoderId );
   private final DigitalInput m_IntakeLimitSwitch = new DigitalInput( Constants.Intake.k_IntakeLimitSwitchId );
 
