@@ -8,6 +8,41 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+//import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.XboxController.Button;
+//import edu.wpi.first.wpilibj.PS4Controller.Button;
+import frc.robot.SwerveConstants.AutoConstants;
+import frc.robot.SwerveConstants.DriveConstants;
+import frc.robot.SwerveConstants.OIConstants;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Subsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import frc.robot.autonomous.AutoChooser;
+import frc.robot.autonomous.AutoRunner;
+import frc.robot.autonomous.tasks.Task;
+
+
+
 
 
 /**
@@ -17,19 +52,31 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  //private Command m_autonomousCommand;
+  //private RobotContainer m_robotContainer;
 
-  private RobotContainer m_robotContainer;
+  /* Controller */
+  XboxController m_xboxController = new XboxController( OIConstants.kDriverControllerPort );
+
+  /* Robot Subsytems */
+  private List<Subsystem> m_allSubsystems = new ArrayList<>();
+  private final Intake m_Intake = Intake.getInstance();
+  private final DriveTrain m_DriveTrain = DriveTrain.getInstance();
+
+  /* Auto Stuff */
+  private Task m_currentTask;
+  private AutoRunner m_autoRunner = AutoRunner.getInstance();
+  private AutoChooser m_autoChooser = new AutoChooser();
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
-  public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+  public void robotInit() 
+  {
+    m_allSubsystems.add( m_DriveTrain );
+    m_allSubsystems.add( m_Intake );
   }
 
   /**
@@ -45,52 +92,122 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    //CommandScheduler.getInstance().run();
+    m_allSubsystems.forEach(subsystem -> subsystem.periodic() );
+    m_allSubsystems.forEach(subsystem -> subsystem.writePeriodicOutputs() );
+    m_allSubsystems.forEach(subsystem -> subsystem.outputTelemetry() );
+    m_allSubsystems.forEach(subsystem -> subsystem.writeToLog() );
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() 
+  {
+    m_allSubsystems.forEach(subsystem -> subsystem.stop() );
+  }
 
   @Override
   public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+  public void autonomousInit() 
+  {
+    m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
+    m_currentTask = m_autoRunner.getNextTask();
 
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    // Start the first task
+    if(m_currentTask != null) 
+    {
+      m_currentTask.start();
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() 
+  {
+    // If there is a current task, run it
+    if (m_currentTask != null) 
+    {
+      // Run the current task
+      m_currentTask.update();
+      m_currentTask.updateSim();
+
+      // If the current task is finished, get the next task
+      if (m_currentTask.isFinished()) 
+      {
+        m_currentTask.done();
+        m_currentTask = m_autoRunner.getNextTask();
+
+        // Start the next task
+        if (m_currentTask != null) 
+        {
+          m_currentTask.start();
+        }
+      }
+    }
+  }
 
   @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+  public void teleopInit() 
+  {    
+    /* Nothing */
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() 
+  {
+    m_DriveTrain.drive( -MathUtil.applyDeadband( -m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
+                        -MathUtil.applyDeadband( m_xboxController.getLeftY(), OIConstants.kDriveDeadband ),
+                        -MathUtil.applyDeadband( m_xboxController.getRightX(), OIConstants.kDriveDeadband ),
+                        true, 
+                        true );
+    /* Check controller for Drive Commands */
+    if( m_xboxController.getRightStickButton() )
+    {
+      m_DriveTrain.zeroHeading();
+    }
+    else if( m_xboxController.getLeftStickButton() )
+    {
+      m_DriveTrain.setX();
+    }
+
+    /* Check controller for Intake commands */
+    if( m_xboxController.getAButton() )
+    {
+      m_Intake.goToGround();
+    }
+    else if( m_xboxController.getBButton() )
+    {
+      if( m_Intake.getIntakeHasNote() )
+      {
+        m_Intake.pulse();
+      }
+      else
+      {
+        m_Intake.intake();
+      }
+    }
+    else if( m_xboxController.getXButton() )
+    {
+      m_Intake.eject();
+    }
+    else if( m_xboxController.getLeftBumper() )
+    {
+      m_Intake.goToSource();
+    }
+    else if( m_xboxController.getRightBumper() )
+    {
+      m_Intake.goToStow();
+    }
+    else 
+    {
+      m_Intake.stopIntake();
+    }
+
+  }
 
   @Override
   public void testInit() {

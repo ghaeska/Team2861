@@ -25,6 +25,12 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants 
 {
+  public static class Field 
+  {
+    public static final double k_width = Units.feetToMeters(54.0);
+    public static final double k_length = Units.feetToMeters(27.0);
+  }
+
   public static final class DriveConstants 
   {
     

@@ -21,6 +21,7 @@ import com.revrobotics.RelativeEncoder;
 
 import frc.robot.SwerveConstants.ModuleConstants;
 //import frc.utils.Conversions;
+import frc.utils.Conversions;
 
 public class MAXSwerveModule {
   /* Spark Max controlled Driving and turning Motors/controllers */
@@ -182,9 +183,8 @@ public class MAXSwerveModule {
   }
 
 
-  // public double getDriveMotorPosition()
-  // {
-  //   return Conversions.neoToMeters( m_drivingSparkMax.getAbsoluteEncoder(), , )
-
-  // }
+  public RelativeEncoder getDriveMotorEncoder() 
+  {
+    return m_drivingSparkMax.getEncoder();
+  }
 }
