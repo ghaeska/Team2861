@@ -29,7 +29,29 @@ public final class Constants
   {
     
   }
-  
 
-  
+  public static class Intake
+  {
+    /* Motor ID's */
+    public static final int k_IntakeMotorCanId = 10;
+    public static final int k_PivotMotorCanId = 11;
+
+    /* Digital Input/Output ID's */
+    public static final int k_PivotEncoderId = 0;
+    public static final int k_IntakeLimitSwitchId = 2;
+
+    /* Absolute Encoder Offset */
+    public static final double k_PivotEncoderOffset = 0.000000;  //GTH:TODO, NEED TO GET ENCODER OFFSET WHEN INTAKE IS STRAIGHT UP IN THE AIR.
+
+    /* Pivot Angle Set Points */
+    public static final double k_PivotAngleGround = 60;
+    public static final double k_PivotAngleSource = 190;
+    public static final double k_PivotAngleAmp    = 190;
+    public static final double k_PivotAngleStowed = 270;
+
+    /* Intake Speeds */
+    public static final double k_IntakeIntakeSpeed = 0.7;
+    public static final double k_IntakeEjectSpeed = -0.45;
+    public static final double k_IntakeFeedShootSpeed = -0.50;
+  }  
 }
