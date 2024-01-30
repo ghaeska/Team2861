@@ -177,30 +177,32 @@ public class Robot extends TimedRobot {
     /* Check controller for Intake commands */
     if( m_xboxController.getAButton() )
     {
-      m_Intake.goToGround();
+      m_Intake.intake();
+      //m_Intake.goToGround();
     }
     else if( m_xboxController.getBButton() )
     {
-      if( m_Intake.getIntakeHasNote() )
-      {
-        m_Intake.pulse();
-      }
-      else
-      {
-        m_Intake.intake();
-      }
+      m_Intake.stopIntake();
+      // if( m_Intake.getIntakeHasNote() )
+      // {
+      //   m_Intake.pulse();
+      // }
+      // else
+      // {
+      //   m_Intake.intake();
+      // }
     }
     else if( m_xboxController.getXButton() )
     {
-      m_Intake.eject();
+      //m_Intake.eject();
     }
     else if( m_xboxController.getLeftBumper() )
     {
-      m_Intake.goToSource();
+      //m_Intake.goToSource();
     }
     else if( m_xboxController.getRightBumper() )
     {
-      m_Intake.goToStow();
+      //m_Intake.goToStow();
     }
     else 
     {

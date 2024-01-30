@@ -15,11 +15,11 @@ import edu.wpi.first.math.util.Units;
 
 public class Intake extends Subsystem
 {
-  private final PIDController m_pivotPID = new PIDController( Constants.Intake.k_pivotMotorP,
-                                                              Constants.Intake.k_pivotMotorI, 
-                                                              Constants.Intake.k_pivotMotorD );
-  private final DutyCycleEncoder m_pivotEncoder = new DutyCycleEncoder( Constants.Intake.k_PivotEncoderId );
-  private final DigitalInput m_IntakeLimitSwitch = new DigitalInput( Constants.Intake.k_IntakeLimitSwitchId );
+  //private final PIDController m_pivotPID = new PIDController( Constants.Intake.k_pivotMotorP,
+  //                                                            Constants.Intake.k_pivotMotorI, 
+  //                                                            Constants.Intake.k_pivotMotorD );
+  //private final DutyCycleEncoder m_pivotEncoder = new DutyCycleEncoder( Constants.Intake.k_PivotEncoderId );
+  //private final DigitalInput m_IntakeLimitSwitch = new DigitalInput( Constants.Intake.k_IntakeLimitSwitchId );
 
 
   /* Private Instance Variables */
@@ -27,7 +27,7 @@ public class Intake extends Subsystem
   private PeriodicIO m_PeriodicIO;
 
   private CANSparkMax m_IntakeMotor;
-  private CANSparkMax m_PivotMotor;
+  //private CANSparkMax m_PivotMotor;
 
   public static Intake getInstance()
   {
@@ -46,10 +46,10 @@ public class Intake extends Subsystem
     m_IntakeMotor.setIdleMode( CANSparkBase.IdleMode.kCoast );
 
     /* Pivot Motor Setup */
-    m_PivotMotor = new CANSparkMax( Constants.Intake.k_PivotMotorCanId, MotorType.kBrushless );
-    m_PivotMotor.restoreFactoryDefaults();
-    m_PivotMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
-    m_PivotMotor.setSmartCurrentLimit( 10 );
+    //m_PivotMotor = new CANSparkMax( Constants.Intake.k_PivotMotorCanId, MotorType.kBrushless );
+    //m_PivotMotor.restoreFactoryDefaults();
+    //m_PivotMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
+    //m_PivotMotor.setSmartCurrentLimit( 10 );
 
     m_PeriodicIO = new PeriodicIO();
   }
@@ -57,30 +57,30 @@ public class Intake extends Subsystem
   private static class PeriodicIO
   {
     /* Input is Desired state. */
-    PivotTarget pivot_target = PivotTarget.STOW;
+    //PivotTarget pivot_target = PivotTarget.STOW;
     IntakeState state_intake = IntakeState.NONE;
 
     /* Intake Output: Motor Set Values */
-    double intake_pivot_voltage = 0.0;
+    //double intake_pivot_voltage = 0.0;
     double intake_speed = 0.0;
   }
 
-  public enum PivotTarget
-  {
-    NONE,
-    GROUND,
-    SOURCE,
-    AMP,
-    STOW
-  }
+  //public enum PivotTarget
+  //{
+  //  NONE,
+  //  GROUND,
+  //  SOURCE,
+  //  AMP,
+  //  STOW
+  //}
 
   public enum IntakeState
   {
     NONE,
     INTAKE,
     EJECT,
-    PULSE,
-    FEED_SHOOTER
+    //PULSE,
+    //FEED_SHOOTER
   }
 
 
@@ -89,18 +89,18 @@ public class Intake extends Subsystem
 public void periodic()
 {
   /* Check to see if we have a note and need to verify position. */
-  checkAutoTasks();
+  //checkAutoTasks();
 
   /* Pivot Control */
-  double pivot_angle = pivotTargetToAngle( m_PeriodicIO.pivot_target );
-  m_PeriodicIO.intake_pivot_voltage = m_pivotPID.calculate( getPivotAngleDegrees(), pivot_angle );
+  //double pivot_angle = pivotTargetToAngle( m_PeriodicIO.pivot_target );
+  //m_PeriodicIO.intake_pivot_voltage = m_pivotPID.calculate( getPivotAngleDegrees(), pivot_angle );
 
   /* Add a failsafe to check to see if encoder is connected. */
-  if( m_pivotEncoder.get() == 0.0 )
-  {
-    /* chances are it is not connected, so disable it. */
-    m_PeriodicIO.intake_pivot_voltage = 0.0;
-  }
+  //if( m_pivotEncoder.get() == 0.0 )
+  //{
+  //  /* chances are it is not connected, so disable it. */
+  //  m_PeriodicIO.intake_pivot_voltage = 0.0;
+  //}
 
   /* Control the intake */
   m_PeriodicIO.intake_speed = intakeStateToSpeed( m_PeriodicIO.state_intake );
@@ -110,7 +110,7 @@ public void periodic()
 @Override
 public void writePeriodicOutputs()
 {
-  m_PivotMotor.setVoltage(m_PeriodicIO.intake_pivot_voltage );
+  //m_PivotMotor.setVoltage(m_PeriodicIO.intake_pivot_voltage );
   m_IntakeMotor.set( m_PeriodicIO.intake_speed );
 }
 
@@ -118,23 +118,24 @@ public void writePeriodicOutputs()
 @Override
 public void stop()
 {
-  m_PeriodicIO.intake_pivot_voltage = 0.0;
+  //m_PeriodicIO.intake_pivot_voltage = 0.0;
   m_PeriodicIO.intake_speed = 0.0;
+  m_PeriodicIO.state_intake = IntakeState.NONE;
 }
 
 @Override
   public void outputTelemetry() 
   {
     SmartDashboard.putNumber("Intake speed:", intakeStateToSpeed(m_PeriodicIO.state_intake));
-    SmartDashboard.putNumber("Pivot Abs Enc (get):", m_pivotEncoder.get());
-    SmartDashboard.putNumber("Pivot Abs Enc (getAbsolutePosition):", m_pivotEncoder.getAbsolutePosition());
-    SmartDashboard.putNumber("Pivot Abs Enc (getPivotAngleDegrees):", getPivotAngleDegrees());
-    SmartDashboard.putNumber("Pivot Setpoint:", pivotTargetToAngle(m_PeriodicIO.pivot_target));
+    //SmartDashboard.putNumber("Pivot Abs Enc (get):", m_pivotEncoder.get());
+    //SmartDashboard.putNumber("Pivot Abs Enc (getAbsolutePosition):", m_pivotEncoder.getAbsolutePosition());
+    //SmartDashboard.putNumber("Pivot Abs Enc (getPivotAngleDegrees):", getPivotAngleDegrees());
+    //SmartDashboard.putNumber("Pivot Setpoint:", pivotTargetToAngle(m_PeriodicIO.pivot_target));
 
-    SmartDashboard.putNumber("Pivot Power:", m_PeriodicIO.intake_pivot_voltage);
-    SmartDashboard.putNumber("Pivot Current:", m_PivotMotor.getOutputCurrent());
+    //SmartDashboard.putNumber("Pivot Power:", m_PeriodicIO.intake_pivot_voltage);
+    //SmartDashboard.putNumber("Pivot Current:", m_PivotMotor.getOutputCurrent());
 
-    SmartDashboard.putBoolean("Intake Limit Switch:", getIntakeHasNote());
+    //SmartDashboard.putBoolean("Intake Limit Switch:", getIntakeHasNote());
   }
 
   @Override
@@ -148,23 +149,23 @@ public void stop()
 
 /* Public Functions */
 
-public double pivotTargetToAngle( PivotTarget target )  
-{
-  switch( target ) 
-  {
-    case GROUND:
-      return Constants.Intake.k_PivotAngleGround;
-    case SOURCE:
-      return Constants.Intake.k_PivotAngleSource;
-    case AMP:
-      return Constants.Intake.k_PivotAngleAmp;
-    case STOW:
-      return Constants.Intake.k_PivotAngleStowed;
-    default:
-      // "Safe" default
-      return 180;
-  }
-}
+// public double pivotTargetToAngle( PivotTarget target )  
+// {
+//   switch( target ) 
+//   {
+//     case GROUND:
+//       return Constants.Intake.k_PivotAngleGround;
+//     case SOURCE:
+//       return Constants.Intake.k_PivotAngleSource;
+//     case AMP:
+//       return Constants.Intake.k_PivotAngleAmp;
+//     case STOW:
+//       return Constants.Intake.k_PivotAngleStowed;
+//     default:
+//       // "Safe" default
+//       return 180;
+//   }
+// }
 
 public double intakeStateToSpeed( IntakeState state ) 
 {
@@ -174,16 +175,17 @@ public double intakeStateToSpeed( IntakeState state )
       return Constants.Intake.k_IntakeIntakeSpeed;
     case EJECT:
       return Constants.Intake.k_IntakeEjectSpeed;
-    case PULSE:
-      // Use the timer to pulse the intake on for a 1/16 second,
-      // then off for a 15/16 second
-      if( Timer.getFPGATimestamp() % 1.0 < ( 1.0 / 45.0 ) ) 
-      {
-        return Constants.Intake.k_IntakeIntakeSpeed;
-      }
-      return 0.0;
-    case FEED_SHOOTER:
-      return Constants.Intake.k_IntakeFeedShootSpeed;
+    // case PULSE:
+    //   // Use the timer to pulse the intake on for a 1/16 second,
+    //   // then off for a 15/16 second
+    //   if( Timer.getFPGATimestamp() % 1.0 < ( 1.0 / 45.0 ) ) 
+    //   {
+    //     return Constants.Intake.k_IntakeIntakeSpeed;
+    //   }
+    //   return 0.0;
+    // case FEED_SHOOTER:
+    //   return Constants.Intake.k_IntakeFeedShootSpeed;
+    case NONE:
     default:
       // "Safe" default
       return 0.0;
@@ -196,43 +198,43 @@ public IntakeState getIntakeState()
   return m_PeriodicIO.state_intake;
 }
 
-public double getPivotAngleDegrees() 
-{
-  double value = m_pivotEncoder.getAbsolutePosition() 
-                 - Constants.Intake.k_PivotEncoderOffset 
-                 + 0.5;
+// public double getPivotAngleDegrees() 
+// {
+//   double value = m_pivotEncoder.getAbsolutePosition() 
+//                  - Constants.Intake.k_PivotEncoderOffset 
+//                  + 0.5;
 
-  return Units.rotationsToDegrees(Helpers.modRotations(value));
-}
+//   return Units.rotationsToDegrees(Helpers.modRotations(value));
+// }
 
-public boolean getIntakeHasNote() 
-{
-  // NOTE: this is intentionally inverted, because the limit switch is normally
-  // closed
-  return !m_IntakeLimitSwitch.get();
-}
+// public boolean getIntakeHasNote() 
+// {
+//   // NOTE: this is intentionally inverted, because the limit switch is normally
+//   // closed
+//   return !m_IntakeLimitSwitch.get();
+// }
 
 
 /* --------------------- Pivot Helper Functions ----------------------------- */
-public void goToGround() 
-{
-  m_PeriodicIO.pivot_target = PivotTarget.GROUND;
-}
+// public void goToGround() 
+// {
+//   m_PeriodicIO.pivot_target = PivotTarget.GROUND;
+// }
 
-public void goToSource() 
-{
-  m_PeriodicIO.pivot_target = PivotTarget.SOURCE;
-}
+// public void goToSource() 
+// {
+//   m_PeriodicIO.pivot_target = PivotTarget.SOURCE;
+// }
 
-public void goToAmp() 
-{
-  m_PeriodicIO.pivot_target = PivotTarget.SOURCE;
-}
+// public void goToAmp() 
+// {
+//   m_PeriodicIO.pivot_target = PivotTarget.SOURCE;
+// }
 
-public void goToStow() 
-{
-  m_PeriodicIO.pivot_target = PivotTarget.STOW;
-}
+// public void goToStow() 
+// {
+//   m_PeriodicIO.pivot_target = PivotTarget.STOW;
+// }
 
 
 /* ---------------------- Intake Helper Functions --------------------------- */
@@ -246,15 +248,15 @@ public void eject()
   m_PeriodicIO.state_intake = IntakeState.EJECT;
 }
 
-public void pulse() 
-{
-  m_PeriodicIO.state_intake = IntakeState.PULSE;
-}
+// public void pulse() 
+// {
+//   m_PeriodicIO.state_intake = IntakeState.PULSE;
+// }
 
-public void feedShooter() 
-{
-  m_PeriodicIO.state_intake = IntakeState.FEED_SHOOTER;
-}
+// public void feedShooter() 
+// {
+//   m_PeriodicIO.state_intake = IntakeState.FEED_SHOOTER;
+// }
 
 public void stopIntake() 
 {
@@ -267,28 +269,28 @@ public void setState( IntakeState state )
   m_PeriodicIO.state_intake = state;
 }
 
-public void setPivotTarget( PivotTarget target ) 
-{
-  m_PeriodicIO.pivot_target = target;
-}
+// public void setPivotTarget( PivotTarget target ) 
+// {
+//   m_PeriodicIO.pivot_target = target;
+// }
 
 
 /* ---------------------- Private Functions --------------------------------- */
-private void checkAutoTasks() 
-{
-  // If the intake is set to GROUND, and the intake has a note, and the pivot is
-  // close to it's target
-  // Stop the intake and go to the SOURCE position
-  if( m_PeriodicIO.pivot_target == PivotTarget.GROUND && getIntakeHasNote() && isPivotAtTarget() ) 
-  {
-    m_PeriodicIO.pivot_target = PivotTarget.STOW;    
-  }
-}
+// private void checkAutoTasks() 
+// {
+//   // If the intake is set to GROUND, and the intake has a note, and the pivot is
+//   // close to it's target
+//   // Stop the intake and go to the SOURCE position
+//   if( m_PeriodicIO.pivot_target == PivotTarget.GROUND && getIntakeHasNote() && isPivotAtTarget() ) 
+//   {
+//     m_PeriodicIO.pivot_target = PivotTarget.STOW;    
+//   }
+// }
 
-private boolean isPivotAtTarget() 
-{
-  return Math.abs(getPivotAngleDegrees() - pivotTargetToAngle(m_PeriodicIO.pivot_target)) < 5;
-}
+// private boolean isPivotAtTarget() 
+// {
+//   return Math.abs(getPivotAngleDegrees() - pivotTargetToAngle(m_PeriodicIO.pivot_target)) < 5;
+// }
 
 
 
