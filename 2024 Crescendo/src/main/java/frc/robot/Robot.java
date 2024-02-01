@@ -53,7 +53,7 @@ import frc.robot.autonomous.tasks.Task;
  * project.
  */
 public class Robot extends TimedRobot {
-  //private Command m_autonomousCommand;
+  private Command m_autonomousCommand;
   //private RobotContainer m_robotContainer;
 
   /* Controller */
@@ -67,9 +67,9 @@ public class Robot extends TimedRobot {
   private IntakeState stateIntake = IntakeState.NONE;
 
   /* Auto Stuff */
-  //private Task m_currentTask;
-  //private AutoRunner m_autoRunner = AutoRunner.getInstance();
-  //private AutoChooser m_autoChooser = new AutoChooser();
+  private Task m_currentTask;
+  private AutoRunner m_autoRunner = AutoRunner.getInstance();
+  private AutoChooser m_autoChooser = new AutoChooser();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -116,40 +116,40 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() 
   {
-    // m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
-    // m_currentTask = m_autoRunner.getNextTask();
+    m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
+    m_currentTask = m_autoRunner.getNextTask();
 
-    // // Start the first task
-    // if(m_currentTask != null) 
-    // {
-    //   m_currentTask.start();
-    // }
+    // Start the first task
+    if(m_currentTask != null) 
+    {
+      m_currentTask.start();
+    }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() 
   {
-    // // If there is a current task, run it
-    // if (m_currentTask != null) 
-    // {
-    //   // Run the current task
-    //   m_currentTask.update();
-    //   m_currentTask.updateSim();
+    // If there is a current task, run it
+    if (m_currentTask != null) 
+    {
+      // Run the current task
+      m_currentTask.update();
+      m_currentTask.updateSim();
 
-    //   // If the current task is finished, get the next task
-    //   if (m_currentTask.isFinished()) 
-    //   {
-    //     m_currentTask.done();
-    //     m_currentTask = m_autoRunner.getNextTask();
+      // If the current task is finished, get the next task
+      if (m_currentTask.isFinished()) 
+      {
+        m_currentTask.done();
+        m_currentTask = m_autoRunner.getNextTask();
 
-    //     // Start the next task
-    //     if (m_currentTask != null) 
-    //     {
-    //       m_currentTask.start();
-    //     }
-    //   }
-    // }
+        // Start the next task
+        if (m_currentTask != null) 
+        {
+          m_currentTask.start();
+        }
+      }
+    }
   }
 
   @Override
@@ -180,45 +180,74 @@ public class Robot extends TimedRobot {
     /* Check controller for Intake commands */
     if( m_xboxController.getAButtonPressed() )
     {
+      /* 
+      ** If we are going in reverse, we dont want to just change direction, might
+      ** be hard on the motor/gearbox.  We will want to stop our Intake before we 
+      ** change its direction.
+      */
       if( stateIntake == IntakeState.EJECT )
       {
+        /* We are spinning for ejection, stop before we intake */
         stateIntake = IntakeState.NONE;
       }
       else
       {
-        stateIntake = IntakeState.INTAKE;
+        /* We arent doing anything, go ahead and intake. */
+        stateIntake = IntakeState.INTAKE_SLOW;
       }
     }
     else if( m_xboxController.getBButtonPressed() )
     {
-      if( stateIntake == IntakeState.INTAKE )
+      /* 
+      ** If we are going in reverse, we dont want to just change direction, might
+      ** be hard on the motor/gearbox.  We will want to stop our Intake before we 
+      ** change its direction.
+      */
+      if( stateIntake == IntakeState.INTAKE_SLOW || stateIntake == IntakeState.INTAKE_FAST )
       {
+        /* We are spinning for intake, stop before we eject */
         stateIntake = IntakeState.NONE;
       }
       else
       {
+        /* We arent doing anything, go ahead and eject. */
         stateIntake = IntakeState.EJECT;
       }
     }
     else if( m_xboxController.getYButton() )
     {
+      /* stop all intake functionality. */
       stateIntake = IntakeState.NONE;
     }
     else if( m_xboxController.getXButton() )
     {
-      //m_Intake.eject();
+      /* 
+      ** If we are going in reverse, we dont want to just change direction, might
+      ** be hard on the motor/gearbox.  We will want to stop our Intake before we 
+      ** change its direction.
+      */
+      if( stateIntake == IntakeState.EJECT )
+      {
+        /* We are spinning for ejection, stop before we intake */
+        stateIntake = IntakeState.NONE;
+      }
+      else
+      {
+        /* We arent doing anything, go ahead and intake. */
+        stateIntake = IntakeState.INTAKE_FAST;
+      }
     }
     else if( m_xboxController.getLeftBumper() )
     {
-      //m_Intake.goToSource();
+      
     }
     else if( m_xboxController.getRightBumper() )
     {
-      //m_Intake.goToStow();
+      
     }
     else 
     {
-      m_Intake.stopIntake();
+      
     }
 
     /* Update Intake state after input */

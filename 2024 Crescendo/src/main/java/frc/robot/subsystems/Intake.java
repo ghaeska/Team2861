@@ -45,7 +45,8 @@ public class Intake extends Subsystem
   public enum IntakeState
   {
     NONE,
-    INTAKE,
+    INTAKE_FAST,
+    INTAKE_SLOW,
     EJECT
   }
 
@@ -93,8 +94,10 @@ public class Intake extends Subsystem
   {
     switch( state ) 
     {
-      case INTAKE:
-        return Constants.Intake.k_IntakeIntakeSpeed;
+      case INTAKE_FAST:
+        return Constants.Intake.k_IntakeIntakeSpeedFast;
+      case INTAKE_SLOW:
+        return Constants.Intake.k_IntakeIntakeSpeedSlow;
       case EJECT:
         return Constants.Intake.k_IntakeEjectSpeed;
       case NONE:
@@ -109,21 +112,21 @@ public class Intake extends Subsystem
   }
 
   /* ---------------------- Intake Helper Functions --------------------------- */
-  public void intake() 
-  {
-    m_PeriodicIO.state_intake = IntakeState.INTAKE;
-  }
+  // public void intake() 
+  // {
+  //   m_PeriodicIO.state_intake = IntakeState.INTAKE;
+  // }
 
-  public void eject() 
-  {
-    m_PeriodicIO.state_intake = IntakeState.EJECT;
-  }
+  // public void eject() 
+  // {
+  //   m_PeriodicIO.state_intake = IntakeState.EJECT;
+  // }
 
-  public void stopIntake() 
-  {
-    m_PeriodicIO.state_intake = IntakeState.NONE;
-    m_PeriodicIO.intake_speed = 0.0;
-  }
+  // public void stopIntake() 
+  // {
+  //   m_PeriodicIO.state_intake = IntakeState.NONE;
+  //   m_PeriodicIO.intake_speed = 0.0;
+  // }
 
   public void setState( IntakeState state ) 
   {

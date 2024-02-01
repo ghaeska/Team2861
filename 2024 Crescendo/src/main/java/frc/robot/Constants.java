@@ -52,8 +52,8 @@ public final class Constants
     public static final int k_IntakeLimitSwitchId = 2;
 
     /* Absolute Encoder Offset */
-    public static final double k_PivotEncoderOffset = 0.000000;  //GTH:TODO, NEED TO GET ENCODER OFFSET WHEN INTAKE IS STRAIGHT UP IN THE AIR.
-
+    public static final double k_PivotEncoderOffset = 0.000000;
+    
     /* Pivot Angle Set Points */
     public static final double k_PivotAngleGround = 60;
     public static final double k_PivotAngleSource = 190;
@@ -61,8 +61,10 @@ public final class Constants
     public static final double k_PivotAngleStowed = 270;
 
     /* Intake Speeds */
-    public static final double k_IntakeIntakeSpeed = -.3;
-    public static final double k_IntakeEjectSpeed = .2;
+    /* positive value ejects, negative intakes. */
+    public static final double k_IntakeIntakeSpeedSlow = -0.3;
+    public static final double k_IntakeIntakeSpeedFast = -0.8;
+    public static final double k_IntakeEjectSpeed = 0.2;
     public static final double k_IntakeFeedShootSpeed = -0.50;
   }
 
