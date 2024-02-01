@@ -8,7 +8,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake extends Subsystem
 {
-  /* Private Instance Variables */
+  /*
+  ** This file uses a state machine to know how the intake should be operating.
+  ** Call setState() with a state that you would like to get to and it will 
+  ** put the intake into that state. 
+  */
+
+/*------------------------ Private Instance Variables ------------------------*/
   private static Intake m_Instance;
   private PeriodicIO m_PeriodicIO;
 
@@ -37,27 +43,25 @@ public class Intake extends Subsystem
   {
     /* Input is Desired state. */
     IntakeState state_intake = IntakeState.NONE;
-
     /* Intake Output: Motor Set Values */
     double intake_speed = 0.0;
   }
 
   public enum IntakeState
   {
-    NONE,
-    INTAKE_FAST,
-    INTAKE_SLOW,
-    EJECT
+    NONE,         // Intake will be doing nothing
+    INTAKE_FAST,  // Intake will be intaking fast
+    INTAKE_SLOW,  // Intake will be intaking slow
+    EJECT         // Intake will be trying to eject.
   }
-
 
 /*---------------------- Intake Subsystem Functions --------------------------*/
 @Override
   public void periodic()
   {
     /* Control the intake */
-    m_PeriodicIO.intake_speed = intakeStateToSpeed( m_PeriodicIO.state_intake );
-    SmartDashboard.putString( "Intake State:", m_PeriodicIO.state_intake.toString() );
+    m_PeriodicIO.intake_speed = IntakeSetSpeedFromState( m_PeriodicIO.state_intake );
+    SmartDashboard.putString( "Intake State:", m_PeriodicIO.state_intake.toString());
   }
 
 @Override
@@ -65,7 +69,6 @@ public class Intake extends Subsystem
   {
     m_IntakeMotor.set( m_PeriodicIO.intake_speed );
   }
-
 
 @Override
   public void stop()
@@ -77,7 +80,7 @@ public class Intake extends Subsystem
 @Override
   public void outputTelemetry() 
   {
-    SmartDashboard.putNumber("Intake State:", intakeStateToSpeed(m_PeriodicIO.state_intake));
+    SmartDashboard.putNumber("Intake Speed:", IntakeSetSpeedFromState(m_PeriodicIO.state_intake));
   }
 
   @Override
@@ -86,11 +89,8 @@ public class Intake extends Subsystem
     /* nothing */
   }
 
-
-
-
 /*------------------------ Public Functions ----------------------------------*/
-  public double intakeStateToSpeed( IntakeState state ) 
+  public double IntakeSetSpeedFromState( IntakeState state ) 
   {
     switch( state ) 
     {
@@ -106,28 +106,13 @@ public class Intake extends Subsystem
     }
   }
 
+
   public IntakeState getIntakeState() 
   {
     return m_PeriodicIO.state_intake;
   }
 
   /* ---------------------- Intake Helper Functions --------------------------- */
-  // public void intake() 
-  // {
-  //   m_PeriodicIO.state_intake = IntakeState.INTAKE;
-  // }
-
-  // public void eject() 
-  // {
-  //   m_PeriodicIO.state_intake = IntakeState.EJECT;
-  // }
-
-  // public void stopIntake() 
-  // {
-  //   m_PeriodicIO.state_intake = IntakeState.NONE;
-  //   m_PeriodicIO.intake_speed = 0.0;
-  // }
-
   public void setState( IntakeState state ) 
   {
     m_PeriodicIO.state_intake = state;

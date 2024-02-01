@@ -22,13 +22,14 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController.Button;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.SwerveConstants.AutoConstants;
 import frc.robot.SwerveConstants.DriveConstants;
 import frc.robot.SwerveConstants.OIConstants;
-import frc.robot.subsystems.DriveSubsystem;
+//import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Subsystem;
@@ -42,10 +43,6 @@ import frc.robot.autonomous.AutoChooser;
 import frc.robot.autonomous.AutoRunner;
 import frc.robot.autonomous.tasks.Task;
 
-
-
-
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -58,6 +55,7 @@ public class Robot extends TimedRobot {
 
   /* Controller */
   XboxController m_xboxController = new XboxController( OIConstants.kDriverControllerPort );
+  dpadbu
 
   /* Robot Subsytems */
   private List<Subsystem> m_allSubsystems = new ArrayList<>();
@@ -175,6 +173,23 @@ public class Robot extends TimedRobot {
     else if( m_xboxController.getLeftStickButton() )
     {
       m_DriveTrain.setX();
+    }
+    /* POV is the DPAD, UP=0, DOWN=180, LEFT=270, RIGHT=90 */
+    else if(m_xboxController.getPOV() == 0 )
+    {
+
+    }
+    else if(m_xboxController.getPOV() == 90 )
+    {
+      
+    }
+    else if(m_xboxController.getPOV() == 180 )
+    {
+      
+    }
+    else if(m_xboxController.getPOV() == 270 )
+    {
+      
     }
 
     /* Check controller for Intake commands */
