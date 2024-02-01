@@ -6,6 +6,7 @@ import com.kauailabs.navx.frc.AHRS;
 //import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -33,6 +34,8 @@ import frc.robot.Constants;
 import frc.robot.SwerveConstants;
 //import frc.robot.simulation.SimulatableCANSparkMax;
 import frc.robot.SwerveConstants.DriveConstants;
+import frc.robot.SwerveConstants.ModuleConstants;
+import frc.utils.Conversions;
 import frc.utils.SwerveUtils;
 
 public class DriveTrain extends Subsystem
@@ -150,6 +153,7 @@ public class DriveTrain extends Subsystem
             m_rearRight.getPosition()
         });
 
+        //SmartDashboard.putNumber("Back Left Encoder", m_rearLeft.getDriveMotorEncoder() );
         SmartDashboard.putNumber("Swerve Angle", m_gyro.getAngle() );
   }
 
@@ -375,18 +379,21 @@ public class DriveTrain extends Subsystem
   }
 
   @Override
-  public void outputTelemetry() {
-    // SmartDashboard.putNumber("leftVelocitySetPoint", mPeriodicIO.diffWheelSpeeds.leftMetersPerSecond);
-    // SmartDashboard.putNumber("rightVelocitySetPoint", mPeriodicIO.diffWheelSpeeds.rightMetersPerSecond);
-    // SmartDashboard.putNumber("leftVelocity", mLeftEncoder.getVelocity());
-    // SmartDashboard.putNumber("rightVelocity", -mRightEncoder.getVelocity());
-    // SmartDashboard.putNumber("leftMeters", mLeftEncoder.getPosition());
-    // SmartDashboard.putNumber("rightMeters", -mRightEncoder.getPosition());
-    // SmartDashboard.putNumber("Gyro", mGyro.getAngle());
+  public void outputTelemetry() 
+  {
+    /* Velocity Printouts */
+     SmartDashboard.putNumber("Front Left Velocity", m_FrontLeftEncoder .getVelocity());
+     SmartDashboard.putNumber("Back Left Velocity", m_BackLeftEncoder .getVelocity());
+     SmartDashboard.putNumber("Front Right Velocity", m_FrontRightEncoder .getVelocity());
+     SmartDashboard.putNumber("Back Right Velocity", m_BackRightEncoder .getVelocity());
+    /* Encoder Position Printouts */
+    SmartDashboard.putNumber("Front Left Meters", m_FrontLeftEncoder.getPosition());
+    SmartDashboard.putNumber("Back Left Meters", m_BackLeftEncoder .getPosition());
+    SmartDashboard.putNumber("Front Right Meters", m_FrontRightEncoder .getPosition());
+    SmartDashboard.putNumber("Back Right Meters", m_BackRightEncoder .getPosition());
+    /* Gyro Printout */
+    SmartDashboard.putNumber("Gyro", m_gyro.getAngle());
   }
-
-
-
 
 
 
