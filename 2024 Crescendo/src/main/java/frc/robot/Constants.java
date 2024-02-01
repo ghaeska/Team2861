@@ -61,8 +61,8 @@ public final class Constants
     public static final double k_PivotAngleStowed = 270;
 
     /* Intake Speeds */
-    public static final double k_IntakeIntakeSpeed = 0.7;
-    public static final double k_IntakeEjectSpeed = -0.45;
+    public static final double k_IntakeIntakeSpeed = -.3;
+    public static final double k_IntakeEjectSpeed = .2;
     public static final double k_IntakeFeedShootSpeed = -0.50;
   }
 

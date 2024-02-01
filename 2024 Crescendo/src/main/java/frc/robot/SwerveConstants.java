@@ -33,7 +33,7 @@ public class SwerveConstants
     public static final double kMaxSpeedMetersPerSecond = 4.45;
 
     /* Angular speed, I believe the lower the number, the slower the turn. */
-    public static final double kMaxAngularSpeed = 0.5 * Math.PI; // radians per second
+    public static final double kMaxAngularSpeed = 1.0 * Math.PI; // radians per second
 
     /* Slew rates slow down the initial input from a controller and will ramp up over time. */
     public static final double kDirectionSlewRate = 1.2; // radians per second

@@ -32,6 +32,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Subsystem;
+import frc.robot.subsystems.Intake.IntakeState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -63,10 +64,12 @@ public class Robot extends TimedRobot {
   private final Intake m_Intake = Intake.getInstance();
   private final DriveTrain m_DriveTrain = DriveTrain.getInstance();
 
+  private IntakeState stateIntake = IntakeState.NONE;
+
   /* Auto Stuff */
-  private Task m_currentTask;
-  private AutoRunner m_autoRunner = AutoRunner.getInstance();
-  private AutoChooser m_autoChooser = new AutoChooser();
+  //private Task m_currentTask;
+  //private AutoRunner m_autoRunner = AutoRunner.getInstance();
+  //private AutoChooser m_autoChooser = new AutoChooser();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -113,40 +116,40 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() 
   {
-    m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
-    m_currentTask = m_autoRunner.getNextTask();
+    // m_autoRunner.setAutoMode(m_autoChooser.getSelectedAuto());
+    // m_currentTask = m_autoRunner.getNextTask();
 
-    // Start the first task
-    if(m_currentTask != null) 
-    {
-      m_currentTask.start();
-    }
+    // // Start the first task
+    // if(m_currentTask != null) 
+    // {
+    //   m_currentTask.start();
+    // }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() 
   {
-    // If there is a current task, run it
-    if (m_currentTask != null) 
-    {
-      // Run the current task
-      m_currentTask.update();
-      m_currentTask.updateSim();
+    // // If there is a current task, run it
+    // if (m_currentTask != null) 
+    // {
+    //   // Run the current task
+    //   m_currentTask.update();
+    //   m_currentTask.updateSim();
 
-      // If the current task is finished, get the next task
-      if (m_currentTask.isFinished()) 
-      {
-        m_currentTask.done();
-        m_currentTask = m_autoRunner.getNextTask();
+    //   // If the current task is finished, get the next task
+    //   if (m_currentTask.isFinished()) 
+    //   {
+    //     m_currentTask.done();
+    //     m_currentTask = m_autoRunner.getNextTask();
 
-        // Start the next task
-        if (m_currentTask != null) 
-        {
-          m_currentTask.start();
-        }
-      }
-    }
+    //     // Start the next task
+    //     if (m_currentTask != null) 
+    //     {
+    //       m_currentTask.start();
+    //     }
+    //   }
+    // }
   }
 
   @Override
@@ -175,22 +178,31 @@ public class Robot extends TimedRobot {
     }
 
     /* Check controller for Intake commands */
-    if( m_xboxController.getAButton() )
+    if( m_xboxController.getAButtonPressed() )
     {
-      m_Intake.intake();
-      //m_Intake.goToGround();
+      if( stateIntake == IntakeState.EJECT )
+      {
+        stateIntake = IntakeState.NONE;
+      }
+      else
+      {
+        stateIntake = IntakeState.INTAKE;
+      }
     }
-    else if( m_xboxController.getBButton() )
+    else if( m_xboxController.getBButtonPressed() )
     {
-      m_Intake.stopIntake();
-      // if( m_Intake.getIntakeHasNote() )
-      // {
-      //   m_Intake.pulse();
-      // }
-      // else
-      // {
-      //   m_Intake.intake();
-      // }
+      if( stateIntake == IntakeState.INTAKE )
+      {
+        stateIntake = IntakeState.NONE;
+      }
+      else
+      {
+        stateIntake = IntakeState.EJECT;
+      }
+    }
+    else if( m_xboxController.getYButton() )
+    {
+      stateIntake = IntakeState.NONE;
     }
     else if( m_xboxController.getXButton() )
     {
@@ -208,6 +220,9 @@ public class Robot extends TimedRobot {
     {
       m_Intake.stopIntake();
     }
+
+    /* Update Intake state after input */
+    m_Intake.setState( stateIntake );
 
   }
 

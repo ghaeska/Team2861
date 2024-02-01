@@ -1,7 +1,7 @@
 package frc.robot.autonomous;
 
 import frc.robot.autonomous.modes.AutoModeBase;
-import frc.robot.autonomous.modes.DefaultMode;
+//import frc.robot.autonomous.modes.DefaultMode;
 import frc.robot.autonomous.modes.DoNothingMode;
 import frc.robot.autonomous.tasks.Task;
 
@@ -31,7 +31,7 @@ public class AutoRunner {
         m_autoMode = new DoNothingMode();
         break;
       case DEFAULT:
-        m_autoMode = new DefaultMode();
+       // m_autoMode = new DefaultMode();
         break;
       default:
         System.out.println("Invalid auto mode selected. Defaulting to do nothing.");
