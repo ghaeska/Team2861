@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -34,6 +36,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.utils.Helpers;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -49,13 +52,23 @@ import frc.robot.autonomous.tasks.Task;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot
+{
   private Command m_autonomousCommand;
-  //private RobotContainer m_robotContainer;
+
+  /* Automatic turning functionality */
+  private boolean m_TurnToAngle;
+  private double m_yaw;
+  private double currentRotationalRate;
+  private final PIDController m_PIDController = new PIDController( Constants.DriveConstants.k_turnPID_P,
+                                                                   Constants.DriveConstants.k_turnPID_I,
+                                                                   Constants.DriveConstants.k_turnPID_D
+                                                                 );
+  
+  public static final Pigeon2 m_gyro = new Pigeon2( DriveConstants.kGyroCanId );
 
   /* Controller */
-  XboxController m_xboxController = new XboxController( OIConstants.kDriverControllerPort );
-  dpadbu
+  XboxController m_DriverController = new XboxController( OIConstants.kDriverControllerPort );
 
   /* Robot Subsytems */
   private List<Subsystem> m_allSubsystems = new ArrayList<>();
@@ -154,46 +167,87 @@ public class Robot extends TimedRobot {
   public void teleopInit() 
   {    
     /* Nothing */
+    m_PIDController.setTolerance( Constants.DriveConstants.k_tolerance_degrees );
+    m_PIDController.enableContinuousInput( -180.0, 180.0 );    
   }
+  
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() 
   {
-    m_DriveTrain.drive( -MathUtil.applyDeadband( -m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
-                        -MathUtil.applyDeadband( m_xboxController.getLeftY(), OIConstants.kDriveDeadband ),
-                        -MathUtil.applyDeadband( m_xboxController.getRightX(), OIConstants.kDriveDeadband ),
-                        true, 
-                        true );
+    m_TurnToAngle = false;
+    
     /* Check controller for Drive Commands */
-    if( m_xboxController.getRightStickButton() )
+    if( m_DriverController.getRightStickButton() )
     {
-      m_DriveTrain.zeroHeading();
+      //m_DriveTrain.zeroHeading();
     }
-    else if( m_xboxController.getLeftStickButton() )
+    else if( m_DriverController.getLeftStickButton() )
     {
       m_DriveTrain.setX();
     }
     /* POV is the DPAD, UP=0, DOWN=180, LEFT=270, RIGHT=90 */
-    else if(m_xboxController.getPOV() == 0 )
+    else if(m_DriverController.getPOV() == 0 )
     {
+      /* Idea, press a button, feed that into the drive, then manually rotate until it hits that spot */
+      m_PIDController.setSetpoint( 0.0 ); //UP
+      m_TurnToAngle = true;
+    }
+    else if(m_DriverController.getPOV() == 90 ) //Right
+    {
+      m_PIDController.setSetpoint( 90.0 );
+      m_TurnToAngle = true;
+    }
+    else if(m_DriverController.getPOV() == 180 ) //Down
+    {
+      m_PIDController.setSetpoint( 179.9 );
+      m_TurnToAngle = true;
+    }
+    else if(m_DriverController.getPOV() == 270 ) //Left 
+    {
+      m_PIDController.setSetpoint( -90.0 );
+      m_TurnToAngle = true;
+    }    
 
-    }
-    else if(m_xboxController.getPOV() == 90 )
+    if( m_TurnToAngle )
     {
-      
+      m_yaw = m_gyro.getAngle();
+      double pid_output = m_PIDController.calculate( m_yaw );
+      pid_output = Helpers.clamp( pid_output, -1.0, 1.0 );
+      currentRotationalRate = pid_output;
+
+      m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+                          -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+                          currentRotationalRate,
+                          true, 
+                          true );
     }
-    else if(m_xboxController.getPOV() == 180 )
+
+    if( m_DriverController.getRightX() != 0 )
     {
-      
+      m_TurnToAngle = false;
+      /* Control the rotation by joystick again.  */
+      m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+                          -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+                          -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
+                          true, 
+                          true );
     }
-    else if(m_xboxController.getPOV() == 270 )
-    {
-      
-    }
+
+    
+
+
+
+    // m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+    //                     -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+    //                     -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
+    //                     true, 
+    //                     true );
+
 
     /* Check controller for Intake commands */
-    if( m_xboxController.getAButtonPressed() )
+    if( m_DriverController.getAButtonPressed() )
     {
       /* 
       ** If we are going in reverse, we dont want to just change direction, might
@@ -211,7 +265,7 @@ public class Robot extends TimedRobot {
         stateIntake = IntakeState.INTAKE_SLOW;
       }
     }
-    else if( m_xboxController.getBButtonPressed() )
+    else if( m_DriverController.getBButtonPressed() )
     {
       /* 
       ** If we are going in reverse, we dont want to just change direction, might
@@ -229,12 +283,12 @@ public class Robot extends TimedRobot {
         stateIntake = IntakeState.EJECT;
       }
     }
-    else if( m_xboxController.getYButton() )
+    else if( m_DriverController.getYButtonPressed() )
     {
       /* stop all intake functionality. */
       stateIntake = IntakeState.NONE;
     }
-    else if( m_xboxController.getXButton() )
+    else if( m_DriverController.getXButtonPressed() )
     {
       /* 
       ** If we are going in reverse, we dont want to just change direction, might
@@ -252,11 +306,11 @@ public class Robot extends TimedRobot {
         stateIntake = IntakeState.INTAKE_FAST;
       }
     }
-    else if( m_xboxController.getLeftBumper() )
+    else if( m_DriverController.getLeftBumper() )
     {
       
     }
-    else if( m_xboxController.getRightBumper() )
+    else if( m_DriverController.getRightBumper() )
     {
       
     }

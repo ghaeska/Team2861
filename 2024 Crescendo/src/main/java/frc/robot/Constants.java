@@ -33,7 +33,13 @@ public final class Constants
 
   public static final class DriveConstants 
   {
-    
+    /* PID control values for auto turning */
+    public static final double k_turnPID_P = 0.00;
+    public static final double k_turnPID_I = 0.00;
+    public static final double k_turnPID_D = 0.00;
+    public static final double k_turnPID_F = 0.00;
+
+    public static final double k_tolerance_degrees = 2.0f;
   }
 
   public static class Intake

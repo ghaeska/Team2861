@@ -45,6 +45,8 @@ public class DriveTrain extends Subsystem
   private final RelativeEncoder m_BackRightEncoder;
   private final RelativeEncoder m_BackLeftEncoder;
 
+  //private final PIDController m_PIDController;
+
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -154,7 +156,7 @@ public class DriveTrain extends Subsystem
         });
 
         //SmartDashboard.putNumber("Back Left Encoder", m_rearLeft.getDriveMotorEncoder() );
-        SmartDashboard.putNumber("Swerve Angle", m_gyro.getAngle() );
+        SmartDashboard.putNumber("Swerve Gyro Angle", m_gyro.getAngle() );
   }
 
   /**
@@ -393,15 +395,8 @@ public class DriveTrain extends Subsystem
     SmartDashboard.putNumber("Back Right Meters", m_BackRightEncoder .getPosition());
     /* Gyro Printout */
     SmartDashboard.putNumber("Gyro", m_gyro.getAngle());
+
+    
   }
 
-
-
-
-
-
-
-
-
-  
 }
