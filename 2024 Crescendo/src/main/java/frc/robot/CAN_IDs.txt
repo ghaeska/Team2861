@@ -16,11 +16,11 @@ Here is a master list of all CAN ID's that are used in our robot.
  |    9    |         Not Used         |                                        |
  |   10    |       Intake Motor       |           Constants.java               |
  |   11    |         Not Used         |                                        |
- |   12    |         Not Used         |                                        |
- |   13    |         Not Used         |                                        |
+ |   12    |    Top Shooter Motor     |           Constants.java               |
+ |   13    |    Bot Shooter Motor     |           Constants.java               |
  |   14    |         Not Used         |                                        |
- |   15    |    Left Shooter Motor    |           Constants.java               |
- |   16    |   Right Shooter Motor    |           Constants.java               |
+ |   15    |     Left Arm Pivot       |           Constants.java               |
+ |   16    |    Right Arm Pivot       |           Constants.java               |
  |   17    |         Not Used         |                                        |
  |   18    |         Not Used         |                                        |
  |   19    |         Not Used         |                                        |

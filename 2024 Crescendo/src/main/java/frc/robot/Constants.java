@@ -44,34 +44,15 @@ public final class Constants
 
   public static class Intake
   {
-    /* Intake PID constants */
-    public static final double k_pivotMotorP = 0.12;
-    public static final double k_pivotMotorI = 0.0;
-    public static final double k_pivotMotorD = 0.001;
-
     /* Intake Motor ID's */
-    public static final int k_IntakeMotorCanId = 10;
-    public static final int k_PivotMotorCanId = 11;
-
-    /* Digital Input/Output ID's */
-    public static final int k_PivotEncoderId = 0;
-    public static final int k_IntakeLimitSwitchId = 2;
-
-    /* Absolute Encoder Offset */
-    public static final double k_PivotEncoderOffset = 0.000000;
-    
-    /* Pivot Angle Set Points */
-    public static final double k_PivotAngleGround = 60;
-    public static final double k_PivotAngleSource = 190;
-    public static final double k_PivotAngleAmp    = 190;
-    public static final double k_PivotAngleStowed = 270;
+    public static final int k_IntakeMotorCanId = 10;  
 
     /* Intake Speeds */
     /* positive value ejects, negative intakes. */
-    public static final double k_IntakeIntakeSpeedSlow = -0.3;
-    public static final double k_IntakeIntakeSpeedFast = -0.8;
-    public static final double k_IntakeEjectSpeed = 0.2;
-    public static final double k_IntakeFeedShootSpeed = -0.50;
+    public static final double k_IntakeIntakeSpeedSlow = -0.3; //GTH:TODO need to update value
+    public static final double k_IntakeIntakeSpeedFast = -0.8; //GTH:TODO need to update value
+    public static final double k_IntakeEjectSpeed = 0.2; //GTH:TODO need to update value
+    public static final double k_IntakeFeedShootSpeed = -0.50; //GTH:TODO need to update value
   }
 
   public static class Shooter
@@ -83,11 +64,44 @@ public final class Constants
     public static final double k_ShooterMotorFF = 0.002;
 
     /* Shooter Motor ID's */
-    public static final int k_ShooterLeftMotorCanId = 15;
-    public static final int k_ShooterRightMotorCanId = 16;
+    public static final int k_ShooterTopMotorCanId = 12;
+    public static final int k_ShooterBotMotorCanId = 13;
+
+    /* Shooter Arm Motor ID's */
+    public static final int k_ShooterArmLeftMotorCanId = 15;
+    public static final int k_ShooterArmRightMotorCanId = 16;
 
     /* Shooter Min/Max Outputs */
     public static final double k_ShooterMinOutput = 0;
     public static final double k_ShooterMaxOutput = 1;
+
+    public static final double k_ShooterArmMinOutput = 0;
+    public static final double k_ShooterArmMaxOutput = .2; //GTH:TODO need to update value
+
+    /* Shooter Speeds */
+    public static final double k_ShooterSpeed_Speaker = 0.1; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Amp = 0.1; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Stage = 0.1; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Pass = 0.1; //GTH:TODO need to update value
+
+    /* Pivot Angle Set Points */
+    public static final double k_ShooterArmAngleSource = 190; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleAmp    = 190; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleStowed = 270; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleSpeaker = 270; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleStage = 270; //GTH:TODO need to get value
+    public static final double k_ShooterArmAnglePass = 270; //GTH:TODO need to get value
+
+
+    /* Digital Input/Output ID's */
+    public static final int k_ShooterArmEncoderId = 0;
+
+    /* Absolute Encoder Offset */
+    public static final double k_ShooterArmEncoderOffset = 0.000000; //GTH:TODO need to get value
+
+    /* Intake PID constants */
+    public static final double k_ShooterArmMotorP = 0.12;
+    public static final double k_ShooterArmMotorI = 0.0;
+    public static final double k_ShooterArmMotorD = 0.001;
   }
 }
