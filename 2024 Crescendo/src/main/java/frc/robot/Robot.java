@@ -34,8 +34,10 @@ import frc.robot.SwerveConstants.OIConstants;
 //import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Shooter.ShooterArmState;
 import frc.utils.Helpers;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -73,6 +75,7 @@ public class Robot extends TimedRobot
   /* Robot Subsytems */
   private List<Subsystem> m_allSubsystems = new ArrayList<>();
   private final Intake m_Intake = Intake.getInstance();
+  private final Shooter m_Shooter = Shooter.getInstance();
   private final DriveTrain m_DriveTrain = DriveTrain.getInstance();
 
   private IntakeState stateIntake = IntakeState.NONE;
@@ -91,6 +94,7 @@ public class Robot extends TimedRobot
   {
     m_allSubsystems.add( m_DriveTrain );
     m_allSubsystems.add( m_Intake );
+    m_allSubsystems.add( m_Shooter );
   }
 
   /**
@@ -306,13 +310,13 @@ public class Robot extends TimedRobot
         stateIntake = IntakeState.INTAKE_FAST;
       }
     }
-    else if( m_DriverController.getLeftBumper() )
+    else if( m_DriverController.getLeftBumperPressed() )
     {
-      
+      m_Shooter.setShooterArmTarget( ShooterArmState.SPEAKER );
     }
-    else if( m_DriverController.getRightBumper() )
+    else if( m_DriverController.getRightBumperPressed() )
     {
-      
+      m_Shooter.setShooterArmTarget( ShooterArmState.STOWED );
     }
     else 
     {

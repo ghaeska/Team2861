@@ -135,7 +135,7 @@ public class Shooter extends Subsystem
     }
 
     /* Control the intake */
-    m_PeriodicIO.shooter_rpm = intakeStateToSpeed( m_PeriodicIO.Shooter_Target );
+    m_PeriodicIO.shooter_rpm = ShooterArmStateToSpeed( m_PeriodicIO.Shooter_Target );
     SmartDashboard.putString( "Shooter State:", m_PeriodicIO.Shooter_Target.toString() );
   }
 
@@ -160,7 +160,7 @@ public class Shooter extends Subsystem
     SmartDashboard.putNumber("Shooter left speed:", m_LeftShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Shooter right speed:", m_RightShooterEncoder.getVelocity());
 
-    SmartDashboard.putNumber("Shooter Set Speed:", intakeStateToSpeed(m_PeriodicIO.Shooter_Target));
+    SmartDashboard.putNumber("Shooter Set Speed:", ShooterArmStateToSpeed(m_PeriodicIO.Shooter_Target));
     SmartDashboard.putNumber("Shooter Arm Abs Enc (get):", m_ShooterArmEncoder.get());
     SmartDashboard.putNumber("Shooter Arm Abs Enc (getAbsolutePosition):", m_ShooterArmEncoder.getAbsolutePosition());
     SmartDashboard.putNumber("Shooter Arm Abs Enc (getPivotAngleDegrees):", getPivotAngleDegrees());
@@ -227,7 +227,7 @@ public class Shooter extends Subsystem
     }
   }
 
-  public double intakeStateToSpeed( ShooterState state ) 
+  public double ShooterArmStateToSpeed( ShooterState state ) 
   {
     switch( state ) 
     {
@@ -261,9 +261,11 @@ public class Shooter extends Subsystem
   }
 
   public void setShooterArmTarget( ShooterArmState target ) 
-{
-  m_PeriodicIO.ShooterArm_Target = target;
-}
+  {
+    m_PeriodicIO.ShooterArm_Target = target;
+  }
+
+  //public void setShooterTarget( Shooter)
 
   /*---------------------- Custom Private Functions --------------------------*/
   private void checkAutoTasks() 
