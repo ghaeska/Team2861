@@ -46,7 +46,7 @@ public class DriveTrain extends Subsystem
   private final RelativeEncoder m_BackLeftEncoder;
 
   //private final PIDController m_PIDController;
-
+private final SwerveSubsytem 
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -337,8 +337,8 @@ public class DriveTrain extends Subsystem
   public void zeroHeading() 
   {
     SmartDashboard.getBoolean("Heading Reset", false );
-    m_gyro.reset();
-    //m_gyro.setYaw(0);
+    //m_gyro.reset();
+    m_gyro.setYaw(0);
   }
 
   /**

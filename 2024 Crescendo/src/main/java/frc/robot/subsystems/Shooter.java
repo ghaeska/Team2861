@@ -29,15 +29,19 @@ public class Shooter extends Subsystem
   private CANSparkMax m_RightShooterArmMotor;
 
 
-  private SparkPIDController m_LeftShooterPID;
-  private SparkPIDController m_RightShooterPID;
-  //private SparkPIDController m_ShooterArmPID;
+  private SparkPIDController m_TopShooterPID;
+  private SparkPIDController m_BottomShooterPID;
+
+  //private SparkPIDController m_LeftShooterArmPID;
+  //private SparkPIDController m_RightShooterArmPID;
 
 
   private RelativeEncoder m_LeftShooterEncoder;
   private RelativeEncoder m_RightShooterEncoder;
 
   private SlewRateLimiter m_ShooterSlewLimiter = new SlewRateLimiter( 1000 );
+  private SlewRateLimiter m_ShooterArmSlewLimiter = new SlewRateLimiter( 1000 );
+
 
   private final PIDController m_ShooterArmPID = new PIDController( Constants.Shooter.k_ShooterArmMotorP,
                                                                   Constants.Shooter.k_ShooterArmMotorI, 
@@ -84,21 +88,32 @@ public class Shooter extends Subsystem
     m_RightShooterArmMotor.setInverted( true ); // GTH:TODO need to update
 
     /* Setup the PID Controllers */
-    m_LeftShooterPID = m_TopShooterMotor.getPIDController();
-    m_LeftShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
-    m_LeftShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
-    m_LeftShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
-    m_LeftShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
-    m_LeftShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
+    m_TopShooterPID = m_TopShooterMotor.getPIDController();
+    m_TopShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
+    m_TopShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
+    m_TopShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
+    m_TopShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
+    m_TopShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
 
-    m_RightShooterPID = m_BotShooterMotor.getPIDController();
-    m_RightShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
-    m_RightShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
-    m_RightShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
-    m_RightShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
-    m_RightShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
+    m_BottomShooterPID = m_BotShooterMotor.getPIDController();
+    m_BottomShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
+    m_BottomShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
+    m_BottomShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
+    m_BottomShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
+    m_BottomShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
 
-    //m_ShooterArmPID. = 
+    // m_LeftShooterArmPID = m_LeftShooterArmMotor.getPIDController();
+    // m_LeftShooterArmPID.setP( Constants.Shooter.k_ShooterArmMotorP );
+    // m_LeftShooterArmPID.setI( Constants.Shooter.k_ShooterArmMotorI );
+    // m_LeftShooterArmPID.setD( Constants.Shooter.k_ShooterArmMotorD );
+    // m_LeftShooterArmPID.setOutputRange( Constants.Shooter.k_ShooterArmMinOutput, Constants.Shooter.k_ShooterArmMinOutput );
+
+    // m_RightShooterArmPID = m_RightShooterArmMotor.getPIDController();
+    // m_RightShooterArmPID.setP( Constants.Shooter.k_ShooterArmMotorP );
+    // m_RightShooterArmPID.setI( Constants.Shooter.k_ShooterArmMotorI );
+    // m_RightShooterArmPID.setD( Constants.Shooter.k_ShooterArmMotorD );
+    // m_RightShooterArmPID.setOutputRange( Constants.Shooter.k_ShooterArmMinOutput, Constants.Shooter.k_ShooterArmMinOutput );
+
 
     /* Setup the Motor Encoders */
     m_LeftShooterEncoder = m_TopShooterMotor.getEncoder();
@@ -143,8 +158,13 @@ public class Shooter extends Subsystem
   public void writePeriodicOutputs() 
   {
     double limitedSpeed = m_ShooterSlewLimiter.calculate(m_PeriodicIO.shooter_rpm);
-    m_LeftShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
-    m_RightShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
+    m_TopShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
+    m_BottomShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
+
+    //double shooterArmSpeed = m_ShooterArmSlewLimiter.calculate(m_PeriodicIO.ShooterArm_Voltage);
+    //m_LeftShooterArmPID.setReference(shooterArmSpeed, ControlType.kDutyCycle);
+    m_LeftShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
+    m_RightShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
   }
 
   @Override
