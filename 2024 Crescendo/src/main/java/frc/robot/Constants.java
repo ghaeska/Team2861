@@ -79,10 +79,10 @@ public final class Constants
     public static final double k_ShooterArmMaxOutput = .2; //GTH:TODO need to update value
 
     /* Shooter Speeds */
-    public static final double k_ShooterSpeed_Speaker = 0.1; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Amp = 0.1; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Stage = 0.1; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Pass = 0.1; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
 
     /* Pivot Angle Set Points */
     public static final double k_ShooterArmAngleSource = 190; //GTH:TODO need to get value

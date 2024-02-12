@@ -46,7 +46,6 @@ public class DriveTrain extends Subsystem
   private final RelativeEncoder m_BackLeftEncoder;
 
   //private final PIDController m_PIDController;
-private final SwerveSubsytem 
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,

@@ -74,9 +74,9 @@ public class Robot extends TimedRobot
 
   /* Robot Subsytems */
   private List<Subsystem> m_allSubsystems = new ArrayList<>();
-  private final Intake m_Intake = Intake.getInstance();
+  //private final Intake m_Intake = Intake.getInstance();
   private final Shooter m_Shooter = Shooter.getInstance();
-  private final DriveTrain m_DriveTrain = DriveTrain.getInstance();
+  //private final DriveTrain m_DriveTrain = DriveTrain.getInstance();
 
   private IntakeState stateIntake = IntakeState.NONE;
 
@@ -92,8 +92,8 @@ public class Robot extends TimedRobot
   @Override
   public void robotInit() 
   {
-    m_allSubsystems.add( m_DriveTrain );
-    m_allSubsystems.add( m_Intake );
+    //m_allSubsystems.add( m_DriveTrain );
+    //m_allSubsystems.add( m_Intake );
     m_allSubsystems.add( m_Shooter );
   }
 
@@ -189,7 +189,7 @@ public class Robot extends TimedRobot
     }
     else if( m_DriverController.getLeftStickButton() )
     {
-      m_DriveTrain.setX();
+      //m_DriveTrain.setX();
     }
     /* POV is the DPAD, UP=0, DOWN=180, LEFT=270, RIGHT=90 */
     else if(m_DriverController.getPOV() == 0 )
@@ -221,22 +221,22 @@ public class Robot extends TimedRobot
       pid_output = Helpers.clamp( pid_output, -1.0, 1.0 );
       currentRotationalRate = pid_output;
 
-      m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
-                          -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
-                          currentRotationalRate,
-                          true, 
-                          true );
+      // m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+      //                     -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+      //                     currentRotationalRate,
+      //                     true, 
+      //                     true );
     }
 
     if( m_DriverController.getRightX() != 0 )
     {
       m_TurnToAngle = false;
       /* Control the rotation by joystick again.  */
-      m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
-                          -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
-                          -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
-                          true, 
-                          true );
+      // m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+      //                     -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+      //                     -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
+      //                     true, 
+      //                     true );
     }
 
     
@@ -312,11 +312,13 @@ public class Robot extends TimedRobot
     }
     else if( m_DriverController.getLeftBumperPressed() )
     {
-      m_Shooter.setShooterArmTarget( ShooterArmState.SPEAKER );
+      //m_Shooter.setShooterArmTarget( ShooterArmState.SPEAKER );
+      m_Shooter.setSpeed(1000);
     }
     else if( m_DriverController.getRightBumperPressed() )
     {
-      m_Shooter.setShooterArmTarget( ShooterArmState.STOWED );
+      //m_Shooter.setShooterArmTarget( ShooterArmState.STOWED );
+      m_Shooter.setSpeed(0);
     }
     else 
     {
@@ -324,7 +326,7 @@ public class Robot extends TimedRobot
     }
 
     /* Update Intake state after input */
-    m_Intake.setState( stateIntake );
+    //m_Intake.setState( stateIntake );
 
   }
 
