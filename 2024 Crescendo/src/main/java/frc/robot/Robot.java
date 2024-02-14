@@ -67,16 +67,16 @@ public class Robot extends TimedRobot
                                                                    Constants.DriveConstants.k_turnPID_D
                                                                  );
   
-  public static final Pigeon2 m_gyro = new Pigeon2( DriveConstants.kGyroCanId );
+  //public static final Pigeon2 m_gyro = new Pigeon2( DriveConstants.kGyroCanId );
 
   /* Controller */
   XboxController m_DriverController = new XboxController( OIConstants.kDriverControllerPort );
 
   /* Robot Subsytems */
   private List<Subsystem> m_allSubsystems = new ArrayList<>();
-  //private final Intake m_Intake = Intake.getInstance();
+  private final Intake m_Intake = Intake.getInstance();
   private final Shooter m_Shooter = Shooter.getInstance();
-  //private final DriveTrain m_DriveTrain = DriveTrain.getInstance();
+  private final DriveTrain m_DriveTrain = DriveTrain.getInstance();
 
   private IntakeState stateIntake = IntakeState.NONE;
 
@@ -92,8 +92,8 @@ public class Robot extends TimedRobot
   @Override
   public void robotInit() 
   {
-    //m_allSubsystems.add( m_DriveTrain );
-    //m_allSubsystems.add( m_Intake );
+    m_allSubsystems.add( m_DriveTrain );
+    m_allSubsystems.add( m_Intake );
     m_allSubsystems.add( m_Shooter );
   }
 
@@ -185,59 +185,59 @@ public class Robot extends TimedRobot
     /* Check controller for Drive Commands */
     if( m_DriverController.getRightStickButton() )
     {
-      //m_DriveTrain.zeroHeading();
+      m_DriveTrain.zeroHeading();
     }
     else if( m_DriverController.getLeftStickButton() )
     {
-      //m_DriveTrain.setX();
+      m_DriveTrain.setX();
     }
     /* POV is the DPAD, UP=0, DOWN=180, LEFT=270, RIGHT=90 */
-    else if(m_DriverController.getPOV() == 0 )
-    {
-      /* Idea, press a button, feed that into the drive, then manually rotate until it hits that spot */
-      m_PIDController.setSetpoint( 0.0 ); //UP
-      m_TurnToAngle = true;
-    }
-    else if(m_DriverController.getPOV() == 90 ) //Right
-    {
-      m_PIDController.setSetpoint( 90.0 );
-      m_TurnToAngle = true;
-    }
-    else if(m_DriverController.getPOV() == 180 ) //Down
-    {
-      m_PIDController.setSetpoint( 179.9 );
-      m_TurnToAngle = true;
-    }
-    else if(m_DriverController.getPOV() == 270 ) //Left 
-    {
-      m_PIDController.setSetpoint( -90.0 );
-      m_TurnToAngle = true;
-    }    
+    // else if(m_DriverController.getPOV() == 0 )
+    // {
+    //   /* Idea, press a button, feed that into the drive, then manually rotate until it hits that spot */
+    //   m_PIDController.setSetpoint( 0.0 ); //UP
+    //   m_TurnToAngle = true;
+    // }
+    // else if(m_DriverController.getPOV() == 90 ) //Right
+    // {
+    //   m_PIDController.setSetpoint( 90.0 );
+    //   m_TurnToAngle = true;
+    // }
+    // else if(m_DriverController.getPOV() == 180 ) //Down
+    // {
+    //   m_PIDController.setSetpoint( 179.9 );
+    //   m_TurnToAngle = true;
+    // }
+    // else if(m_DriverController.getPOV() == 270 ) //Left 
+    // {
+    //   m_PIDController.setSetpoint( -90.0 );
+    //   m_TurnToAngle = true;
+    // }    
 
-    if( m_TurnToAngle )
-    {
-      m_yaw = m_gyro.getAngle();
-      double pid_output = m_PIDController.calculate( m_yaw );
-      pid_output = Helpers.clamp( pid_output, -1.0, 1.0 );
-      currentRotationalRate = pid_output;
+    // if( m_TurnToAngle )
+    // {
+    //   m_yaw = m_DriveTrain.m_gyro.getAngle();
+    //   double pid_output = m_PIDController.calculate( m_yaw );
+    //   pid_output = Helpers.clamp( pid_output, -1.0, 1.0 );
+    //   currentRotationalRate = pid_output;
 
-      // m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
-      //                     -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
-      //                     currentRotationalRate,
-      //                     true, 
-      //                     true );
-    }
+    //   m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+    //                       -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+    //                       currentRotationalRate,
+    //                       true, 
+    //                       true );
+    // }
 
-    if( m_DriverController.getRightX() != 0 )
-    {
+    // if( m_DriverController.getRightX() != 0 )
+    // {
       m_TurnToAngle = false;
       /* Control the rotation by joystick again.  */
-      // m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
-      //                     -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
-      //                     -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
-      //                     true, 
-      //                     true );
-    }
+      m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+                          -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+                          -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
+                          true, 
+                          true );
+   // }
 
     
 
@@ -312,12 +312,12 @@ public class Robot extends TimedRobot
     }
     else if( m_DriverController.getLeftBumperPressed() )
     {
-      //m_Shooter.setShooterArmTarget( ShooterArmState.SPEAKER );
+      m_Shooter.setShooterArmTarget( ShooterArmState.SPEAKER );
       m_Shooter.setSpeed(1000);
     }
     else if( m_DriverController.getRightBumperPressed() )
     {
-      //m_Shooter.setShooterArmTarget( ShooterArmState.STOWED );
+      m_Shooter.setShooterArmTarget( ShooterArmState.STOWED );
       m_Shooter.setSpeed(0);
     }
     else 
@@ -326,7 +326,7 @@ public class Robot extends TimedRobot
     }
 
     /* Update Intake state after input */
-    //m_Intake.setState( stateIntake );
+    m_Intake.setState( stateIntake );
 
   }
 

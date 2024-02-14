@@ -28,25 +28,27 @@ public class Shooter extends Subsystem
   private CANSparkMax m_LeftShooterArmMotor;
   private CANSparkMax m_RightShooterArmMotor;
 
-
   private SparkPIDController m_TopShooterPID;
   private SparkPIDController m_BottomShooterPID;
 
-  //private SparkPIDController m_LeftShooterArmPID;
-  //private SparkPIDController m_RightShooterArmPID;
+  private SparkPIDController m_ShooterArmPID;
 
+  private RelativeEncoder m_TopShooterEncoder;
+  private RelativeEncoder m_BottomShooterEncoder;
 
-  private RelativeEncoder m_LeftShooterEncoder;
-  private RelativeEncoder m_RightShooterEncoder;
+  private RelativeEncoder m_LeftShooterArmEncoder;
+  private RelativeEncoder m_RightShooterArmEncoder;
 
-  private SlewRateLimiter m_ShooterSlewLimiter = new SlewRateLimiter( 1000 );
+  //private SlewRateLimiter m_ShooterSlewLimiter = new SlewRateLimiter( 1000 );
   //private SlewRateLimiter m_ShooterArmSlewLimiter = new SlewRateLimiter( 1000 );
 
 
-  private final PIDController m_ShooterArmPID = new PIDController( Constants.Shooter.k_ShooterArmMotorP,
-                                                                  Constants.Shooter.k_ShooterArmMotorI, 
-                                                                  Constants.Shooter.k_ShooterArmMotorD );
-  //private final DutyCycleEncoder m_ShooterArmEncoder = new DutyCycleEncoder( Constants.Shooter.k_ShooterArmEncoderId );
+  //private final PIDController m_ShooterArmPID = new PIDController( Constants.Shooter.k_ShooterArmMotorP,
+  //                                                                 Constants.Shooter.k_ShooterArmMotorI, 
+  //                                                                 Constants.Shooter.k_ShooterArmMotorD );
+  private final DutyCycleEncoder m_ShooterArmEncoder = new DutyCycleEncoder( Constants.Shooter.k_ShooterArmEncoderId );
+
+
   //private final DigitalInput m_IntakeLimitSwitch = new DigitalInput( Constants.Intake.k_IntakeLimitSwitchId );
 
   
@@ -63,29 +65,32 @@ public class Shooter extends Subsystem
   {
     m_PeriodicIO = new PeriodicIO();
 
-    /* Setup the Motor Controllers */
+    /********************* Setup the Motor Controllers ************************/
+    /* Shooter Arm Motors */
     m_TopShooterMotor = new CANSparkFlex( Constants.Shooter.k_ShooterTopMotorCanId, MotorType.kBrushless );
     m_BotShooterMotor = new CANSparkFlex( Constants.Shooter.k_ShooterBotMotorCanId, MotorType.kBrushless );
-    //m_LeftShooterArmMotor = new CANSparkMax( Constants.Shooter.k_ShooterArmLeftMotorCanId, MotorType.kBrushless );
-    //m_RightShooterArmMotor = new CANSparkMax( Constants.Shooter.k_ShooterArmRightMotorCanId, MotorType.kBrushless );
+
+    /* Shooter Arm Motors */
+    m_LeftShooterArmMotor = new CANSparkMax( Constants.Shooter.k_ShooterArmLeftMotorCanId, MotorType.kBrushless );
+    m_RightShooterArmMotor = new CANSparkMax( Constants.Shooter.k_ShooterArmRightMotorCanId, MotorType.kBrushless );
 
     /* Restore them to defaults */
     m_TopShooterMotor.restoreFactoryDefaults();
     m_BotShooterMotor.restoreFactoryDefaults();
-    //m_LeftShooterArmMotor.restoreFactoryDefaults();
-    //m_RightShooterArmMotor.restoreFactoryDefaults();
+    m_LeftShooterArmMotor.restoreFactoryDefaults();
+    m_RightShooterArmMotor.restoreFactoryDefaults();
 
     /* Set the motors Idle Mode */
     m_TopShooterMotor.setIdleMode( CANSparkBase.IdleMode.kCoast );
     m_BotShooterMotor.setIdleMode( CANSparkBase.IdleMode.kCoast );
-    //m_LeftShooterArmMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
-    //m_RightShooterArmMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
+    m_LeftShooterArmMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
+    m_RightShooterArmMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
 
     /* Set the motor Inversions */
-    m_TopShooterMotor.setInverted( true );  // GTH:TODO need to update
-    m_BotShooterMotor.setInverted( false ); // GTH:TODO need to update
-    //m_LeftShooterArmMotor.setInverted( true ); // GTH:TODO need to update
-    //m_RightShooterArmMotor.setInverted( true ); // GTH:TODO need to update
+    m_TopShooterMotor.setInverted( true );
+    m_BotShooterMotor.setInverted( false );
+    m_LeftShooterArmMotor.setInverted( true ); // GTH:TODO need to update
+    m_RightShooterArmMotor.setInverted( true ); // GTH:TODO need to update
 
     /* Setup the PID Controllers */
     m_TopShooterPID = m_TopShooterMotor.getPIDController();
@@ -102,31 +107,34 @@ public class Shooter extends Subsystem
     m_BottomShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
     m_BottomShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
 
-    // m_LeftShooterArmPID = m_LeftShooterArmMotor.getPIDController();
-    // m_LeftShooterArmPID.setP( Constants.Shooter.k_ShooterArmMotorP );
-    // m_LeftShooterArmPID.setI( Constants.Shooter.k_ShooterArmMotorI );
-    // m_LeftShooterArmPID.setD( Constants.Shooter.k_ShooterArmMotorD );
-    // m_LeftShooterArmPID.setOutputRange( Constants.Shooter.k_ShooterArmMinOutput, Constants.Shooter.k_ShooterArmMinOutput );
-
-    // m_RightShooterArmPID = m_RightShooterArmMotor.getPIDController();
-    // m_RightShooterArmPID.setP( Constants.Shooter.k_ShooterArmMotorP );
-    // m_RightShooterArmPID.setI( Constants.Shooter.k_ShooterArmMotorI );
-    // m_RightShooterArmPID.setD( Constants.Shooter.k_ShooterArmMotorD );
-    // m_RightShooterArmPID.setOutputRange( Constants.Shooter.k_ShooterArmMinOutput, Constants.Shooter.k_ShooterArmMinOutput );
-
+    m_ShooterArmPID = m_LeftShooterArmMotor.getPIDController();
+    m_ShooterArmPID.setP( Constants.Shooter.k_ShooterArmMotorP );
+    m_ShooterArmPID.setI( Constants.Shooter.k_ShooterArmMotorI );
+    m_ShooterArmPID.setD( Constants.Shooter.k_ShooterArmMotorD );
+    m_ShooterArmPID.setOutputRange( Constants.Shooter.k_ShooterArmMinOutput, Constants.Shooter.k_ShooterArmMinOutput );
 
     /* Setup the Motor Encoders */
-    m_LeftShooterEncoder = m_TopShooterMotor.getEncoder();
-    m_RightShooterEncoder = m_BotShooterMotor.getEncoder();
+    m_TopShooterEncoder = m_TopShooterMotor.getEncoder();
+    m_BottomShooterEncoder = m_BotShooterMotor.getEncoder();
+
+    m_LeftShooterArmEncoder = m_LeftShooterArmMotor.getEncoder();
+    m_RightShooterArmEncoder = m_RightShooterArmMotor.getEncoder();
+
+    /* Create a Leader/Follower Motor for Arm System */
+    /* Right motor will follow the output of the left motor. */
+    m_RightShooterArmMotor.follow( m_LeftShooterArmMotor );
+
+    m_BotShooterMotor.burnFlash();
+    m_TopShooterMotor.burnFlash();
   }
 
   private static class PeriodicIO 
   {
     double shooter_rpm = 0.0;
-    //ShooterState Shooter_Target = ShooterState.NONE;
+    ShooterState Shooter_Target = ShooterState.NONE;
 
-    //ShooterArmState ShooterArm_Target = ShooterArmState.NONE;
-    //double ShooterArm_Voltage = 0.0;
+    ShooterArmState ShooterArm_Target = ShooterArmState.NONE;
+    double ShooterArm_Voltage = 0.0;
 
   }
 
@@ -139,15 +147,15 @@ public class Shooter extends Subsystem
     checkAutoTasks();
 
     /* Shooter Arm Control */
-    //double ShooterArm_angle = pivotTargetToAngle( m_PeriodicIO.ShooterArm_Target );
-    //m_PeriodicIO.ShooterArm_Voltage = m_ShooterArmPID.calculate( getPivotAngleDegrees(), ShooterArm_angle );
+    double ShooterArm_angle = pivotTargetToAngle( m_PeriodicIO.ShooterArm_Target );
+    m_PeriodicIO.ShooterArm_Voltage = m_ShooterArmPID.calculate( getPivotAngleDegrees(), ShooterArm_angle );
 
     /* Add a failsafe to check to see if encoder is connected. */
-    // if( m_ShooterArmEncoder.get() == 0.0 )
-    // {
-    // /* chances are it is not connected, so disable it. */
-    // m_PeriodicIO.ShooterArm_Voltage = 0.0;
-    // }
+     if( m_ShooterArmEncoder.get() == 0.0 )
+     {
+     /* chances are it is not connected, so disable it. */
+     m_PeriodicIO.ShooterArm_Voltage = 0.0;
+     }
 
     /* Control the intake */
     //m_PeriodicIO.shooter_rpm = ShooterArmStateToSpeed( m_PeriodicIO.Shooter_Target );
@@ -157,14 +165,14 @@ public class Shooter extends Subsystem
   @Override
   public void writePeriodicOutputs() 
   {
-    double limitedSpeed = m_ShooterSlewLimiter.calculate(m_PeriodicIO.shooter_rpm);
-    m_TopShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
-    m_BottomShooterPID.setReference(limitedSpeed, ControlType.kVelocity);
+    //double limitedSpeed = m_ShooterSlewLimiter.calculate( m_PeriodicIO.shooter_rpm );
+    m_TopShooterPID.setReference( m_PeriodicIO.shooter_rpm, ControlType.kVelocity );
+    m_BottomShooterPID.setReference( m_PeriodicIO.shooter_rpm, ControlType.kVelocity );
 
     //double shooterArmSpeed = m_ShooterArmSlewLimiter.calculate(m_PeriodicIO.ShooterArm_Voltage);
     //m_LeftShooterArmPID.setReference(shooterArmSpeed, ControlType.kDutyCycle);
-    //m_LeftShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
-    //m_RightShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
+    m_LeftShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
+    m_RightShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
   }
 
   @Override
@@ -177,18 +185,23 @@ public class Shooter extends Subsystem
   public void outputTelemetry() 
   {
     SmartDashboard.putNumber("Shooter speed (RPM):", m_PeriodicIO.shooter_rpm);
-    SmartDashboard.putNumber("Shooter left speed:", m_LeftShooterEncoder.getVelocity());
-    SmartDashboard.putNumber("Shooter right speed:", m_RightShooterEncoder.getVelocity());
+    SmartDashboard.getNumber("Set Shooter Speed", m_PeriodicIO.shooter_rpm ); // See if this allows for easy speed changes.
+
+    SmartDashboard.putNumber("Shooter Top speed:", m_TopShooterEncoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Bottom speed:", m_BottomShooterEncoder.getVelocity());
+    
+    SmartDashboard.putNumber("Left Shooter Arm Position:", m_LeftShooterArmEncoder.getPosition());
+    SmartDashboard.putNumber("Right Shooter Arm Position:", m_RightShooterArmEncoder.getPosition());
 
     //SmartDashboard.putNumber("Shooter Set Speed:", ShooterArmStateToSpeed(m_PeriodicIO.Shooter_Target));
-    // SmartDashboard.putNumber("Shooter Arm Abs Enc (get):", m_ShooterArmEncoder.get());
-    // SmartDashboard.putNumber("Shooter Arm Abs Enc (getAbsolutePosition):", m_ShooterArmEncoder.getAbsolutePosition());
-    // SmartDashboard.putNumber("Shooter Arm Abs Enc (getPivotAngleDegrees):", getPivotAngleDegrees());
-    // SmartDashboard.putNumber("Shooter Arm Setpoint:", pivotTargetToAngle( m_PeriodicIO.ShooterArm_Target ));
+    SmartDashboard.putNumber("Shooter Arm Abs Enc (get):", m_ShooterArmEncoder.get());
+    SmartDashboard.putNumber("Shooter Arm Abs Enc (getAbsolutePosition):", m_ShooterArmEncoder.getAbsolutePosition());
+    SmartDashboard.putNumber("Shooter Arm Abs Enc (getPivotAngleDegrees):", getPivotAngleDegrees());
+    //SmartDashboard.putNumber("Shooter Arm Setpoint:", pivotTargetToAngle( m_PeriodicIO.ShooterArm_Target ));
 
-    // SmartDashboard.putNumber("Shooter Arm Power:", m_PeriodicIO.ShooterArm_Voltage);
-    // SmartDashboard.putNumber("Shooter Arm Left Current:", m_LeftShooterArmMotor.getOutputCurrent());
-    // SmartDashboard.putNumber("Shooter Arm Right Current:", m_RightShooterArmMotor.getOutputCurrent());
+    //SmartDashboard.putNumber("Shooter Arm Power:", m_PeriodicIO.ShooterArm_Voltage);
+    SmartDashboard.putNumber("Shooter Arm Left Current:", m_LeftShooterArmMotor.getOutputCurrent());
+    SmartDashboard.putNumber("Shooter Arm Right Current:", m_RightShooterArmMotor.getOutputCurrent());
 
   }
 
@@ -220,14 +233,14 @@ public class Shooter extends Subsystem
     STAGE
   }
 
-  // public double getPivotAngleDegrees() 
-  // {
-  //   // double value = m_ShooterArmEncoder.getAbsolutePosition() 
-  //   //               - Constants.Shooter.k_ShooterArmEncoderOffset 
-  //   //               + 0.5;
+  public double getPivotAngleDegrees() 
+  {
+    double value = m_ShooterArmEncoder.getAbsolutePosition() 
+                  - Constants.Shooter.k_ShooterArmEncoderOffset 
+                  + 0.5;
 
-  //   // return Units.rotationsToDegrees(Helpers.modRotations(value));
-  // }
+    return Units.rotationsToDegrees(Helpers.modRotations(value));
+  }
 
   public double pivotTargetToAngle( ShooterArmState state )  
   {

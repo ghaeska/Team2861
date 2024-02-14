@@ -336,8 +336,8 @@ public class DriveTrain extends Subsystem
   public void zeroHeading() 
   {
     SmartDashboard.getBoolean("Heading Reset", false );
-    //m_gyro.reset();
-    m_gyro.setYaw(0);
+    m_gyro.reset();
+    //m_gyro.setYaw(0);
   }
 
   /**

@@ -49,19 +49,19 @@ public final class Constants
 
     /* Intake Speeds */
     /* positive value ejects, negative intakes. */
-    public static final double k_IntakeIntakeSpeedSlow = -0.3; //GTH:TODO need to update value
-    public static final double k_IntakeIntakeSpeedFast = -0.8; //GTH:TODO need to update value
-    public static final double k_IntakeEjectSpeed = 0.2; //GTH:TODO need to update value
-    public static final double k_IntakeFeedShootSpeed = -0.50; //GTH:TODO need to update value
+    public static final double k_IntakeIntakeSpeedSlow = 0.3; //GTH:TODO need to update value
+    public static final double k_IntakeIntakeSpeedFast = 0.7; //GTH:TODO need to update value
+    public static final double k_IntakeEjectSpeed = -0.2; //GTH:TODO need to update value
+    public static final double k_IntakeFeedShootSpeed = 0.50; //GTH:TODO need to update value
   }
 
   public static class Shooter
   {
     /* Shooter PID constants */
-    public static final double k_ShooterMotorP = 0.00005;
-    public static final double k_ShooterMotorI = 0.0;
-    public static final double k_ShooterMotorD = 0.0;
-    public static final double k_ShooterMotorFF = 0.002;
+    public static final double k_ShooterMotorP = 0.0001; // Needs tuning  
+    public static final double k_ShooterMotorI = 0.0;  // Needs tuning
+    public static final double k_ShooterMotorD = 0.0;  // Needs tuning
+    public static final double k_ShooterMotorFF = 0.000015; //Needs tuning.
 
     /* Shooter Motor ID's */
     public static final int k_ShooterTopMotorCanId = 12;
