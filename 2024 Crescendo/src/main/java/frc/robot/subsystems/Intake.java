@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
 import frc.robot.Constants;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -19,6 +21,7 @@ public class Intake extends Subsystem
   private PeriodicIO m_PeriodicIO;
 
   private CANSparkMax m_IntakeMotor;
+  private RelativeEncoder m_IntakeEncoder;
 
   public static Intake getInstance()
   {
@@ -31,10 +34,23 @@ public class Intake extends Subsystem
 
   private Intake()
   {
-    /* Intake Motor Setup */
+    /* Setup the Motor Controllers */
     m_IntakeMotor = new CANSparkMax( Constants.Intake.k_IntakeMotorCanId, MotorType.kBrushless );
+
+    /* Restore them to defaults */
     m_IntakeMotor.restoreFactoryDefaults();
+
+    /* Set the motors Idle Mode */
     m_IntakeMotor.setIdleMode( CANSparkBase.IdleMode.kCoast );
+
+    /* Set the current limits on the Motors */
+    m_IntakeMotor.setSmartCurrentLimit( 20 );
+
+    /* Setup the Motor Encoders */
+    m_IntakeEncoder = m_IntakeMotor.getEncoder();
+
+    /* Burn the new settings into the flash. */
+    m_IntakeMotor.burnFlash();
 
     m_PeriodicIO = new PeriodicIO();
   }
@@ -60,8 +76,7 @@ public class Intake extends Subsystem
   public void periodic()
   {
     /* Control the intake */
-    m_PeriodicIO.intake_speed = IntakeSetSpeedFromState( m_PeriodicIO.state_intake );
-    SmartDashboard.putString( "Intake State:", m_PeriodicIO.state_intake.toString());
+    m_PeriodicIO.intake_speed = IntakeSetSpeedFromState( m_PeriodicIO.state_intake );   
   }
 
 @Override
@@ -80,7 +95,9 @@ public class Intake extends Subsystem
 @Override
   public void outputTelemetry() 
   {
-    SmartDashboard.putNumber("Intake Speed:", IntakeSetSpeedFromState(m_PeriodicIO.state_intake));
+    SmartDashboard.putNumber("Intake Set Speed:", IntakeSetSpeedFromState(m_PeriodicIO.state_intake));
+    SmartDashboard.putString( "Intake Set State:", m_PeriodicIO.state_intake.toString());
+    SmartDashboard.putNumber("Intake Actual Speed:", m_IntakeEncoder.getVelocity());
   }
 
   @Override

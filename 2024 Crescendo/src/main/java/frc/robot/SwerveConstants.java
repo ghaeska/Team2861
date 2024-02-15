@@ -145,12 +145,15 @@ public class SwerveConstants
     public static final int kTurningMotorCurrentLimit = 20; // amps  
   }
 
-  public static final class OIConstants {
+  public static final class OIConstants 
+  {
     public static final int kDriverControllerPort = 0;
+    public static final int k2ndDriverControllerPort = 1;
     public static final double kDriveDeadband = 0.1;
   }
 
-  public static final class AutoConstants {
+  public static final class AutoConstants 
+  {
     public static final double kMaxSpeedMetersPerSecond = 3;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
