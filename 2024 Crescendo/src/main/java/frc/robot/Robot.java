@@ -59,9 +59,6 @@ public class Robot extends TimedRobot
   private Command m_autonomousCommand;
 
   /* Automatic turning functionality */
-  private boolean m_TurnToAngle;
-  private double m_yaw;
-  private double currentRotationalRate;
   private final PIDController m_PIDController = new PIDController( Constants.DriveConstants.k_turnPID_P,
                                                                    Constants.DriveConstants.k_turnPID_I,
                                                                    Constants.DriveConstants.k_turnPID_D
@@ -179,9 +176,7 @@ public class Robot extends TimedRobot
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() 
-  {
-    m_TurnToAngle = false;
-    
+  {    
     /* Check controller for Drive Commands */
     if( m_DriverController.getRightStickButton() )
     {
@@ -191,64 +186,13 @@ public class Robot extends TimedRobot
     {
       m_DriveTrain.setX();
     }
-    /* POV is the DPAD, UP=0, DOWN=180, LEFT=270, RIGHT=90 */
-    // else if(m_DriverController.getPOV() == 0 )
-    // {
-    //   /* Idea, press a button, feed that into the drive, then manually rotate until it hits that spot */
-    //   m_PIDController.setSetpoint( 0.0 ); //UP
-    //   m_TurnToAngle = true;
-    // }
-    // else if(m_DriverController.getPOV() == 90 ) //Right
-    // {
-    //   m_PIDController.setSetpoint( 90.0 );
-    //   m_TurnToAngle = true;
-    // }
-    // else if(m_DriverController.getPOV() == 180 ) //Down
-    // {
-    //   m_PIDController.setSetpoint( 179.9 );
-    //   m_TurnToAngle = true;
-    // }
-    // else if(m_DriverController.getPOV() == 270 ) //Left 
-    // {
-    //   m_PIDController.setSetpoint( -90.0 );
-    //   m_TurnToAngle = true;
-    // }    
 
-    // if( m_TurnToAngle )
-    // {
-    //   m_yaw = m_DriveTrain.m_gyro.getAngle();
-    //   double pid_output = m_PIDController.calculate( m_yaw );
-    //   pid_output = Helpers.clamp( pid_output, -1.0, 1.0 );
-    //   currentRotationalRate = pid_output;
-
-    //   m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
-    //                       -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
-    //                       currentRotationalRate,
-    //                       true, 
-    //                       true );
-    // }
-
-    // if( m_DriverController.getRightX() != 0 )
-    // {
-      m_TurnToAngle = false;
-      /* Control the rotation by joystick again.  */
-      m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
-                          -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
-                          -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
-                          true, 
-                          true );
-   // }
-
-    
-
-
-
-    // m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
-    //                     -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
-    //                     -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
-    //                     true, 
-    //                     true );
-
+    /* Control the rotation by joystick again.  */
+    m_DriveTrain.drive( -MathUtil.applyDeadband( -m_DriverController.getLeftX(), OIConstants.kDriveDeadband ),
+                        -MathUtil.applyDeadband( m_DriverController.getLeftY(), OIConstants.kDriveDeadband ),
+                        -MathUtil.applyDeadband( m_DriverController.getRightX(), OIConstants.kDriveDeadband ),
+                        true, 
+                        true );
 
     /* Check controller for Intake commands */
     if( m_DriverController.getAButtonPressed() )

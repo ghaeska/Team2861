@@ -1,20 +1,27 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.utils.Helpers;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Shooter extends Subsystem
 {
@@ -28,16 +35,25 @@ public class Shooter extends Subsystem
   private CANSparkMax m_LeftShooterArmMotor;
   private CANSparkMax m_RightShooterArmMotor;
 
-  private SparkPIDController m_TopShooterPID;
-  private SparkPIDController m_BottomShooterPID;
+  private BangBangController BBController;
 
-  private SparkPIDController m_ShooterArmPID;
+  private SparkPIDController ArmPIDController;
+  private TrapezoidProfile ArmProfile;
+  private TrapezoidProfile.State m_StartArmState;
+  private TrapezoidProfile.State m_EndArmState;
+  private TrapezoidProfile.State m_TargetArmState;
+
+
 
   private RelativeEncoder m_TopShooterEncoder;
   private RelativeEncoder m_BottomShooterEncoder;
 
   private RelativeEncoder m_LeftShooterArmEncoder;
   private RelativeEncoder m_RightShooterArmEncoder;
+
+  private Timer m_Timer;
+
+  
 
   //private SlewRateLimiter m_ShooterSlewLimiter = new SlewRateLimiter( 1000 );
   //private SlewRateLimiter m_ShooterArmSlewLimiter = new SlewRateLimiter( 1000 );
@@ -65,8 +81,10 @@ public class Shooter extends Subsystem
   {
     m_PeriodicIO = new PeriodicIO();
 
+    m_Timer = new Timer();
+
     /********************* Setup the Motor Controllers ************************/
-    /* Shooter Arm Motors */
+    /* Shooter Motors */
     m_TopShooterMotor = new CANSparkFlex( Constants.Shooter.k_ShooterTopMotorCanId, MotorType.kBrushless );
     m_BotShooterMotor = new CANSparkFlex( Constants.Shooter.k_ShooterBotMotorCanId, MotorType.kBrushless );
 
@@ -92,26 +110,42 @@ public class Shooter extends Subsystem
     m_LeftShooterArmMotor.setInverted( true ); // GTH:TODO need to update
     m_RightShooterArmMotor.setInverted( true ); // GTH:TODO need to update
 
-    /* Setup the PID Controllers */
-    m_TopShooterPID = m_TopShooterMotor.getPIDController();
-    m_TopShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
-    m_TopShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
-    m_TopShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
-    m_TopShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
-    m_TopShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
+    /* Set the current limits on the Motors */
+    m_BotShooterMotor.setSmartCurrentLimit( 40 );
+    m_TopShooterMotor.setSmartCurrentLimit( 40 );
+    m_LeftShooterArmMotor.setSmartCurrentLimit( 35 );
+    m_RightShooterArmMotor.setSmartCurrentLimit( 35 );
 
-    m_BottomShooterPID = m_BotShooterMotor.getPIDController();
-    m_BottomShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
-    m_BottomShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
-    m_BottomShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
-    m_BottomShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
-    m_BottomShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
+    /* Set Motor Smart Limits */
+    m_LeftShooterArmMotor.enableSoftLimit( SoftLimitDirection.kForward, true );
+    m_LeftShooterArmMotor.enableSoftLimit( SoftLimitDirection.kReverse, true );
+    m_RightShooterArmMotor.enableSoftLimit( SoftLimitDirection.kForward, true );
+    m_RightShooterArmMotor.enableSoftLimit( SoftLimitDirection.kReverse, true );
 
-    m_ShooterArmPID = m_LeftShooterArmMotor.getPIDController();
-    m_ShooterArmPID.setP( Constants.Shooter.k_ShooterArmMotorP );
-    m_ShooterArmPID.setI( Constants.Shooter.k_ShooterArmMotorI );
-    m_ShooterArmPID.setD( Constants.Shooter.k_ShooterArmMotorD );
-    m_ShooterArmPID.setOutputRange( Constants.Shooter.k_ShooterArmMinOutput, Constants.Shooter.k_ShooterArmMinOutput );
+    /* Set Arm Motor Soft limits, done as in REV Robotics Code. */
+    m_LeftShooterArmMotor.setSoftLimit( SoftLimitDirection.kForward, (float) 0);
+    m_LeftShooterArmMotor.setSoftLimit( SoftLimitDirection.kReverse, (float) -1.5);
+    m_RightShooterArmMotor.setSoftLimit( SoftLimitDirection.kForward, (float) 0);
+    m_RightShooterArmMotor.setSoftLimit( SoftLimitDirection.kReverse, (float) -1.5);
+
+    /* Setup Arm Motor Encoders as done by REV Robotics. */
+    m_RightShooterArmEncoder = m_RightShooterArmMotor.getEncoder( SparkRelativeEncoder.Type.kHallSensor, 42 );
+    m_RightShooterArmEncoder.setPositionConversionFactor( Constants.Arm.k_ArmPositionFactor );
+    m_RightShooterArmEncoder.setVelocityConversionFactor( Constants.Arm.k_ArmVelocityFactor );
+    m_RightShooterArmEncoder.setPosition(0.0);
+
+    //m_LeftShooterArmEncoder = m_LeftShooterArmMotor.getEncoder( SparkRelativeEncoder.Type.kHallSensor, 42 );
+    //m_LeftShooterArmEncoder.setPositionConversionFactor( Constants.Arm.k_ArmPositionFactor );
+    //m_LeftShooterArmEncoder.setVelocityConversionFactor( Constants.Arm.k_ArmVelocityFactor );
+    //m_LeftShooterArmEncoder.setPosition(0.0);
+
+    ArmPIDController = m_RightShooterArmMotor.getPIDController();
+    ArmPIDController.setP( Constants.Arm.k_ShooterArmMotorP );
+    ArmPIDController.setI( Constants.Arm.k_ShooterArmMotorI );
+    ArmPIDController.setD( Constants.Arm.k_ShooterArmMotorD );
+
+    /* Create a Bang Bang controller for the shooter. */
+    BBController = new BangBangController();   
 
     /* Setup the Motor Encoders */
     m_TopShooterEncoder = m_TopShooterMotor.getEncoder();
@@ -119,22 +153,33 @@ public class Shooter extends Subsystem
 
     m_LeftShooterArmEncoder = m_LeftShooterArmMotor.getEncoder();
     m_RightShooterArmEncoder = m_RightShooterArmMotor.getEncoder();
+    
 
     /* Create a Leader/Follower Motor for Arm System */
     /* Right motor will follow the output of the left motor. */
     m_RightShooterArmMotor.follow( m_LeftShooterArmMotor );
+    m_BotShooterMotor.follow(m_TopShooterMotor,true);
 
     m_BotShooterMotor.burnFlash();
     m_TopShooterMotor.burnFlash();
+    m_LeftShooterArmMotor.burnFlash();
+    m_RightShooterArmMotor.burnFlash();
+
+    
+    m_Timer.start();
+    updateMotionProfile();
   }
 
   private static class PeriodicIO 
   {
     double shooter_rpm = 0.0;
-    ShooterState Shooter_Target = ShooterState.NONE;
+    double m_ArmSetpoint = 0.0;
+    double m_ArmFeedForward = 0.0;
 
-    ShooterArmState ShooterArm_Target = ShooterArmState.NONE;
-    double ShooterArm_Voltage = 0.0;
+    ShooterState shootState = ShooterState.NONE;
+
+    //ShooterArmState ArmSetpoint = ShooterArmState.STOWED;
+    //double ShooterArm_Voltage = 0.0;
 
   }
 
@@ -146,33 +191,69 @@ public class Shooter extends Subsystem
     /* Check to see if we have a note and need to verify position. */
     checkAutoTasks();
 
-    /* Shooter Arm Control */
-    double ShooterArm_angle = pivotTargetToAngle( m_PeriodicIO.ShooterArm_Target );
-    m_PeriodicIO.ShooterArm_Voltage = m_ShooterArmPID.calculate( getPivotAngleDegrees(), ShooterArm_angle );
+    /* Check to see if our encoder is connected, if not, its not safe to to spin. */
+    if( m_ShooterArmEncoder.get() == 0.0 )
+    {
+    /* chances are it is not connected, so disable it. */
+    //m_PeriodicIO.ShooterArm_Voltage = 0.0;
+    }
+    
+    /* Convert the set state to be a speed and angle. */
+    /* Convert the set state to speed. */
+    m_PeriodicIO.shooter_rpm = ShooterArmStateToSpeed( m_PeriodicIO.shootState );
 
-    /* Add a failsafe to check to see if encoder is connected. */
-     if( m_ShooterArmEncoder.get() == 0.0 )
-     {
-     /* chances are it is not connected, so disable it. */
-     m_PeriodicIO.ShooterArm_Voltage = 0.0;
-     }
+    /* Convert the set state to desired angle. */
 
-    /* Control the intake */
-    //m_PeriodicIO.shooter_rpm = ShooterArmStateToSpeed( m_PeriodicIO.Shooter_Target );
-    //SmartDashboard.putString( "Shooter State:", m_PeriodicIO.Shooter_Target.toString() );
+
+
+
+
+    // /* Shooter Arm Control */
+    // double ShooterArm_angle = pivotTargetToAngle( m_PeriodicIO.ShooterArm_Target );
+
+    // /* Add a failsafe to check to see if encoder is connected. */
+    //  if( m_ShooterArmEncoder.get() == 0.0 )
+    //  {
+    //  /* chances are it is not connected, so disable it. */
+    //  m_PeriodicIO.ShooterArm_Voltage = 0.0;
+    //  }
+
+    // /* Control the intake */
+    // //m_PeriodicIO.shooter_rpm = ShooterArmStateToSpeed( m_PeriodicIO.Shooter_Target );
+    // //SmartDashboard.putString( "Shooter State:", m_PeriodicIO.Shooter_Target.toString() );
   }
 
   @Override
   public void writePeriodicOutputs() 
   {
-    //double limitedSpeed = m_ShooterSlewLimiter.calculate( m_PeriodicIO.shooter_rpm );
-    m_TopShooterPID.setReference( m_PeriodicIO.shooter_rpm, ControlType.kVelocity );
-    m_BottomShooterPID.setReference( m_PeriodicIO.shooter_rpm, ControlType.kVelocity );
+    /**************** Set the control of our shooter motors. ******************/
+    /* 
+    ** Because our bottom motor is set to follow the top motor, we should only
+    ** need to set the speed of our top motor. 
+    */
+    m_TopShooterMotor.set( BBController.calculate (m_TopShooterEncoder.getVelocity(), m_PeriodicIO.shooter_rpm ));
 
-    //double shooterArmSpeed = m_ShooterArmSlewLimiter.calculate(m_PeriodicIO.ShooterArm_Voltage);
-    //m_LeftShooterArmPID.setReference(shooterArmSpeed, ControlType.kDutyCycle);
-    m_LeftShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
-    m_RightShooterArmMotor.setVoltage( m_PeriodicIO.ShooterArm_Voltage );
+
+    /**************** Setup our periodic control of the arm. ******************/
+    double elapsedTime = m_Timer.get();
+
+    if( ArmProfile.isFinished( elapsedTime ) )
+    {
+      m_TargetArmState = new TrapezoidProfile.State( m_PeriodicIO.m_ArmSetpoint, 0.0 );
+    }
+    else
+    {
+      m_TargetArmState = ArmProfile.calculate(elapsedTime, m_StartArmState, m_EndArmState );
+    }
+
+    m_PeriodicIO.m_ArmFeedForward = Constants.Arm.k_ArmFeedForward.calculate( m_RightShooterArmEncoder.getPosition() 
+                                                                              + Constants.Arm.k_ArmZeroCosineOffset, 
+                                                                              m_TargetArmState.velocity );                         
+
+    ArmPIDController.setReference( m_TargetArmState.position, CANSparkMax.ControlType.kPosition, 0, m_PeriodicIO.m_ArmFeedForward );
+
+
+
   }
 
   @Override
@@ -212,6 +293,14 @@ public class Shooter extends Subsystem
   }
 
   /*---------------------- Custom Public Functions ---------------------------*/
+
+  public void updateMotionProfile()
+  {
+    m_StartArmState = new TrapezoidProfile.State(m_RightShooterArmEncoder.getPosition(), m_RightShooterArmEncoder.getVelocity());
+    m_EndArmState = new TrapezoidProfile.State(m_PeriodicIO.m_ArmSetpoint, 0.0);
+    ArmProfile = new TrapezoidProfile(Constants.Arm.k_ArmMotionConstraint);
+    m_Timer.reset();
+  }
 
   public enum ShooterArmState
   {
@@ -293,9 +382,9 @@ public class Shooter extends Subsystem
     //m_PeriodicIO.Shooter_Target = ShooterState.NONE;
   }
 
-  public void setShooterArmTarget( ShooterArmState target ) 
+  public void setShooterTarget( ShooterState target ) 
   {
-    //m_PeriodicIO.ShooterArm_Target = target;
+    m_PeriodicIO.shootState = target;
   }
 
   //public void setShooterTarget( Shooter)

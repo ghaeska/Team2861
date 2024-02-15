@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -76,7 +77,7 @@ public final class Constants
     public static final double k_ShooterMaxOutput = 1;
 
     public static final double k_ShooterArmMinOutput = 0;
-    public static final double k_ShooterArmMaxOutput = .2; //GTH:TODO need to update value
+    public static final double k_ShooterArmMaxOutput = 1;
 
     /* Shooter Speeds */
     public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
@@ -84,13 +85,13 @@ public final class Constants
     public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
     public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
 
-    /* Pivot Angle Set Points */
-    public static final double k_ShooterArmAngleSource = 190; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleAmp    = 190; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleStowed = 270; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleSpeaker = 270; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleStage = 270; //GTH:TODO need to get value
-    public static final double k_ShooterArmAnglePass = 270; //GTH:TODO need to get value
+    /* Pivot Angle Set Points in radians */
+    public static final double k_ShooterArmAngleSource = 1.0; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleAmp    = 1.0; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleStowed = 1.0; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleSpeaker = 1.0; //GTH:TODO need to get value
+    public static final double k_ShooterArmAngleStage = 1.0; //GTH:TODO need to get value
+    public static final double k_ShooterArmAnglePass = 1.0; //GTH:TODO need to get value
 
 
     /* Digital Input/Output ID's */
@@ -99,9 +100,26 @@ public final class Constants
     /* Absolute Encoder Offset */
     public static final double k_ShooterArmEncoderOffset = 0.000000; //GTH:TODO need to get value
 
-    /* Intake PID constants */
-    public static final double k_ShooterArmMotorP = 0.12;
-    public static final double k_ShooterArmMotorI = 0.0;
-    public static final double k_ShooterArmMotorD = 0.001;
+    
   }
+
+  public static class Arm
+  {
+    /* Arm PID constants */
+    public static final double k_ShooterArmMotorP = 0.12;
+    public static final double k_ShooterArmMotorI = 0.00;
+    public static final double k_ShooterArmMotorD = 0.00;
+
+    public static final double k_ArmGearRatio = ( 1/100 ) * ( 24/72 ); // GTH:TODO need to update with proper values. (24/54)
+    public static final double k_ArmPositionFactor = k_ArmGearRatio * 2.0 * Math.PI;
+    public static final double k_ArmVelocityFactor = k_ArmGearRatio * 2.0 * Math.PI / 60.0;
+    public static final double k_ArmFreeSpeed = 5676.0 * k_ArmVelocityFactor;
+    public static final double k_ArmZeroCosineOffset = 0.873; //GTH:TODO need to get proper angle and convert to raidans, currently at 50degrees
+
+    public static final TrapezoidProfile.Constraints k_ArmMotionConstraint = new TrapezoidProfile.Constraints(1.0, 2.0);
+    public static final ArmFeedforward k_ArmFeedForward = new ArmFeedforward( 0.0, 3.0, 12.0/k_ArmFreeSpeed, 0.0 );
+
+
+  }
+
 }
