@@ -94,7 +94,7 @@ public class RobotContainer
   private void configureButtonBindings() 
   {
     /* DriveTrain Commands */
-    m_xboxController.rightStick().onTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive )); //Doesnt come out of x.
+    m_xboxController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
     m_xboxController.start().onTrue(new InstantCommand( m_robotDrive::ResetYaw ).ignoringDisable(true));
 
     /* Intake Commands */
