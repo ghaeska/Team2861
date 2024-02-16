@@ -5,8 +5,6 @@ import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants;
 import frc.robot.Constants.Intake;
-import frc.robot.subsystems.Intake.IntakeState;
-
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +26,6 @@ public class IntakeSubsystem extends SubsystemBase
   private RelativeEncoder m_IntakeEncoder;
 
   private double m_IntakeSpeed;
-  private IntakeState m_IntakeState;
-
 
   public IntakeSubsystem()
   {
@@ -62,65 +58,35 @@ public class IntakeSubsystem extends SubsystemBase
   {
     m_IntakeSpeed = 0.0;
     m_IntakeMotor.set( m_IntakeSpeed );
-    m_IntakeState = IntakeState.STOP;
   }
 
 
   @Override
   public void periodic() 
   { 
-    SmartDashboard.putNumber("Intake Set Speed:", IntakeSetSpeedFromState( m_IntakeState ));
-    SmartDashboard.putString( "Intake Set State:", m_IntakeState.toString());
-    SmartDashboard.putNumber("Intake Actual Speed:", m_IntakeEncoder.getVelocity());    
-  }
-
-  public enum IntakeState
-  {
-    STOP,         // Intake will be doing nothing
-    INTAKE_FAST,  // Intake will be intaking fast
-    INTAKE_SLOW,  // Intake will be intaking slow
-    EJECT         // Intake will be trying to eject.
-  }
-
-
-  public double IntakeSetSpeedFromState( IntakeState state ) 
-  {
-    switch( state ) 
-    {
-      case INTAKE_FAST:
-        return Constants.Intake.k_IntakeIntakeSpeedFast;
-      case INTAKE_SLOW:
-        return Constants.Intake.k_IntakeIntakeSpeedSlow;
-      case EJECT:
-        return Constants.Intake.k_IntakeEjectSpeed;
-      case STOP:
-      default:
-        return 0.0;
-    }
-  }
+    SmartDashboard.putNumber( "Intake Set Speed:", m_IntakeSpeed );
+    SmartDashboard.putNumber( "Intake Actual Speed:", m_IntakeEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Index Motor Current", m_IntakeMotor.getOutputCurrent() );
+  } 
 
 /***************************** Commands ************************************* */
   public Command runIntakeFastCommand()
   {
-    m_IntakeState = IntakeState.INTAKE_FAST;
     return new RunCommand(()->this.runIntake( Intake.k_IntakeIntakeSpeedFast ), this );
   }
 
   public Command runIntakeSlowCommand()
   {
-     m_IntakeState = IntakeState.INTAKE_SLOW;
     return new RunCommand(()->this.runIntake( Intake.k_IntakeIntakeSpeedSlow ), this );
   }
 
   public Command stopIntakeCommand()
   {
-     m_IntakeState = IntakeState.STOP;
     return new RunCommand(()->this.stopIntake(), this );
   }
 
   public Command ejectIntakeCommand()
   {
-     m_IntakeState = IntakeState.EJECT;
     return new RunCommand(()->this.runIntake( Intake.k_IntakeEjectSpeed ), this );
   }
 
