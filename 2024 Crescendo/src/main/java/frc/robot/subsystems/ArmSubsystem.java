@@ -147,7 +147,8 @@ public class ArmSubsystem extends ProfiledPIDSubsystem
   // cosine function
   public double correctArmJointRadiansForFeedFwd(double position) 
   {
-    return position - degreesToRadians(ArmConstants.kARM_HORIZONTAL_OFFSET - ArmConstants.kARM_STARTING_OFFSET);
+    return position - degreesToRadians(115 - Arm.k_ArmEncoderOffset);
+    //return position - degreesToRadians(ArmConstants.kARM_HORIZONTAL_OFFSET - ArmConstants.kARM_STARTING_OFFSET);
   }
 
   /**

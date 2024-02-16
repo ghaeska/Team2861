@@ -24,6 +24,7 @@ import frc.robot.SwerveConstants.DriveConstants;
 import frc.robot.SwerveConstants.OIConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IndexSubsystem;
 //import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -48,10 +49,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RobotContainer
 {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private final ArmSubsystem m_arm = new ArmSubsystem();
+  private final DriveSubsystem    m_robotDrive = new DriveSubsystem();
+  private final IntakeSubsystem   m_intake     = new IntakeSubsystem();
+  private final ShooterSubsystem  m_shooter    = new ShooterSubsystem();
+  private final ArmSubsystem      m_arm        = new ArmSubsystem();
+  private final IndexSubsystem    m_index      = new IndexSubsystem();
 
   //public static SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
@@ -110,20 +112,10 @@ public class RobotContainer
     /* Shooter Commands */
     m_xboxController.rightBumper().onTrue( m_shooter.runShooterSpeakerCommand() );
     m_xboxController.leftBumper().onTrue( m_shooter.runShooterStopCommand() );
-    
-   
-    
-      // new JoystickButton( m_xboxController, Button.kA.value ).whileTrue
-      //                   ( new RunCommand( () -> m_robotDrive.setX(),
-      //                   m_robotDrive ) );
-      // new JoystickButton( m_xboxController, Button.kB.value ).whileTrue
-      //                   ( new RunCommand( () -> m_robotDrive.zeroHeading(),
-      //                   m_robotDrive ) );
-      // new JoystickButton( m_driverController, Button.kX.value).whileTrue
-      //                   ( new RunCommand( () -> m_intake.intakeTestMotor (true) ) );
-      // new JoystickButton( m_driverController, Button.kY.value).whileTrue
-      //                   ( new RunCommand( () -> m_intake.intakeTestMotor(false) ) );
-    
+
+    /* Indexer Commands */
+    m_xboxController.rightTrigger().whileTrue( m_index.runIndexFwdCommand() );
+    m_xboxController.leftTrigger().whileTrue( m_index.runIndexRevCommand() );  
     
   }
 
