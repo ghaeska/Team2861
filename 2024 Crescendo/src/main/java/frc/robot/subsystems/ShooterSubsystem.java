@@ -102,9 +102,11 @@ public class ShooterSubsystem extends SubsystemBase
   @Override
   public void periodic() 
   {
-    SmartDashboard.putNumber("Shooter Setpoint speed (RPM):", m_Shooter_RPM );
-    SmartDashboard.putNumber("Shooter Top Motor speed:", m_TopShooterEncoder.getVelocity());
-    SmartDashboard.putNumber("Shooter Bottom Motor speed:", m_BottomShooterEncoder.getVelocity());
+    SmartDashboard.putNumber( "Shooter Setpoint speed (RPM):", m_Shooter_RPM );
+    SmartDashboard.putNumber( "Shooter Top Motor speed:", m_TopShooterEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Shooter Bottom Motor speed:", m_BottomShooterEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Shooter Top Motor Current", m_TopShooterMotor.getOutputCurrent() );
+    SmartDashboard.putNumber( "Shooter Bottom Motor Current", m_BotShooterMotor.getOutputCurrent() );
   }
 
 
