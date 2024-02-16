@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.SwerveConstants.AutoConstants;
 import frc.robot.SwerveConstants.DriveConstants;
 import frc.robot.SwerveConstants.OIConstants;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 //import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -50,6 +51,7 @@ public class RobotContainer
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final ArmSubsystem m_arm = new ArmSubsystem();
 
   //public static SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
@@ -92,14 +94,18 @@ public class RobotContainer
   private void configureButtonBindings() 
   {
     /* DriveTrain Commands */
-    m_xboxController.rightStick().onTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
+    m_xboxController.rightStick().onTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive )); //Doesnt come out of x.
     m_xboxController.start().onTrue(new InstantCommand( m_robotDrive::ResetYaw ).ignoringDisable(true));
 
     /* Intake Commands */
-    m_xboxController.a().toggleOnTrue( m_intake.runIntakeSlowCommand() );
-    m_xboxController.b().onTrue( m_intake.ejectIntakeCommand() );
-    m_xboxController.x().onTrue( m_intake.runIntakeFastCommand() );
+    // m_xboxController.a().toggleOnTrue( m_intake.runIntakeSlowCommand() );
+    // m_xboxController.b().onTrue( m_intake.ejectIntakeCommand() );
+    m_xboxController.x().onTrue( m_intake.runIntakeSlowCommand() );
     m_xboxController.y().onTrue( m_intake.stopIntakeCommand() );
+
+    /* Arm Commands */
+    m_xboxController.a().onTrue( m_arm.runArmCommand() );
+    m_xboxController.b().onTrue( m_arm.stopArmCommand() );
 
     /* Shooter Commands */
     m_xboxController.rightBumper().onTrue( m_shooter.runShooterSpeakerCommand() );

@@ -64,7 +64,7 @@ public class ShooterSubsystem extends SubsystemBase
     m_BottomShooterEncoder = m_BotShooterMotor.getEncoder();
 
     /* Create a Leader/Follower Motor for Shooter System */
-    m_BotShooterMotor.follow(m_TopShooterMotor,true);
+    //m_BotShooterMotor.follow(m_TopShooterMotor,true);
 
     /* Burn the new configurations into the motor controllers flash. */
     m_BotShooterMotor.burnFlash();
@@ -75,13 +75,15 @@ public class ShooterSubsystem extends SubsystemBase
   {
     m_Shooter_RPM = speed;
 
-    m_TopShooterMotor.set( BBController.calculate (m_TopShooterEncoder.getVelocity(), m_Shooter_RPM ));
-
+    m_TopShooterMotor.set( m_Shooter_RPM );//( BBController.calculate(m_TopShooterEncoder.getVelocity(), m_Shooter_RPM ));
+    m_BotShooterMotor.set( m_Shooter_RPM );
   }
 
   public void stopShooter()
   {
     m_Shooter_RPM = 0.0;
+    m_TopShooterMotor.set( m_Shooter_RPM );
+    m_BotShooterMotor.set( m_Shooter_RPM );
     m_ShooterState = ShooterState.STOP;
   }
 

@@ -1,7 +1,7 @@
 package frc.robot;
 
 /* CTRE Imports */
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+//import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /* REV Robotics Imports */
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -41,9 +41,9 @@ public class SwerveConstants
     public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(23.875);
+    public static final double kTrackWidth = Units.inchesToMeters(24.0);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(28.9375);
+    public static final double kWheelBase = Units.inchesToMeters(24.0);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(  kWheelBase / 2,  kTrackWidth / 2 ),
@@ -62,11 +62,11 @@ public class SwerveConstants
     ** Turning Motor CAN ID: 1
     ** Driving Motor CAN ID: 2
     ** Front Right:
-    ** Turning Motor CAN ID: 5
-    ** Driving Motor CAN ID: 6
-    ** Back Left:
     ** Turning Motor CAN ID: 3
     ** Driving Motor CAN ID: 4
+    ** Back Left:
+    ** Turning Motor CAN ID: 5
+    ** Driving Motor CAN ID: 6
     ** Back Right:
     ** Turning Motor CAN ID: 7
     ** Driving Motor CAN ID: 8
@@ -74,13 +74,13 @@ public class SwerveConstants
 
     /* SPARK MAX CAN IDs */
     public static final int kFrontLeftDrivingCanId  = 2;
-    public static final int kRearLeftDrivingCanId   = 4;
-    public static final int kFrontRightDrivingCanId = 6;
+    public static final int kRearLeftDrivingCanId   = 6;
+    public static final int kFrontRightDrivingCanId = 4;
     public static final int kRearRightDrivingCanId  = 8;
 
     public static final int kFrontLeftTurningCanId  = 1;
-    public static final int kRearLeftTurningCanId   = 3;
-    public static final int kFrontRightTurningCanId = 5;
+    public static final int kRearLeftTurningCanId   = 5;
+    public static final int kFrontRightTurningCanId = 3;
     public static final int kRearRightTurningCanId  = 7;
 
     /* Gyro CAN ID */

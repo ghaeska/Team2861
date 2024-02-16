@@ -43,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase
     m_IntakeMotor.setIdleMode( CANSparkBase.IdleMode.kCoast );
 
     /* Set the current limits on the Motors */
-    m_IntakeMotor.setSmartCurrentLimit( 20 );
+    m_IntakeMotor.setSmartCurrentLimit( 35 );
 
     /* Setup the Motor Encoders */
     m_IntakeEncoder = m_IntakeMotor.getEncoder();
@@ -61,6 +61,7 @@ public class IntakeSubsystem extends SubsystemBase
   public void stopIntake()
   {
     m_IntakeSpeed = 0.0;
+    m_IntakeMotor.set( m_IntakeSpeed );
     m_IntakeState = IntakeState.STOP;
   }
 

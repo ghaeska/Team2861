@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -49,10 +50,9 @@ public final class Constants
 
     /* Intake Speeds */
     /* positive value ejects, negative intakes. */
-    public static final double k_IntakeIntakeSpeedSlow = -0.3; //GTH:TODO need to update value
-    public static final double k_IntakeIntakeSpeedFast = -0.8; //GTH:TODO need to update value
-    public static final double k_IntakeEjectSpeed = 0.2; //GTH:TODO need to update value
-    public static final double k_IntakeFeedShootSpeed = -0.50; //GTH:TODO need to update value
+    public static final double k_IntakeIntakeSpeedSlow = 0.5; 
+    public static final double k_IntakeIntakeSpeedFast = 1.0; 
+    public static final double k_IntakeEjectSpeed = -0.3;
   }
 
   public static class Shooter
@@ -67,41 +67,57 @@ public final class Constants
     public static final int k_ShooterTopMotorCanId = 12;
     public static final int k_ShooterBotMotorCanId = 13;
 
-    /* Shooter Arm Motor ID's */
-    public static final int k_ShooterArmLeftMotorCanId = 15;
-    public static final int k_ShooterArmRightMotorCanId = 16;
-
     /* Shooter Min/Max Outputs */
     public static final double k_ShooterMinOutput = 0;
     public static final double k_ShooterMaxOutput = 1;
 
-    public static final double k_ShooterArmMinOutput = 0;
-    public static final double k_ShooterArmMaxOutput = .2; //GTH:TODO need to update value
-
+    
     /* Shooter Speeds */
     public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
     public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
     public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Pass = 0.4; //GTH:T
+    public static final double k_ShooterArmMotorD = 0.001;
+  }
 
-    /* Pivot Angle Set Points */
-    public static final double k_ShooterArmAngleSource = 190; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleAmp    = 190; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleStowed = 270; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleSpeaker = 270; //GTH:TODO need to get value
-    public static final double k_ShooterArmAngleStage = 270; //GTH:TODO need to get value
-    public static final double k_ShooterArmAnglePass = 270; //GTH:TODO need to get value
+  public static class Arm
+  {
+    public static final double k_ArmGearRatio = ( 1/100 ) * ( 24/72 ); // GTH:TODO need to update with proper values. (24/54)
+    public static final double k_ArmPositionFactor = k_ArmGearRatio * 2.0 * Math.PI;
+    public static final double k_ArmVelocityFactor = k_ArmGearRatio * 2.0 * Math.PI / 60.0;
+    public static final double k_ArmFreeSpeed = 5676.0 * k_ArmVelocityFactor;
+    public static final double k_ArmZeroCosineOffset = 0.873; //GTH:TODO need to get proper angle and convert to raidans, currently at 50degrees
 
+    public static final TrapezoidProfile.Constraints k_ArmMotionConstraint = new TrapezoidProfile.Constraints(1.0, 2.0);
+    public static final ArmFeedforward k_ArmFeedForward = new ArmFeedforward( 0.0, 3.0, 12.0/k_ArmFreeSpeed, 0.0 );
+
+
+
+    /* Shooter Arm Motor ID's */
+    public static final int k_ArmLeftMotorCanId = 15;
+    public static final int k_ArmRightMotorCanId = 16;
+
+    public static final double k_ArmMinOutput = 0;
+    public static final double k_ArmMaxOutput = .2; //GTH:TODO need to update value
+   
+    /* Arm PID constants */
+    public static final double k_ArmMotorP = 0.12;
+    public static final double k_ArmMotorI = 0.00; 
+    public static final double k_ArmMotorD = 0.00;
 
     /* Digital Input/Output ID's */
-    public static final int k_ShooterArmEncoderId = 0;
+    public static final int k_ArmEncoderId = 0;
 
     /* Absolute Encoder Offset */
-    public static final double k_ShooterArmEncoderOffset = 0.000000; //GTH:TODO need to get value
+    public static final double k_ArmEncoderOffset = 0.000000; //GTH:TODO need to get value
 
-    /* Intake PID constants */
-    public static final double k_ShooterArmMotorP = 0.12;
-    public static final double k_ShooterArmMotorI = 0.0;
-    public static final double k_ShooterArmMotorD = 0.001;
+    /* Pivot Angle Set Points */
+    public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
+    public static final double k_ArmAngleAmp    = 190; //GTH:TODO need to get value
+    public static final double k_ArmAngleStowed = 270; //GTH:TODO need to get value
+    public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
+    public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
+    public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
+
   }
 }
