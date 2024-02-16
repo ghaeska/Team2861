@@ -70,14 +70,17 @@ public final class Constants
     /* Shooter Min/Max Outputs */
     public static final double k_ShooterMinOutput = 0;
     public static final double k_ShooterMaxOutput = 1;
-
     
-    /* Shooter Speeds */
-    public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Pass = 0.4; //GTH:T
-    public static final double k_ShooterArmMotorD = 0.001;
+    /* Shooter Speeds (RPM) */
+    public static final double k_ShooterSpeed_Speaker = 2500; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Amp = 1000; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Stage = 4000; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Pass = 1000; //GTH:TODO need to update value
+
+    // public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
+    // public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
+    // public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
+    // public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
   }
 
   public static class Arm
@@ -119,5 +122,15 @@ public final class Constants
     public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
     public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
 
+  }
+
+  public static class Index
+  {
+    /* Index Motor ID's */
+    public static final int k_IndexMotorCanId = 11;
+    
+    /* Index Motor Speeds */
+    public static final double k_IndexForwardSpeed =  0.6;
+    public static final double k_IndexReverseSpeed = -0.2;
   }
 }
