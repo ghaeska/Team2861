@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Shooter;
 
 public class ShooterSubsystem extends SubsystemBase
@@ -22,8 +23,8 @@ public class ShooterSubsystem extends SubsystemBase
   private CANSparkFlex m_TopShooterMotor;
   private CANSparkFlex m_BotShooterMotor;
 
-  //private SparkPIDController m_TopShooterPID;
-  //private SparkPIDController m_BottomShooterPID;
+  private SparkPIDController m_TopShooterPID;
+  private SparkPIDController m_BottomShooterPID;
 
   private RelativeEncoder m_TopShooterEncoder;
   private RelativeEncoder m_BottomShooterEncoder;
@@ -31,8 +32,6 @@ public class ShooterSubsystem extends SubsystemBase
   private BangBangController BBController;
 
   private double m_Shooter_RPM;
-  private ShooterState m_ShooterState;
-
   
   public ShooterSubsystem()
   {
@@ -57,7 +56,22 @@ public class ShooterSubsystem extends SubsystemBase
     m_TopShooterMotor.setSmartCurrentLimit( 40 );
 
     /* Setup the Bang Bang Controller */
-    BBController = new BangBangController();
+    //BBController = new BangBangController();
+
+    /* Set the PID controller for the motors */
+    m_TopShooterPID = m_TopShooterMotor.getPIDController();
+    m_TopShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
+    m_TopShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
+    m_TopShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
+    m_TopShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
+    m_TopShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
+
+    m_BottomShooterPID = m_BotShooterMotor.getPIDController();
+    m_BottomShooterPID.setP( Constants.Shooter.k_ShooterMotorP );
+    m_BottomShooterPID.setI( Constants.Shooter.k_ShooterMotorI );
+    m_BottomShooterPID.setD( Constants.Shooter.k_ShooterMotorD );
+    m_BottomShooterPID.setFF( Constants.Shooter.k_ShooterMotorFF );
+    m_BottomShooterPID.setOutputRange( Constants.Shooter.k_ShooterMinOutput, Constants.Shooter.k_ShooterMaxOutput );
 
     /* Setup the Motor Encoders */
     m_TopShooterEncoder = m_TopShooterMotor.getEncoder();
@@ -71,12 +85,11 @@ public class ShooterSubsystem extends SubsystemBase
     m_TopShooterMotor.burnFlash();
   }
 
-  public void runShooter( double speed )
+  public void runShooter( double setPoint_RPM )
   {
-    m_Shooter_RPM = speed;
-
-    m_TopShooterMotor.set( m_Shooter_RPM );//( BBController.calculate(m_TopShooterEncoder.getVelocity(), m_Shooter_RPM ));
-    m_BotShooterMotor.set( m_Shooter_RPM );
+    m_Shooter_RPM = setPoint_RPM;
+    m_TopShooterPID.setReference( setPoint_RPM, CANSparkBase.ControlType.kVelocity);
+    m_BottomShooterPID.setReference(setPoint_RPM, CANSparkBase.ControlType.kVelocity);
   }
 
   public void stopShooter()
@@ -84,79 +97,40 @@ public class ShooterSubsystem extends SubsystemBase
     m_Shooter_RPM = 0.0;
     m_TopShooterMotor.set( m_Shooter_RPM );
     m_BotShooterMotor.set( m_Shooter_RPM );
-    m_ShooterState = ShooterState.STOP;
   }
 
   @Override
   public void periodic() 
   {
-    SmartDashboard.putNumber("Shooter speed (RPM):", m_Shooter_RPM );
-    SmartDashboard.getNumber("Set Shooter Speed", m_Shooter_RPM ); // See if this allows for easy speed changes.
-    SmartDashboard.putNumber("Shooter Top speed:", m_TopShooterEncoder.getVelocity());
-    SmartDashboard.putNumber("Shooter Bottom speed:", m_BottomShooterEncoder.getVelocity());
-    SmartDashboard.putNumber("Shooter Set Speed:", ShooterStateToSpeed( m_ShooterState ));
+    SmartDashboard.putNumber("Shooter Setpoint speed (RPM):", m_Shooter_RPM );
+    SmartDashboard.putNumber("Shooter Top Motor speed:", m_TopShooterEncoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Bottom Motor speed:", m_BottomShooterEncoder.getVelocity());
   }
 
-  public enum ShooterState
-  {
-    STOP,
-    SPEAKER,
-    AMP,
-    HOLD,
-    PASS,
-    STAGE
-  }
-
-  public double ShooterStateToSpeed( ShooterState state ) 
-  {
-    switch( state ) 
-    {
-      case STOP:
-        return 0.0;
-      case SPEAKER:
-        return Shooter.k_ShooterSpeed_Speaker;
-      case AMP:
-        return Shooter.k_ShooterSpeed_Amp;
-      case HOLD:
-        return 0.0;
-      case PASS:
-        return Shooter.k_ShooterSpeed_Pass;
-      case STAGE:
-        return Shooter.k_ShooterSpeed_Stage;
-      default:
-        // "Safe" default
-        return 0.0;
-    }
-  }
 
 /***************************** Commands ************************************* */
   public Command runShooterSpeakerCommand()
   {
-    m_ShooterState = ShooterState.SPEAKER;
     return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Speaker ), this );
   }
 
   public Command runShooterStopCommand()
   {
-    m_ShooterState = ShooterState.STOP;
     return new RunCommand(()->this.stopShooter(), this );
   }
 
   public Command runShooterAmpCommand()
   {
-    m_ShooterState = ShooterState.AMP;
     return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Amp ), this );
   }
 
   public Command runShooterPassCommand()
   {
-    m_ShooterState = ShooterState.PASS;
     return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Pass ), this );
   }
 
   public Command runShooterStageCommand()
   {
-    m_ShooterState = ShooterState.STAGE;
     return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Stage ), this );
   }
 

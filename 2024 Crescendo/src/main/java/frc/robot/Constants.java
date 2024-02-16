@@ -58,10 +58,10 @@ public final class Constants
   public static class Shooter
   {
     /* Shooter PID constants */
-    public static final double k_ShooterMotorP = 0.00005;
+    public static final double k_ShooterMotorP = 0.000005;
     public static final double k_ShooterMotorI = 0.0;
     public static final double k_ShooterMotorD = 0.0;
-    public static final double k_ShooterMotorFF = 0.002;
+    public static final double k_ShooterMotorFF = 0.00002;
 
     /* Shooter Motor ID's */
     public static final int k_ShooterTopMotorCanId = 12;
@@ -89,11 +89,9 @@ public final class Constants
     public static final double k_ArmZeroCosineOffset = 0.873; //GTH:TODO need to get proper angle and convert to raidans, currently at 50degrees
 
     public static final TrapezoidProfile.Constraints k_ArmMotionConstraint = new TrapezoidProfile.Constraints(1.0, 2.0);
-    public static final ArmFeedforward k_ArmFeedForward = new ArmFeedforward( 0.0, 3.0, 12.0/k_ArmFreeSpeed, 0.0 );
+    public static final ArmFeedforward k_ArmFeedForward = new ArmFeedforward( 0.5, 0.25, 3.45, 0.01 );//values taken from team 3467
 
-
-
-    /* Shooter Arm Motor ID's */
+    /* Arm Motor ID's */
     public static final int k_ArmLeftMotorCanId = 15;
     public static final int k_ArmRightMotorCanId = 16;
 
@@ -101,9 +99,11 @@ public final class Constants
     public static final double k_ArmMaxOutput = .2; //GTH:TODO need to update value
    
     /* Arm PID constants */
-    public static final double k_ArmMotorP = 0.12;
+    public static final double k_ArmMotorP = 18;
     public static final double k_ArmMotorI = 0.00; 
-    public static final double k_ArmMotorD = 0.00;
+    public static final double k_ArmMotorD = 0.02;
+    public static final double k_ArmCruise = 4.0;
+    public static final double k_ArmAccel  = 10;
 
     /* Digital Input/Output ID's */
     public static final int k_ArmEncoderId = 0;
