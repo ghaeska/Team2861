@@ -110,12 +110,12 @@ public class RobotContainer
     m_xboxController.b().onTrue( m_arm.stopArmCommand() );
 
     /* Shooter Commands */
-    m_xboxController.rightBumper().onTrue( m_shooter.runShooterSpeakerCommand() );
+    m_xboxController.rightBumper().onTrue( m_shooter.runShooterStageCommand() );
     m_xboxController.leftBumper().onTrue( m_shooter.runShooterStopCommand() );
 
     /* Indexer Commands */
     m_xboxController.rightTrigger().whileTrue( m_index.runIndexFwdCommand() );
-    m_xboxController.leftTrigger().whileTrue( m_index.runIndexRevCommand() );  
+    m_xboxController.leftTrigger().whileTrue( m_index.stopIndexCommand() );  
     
   }
 

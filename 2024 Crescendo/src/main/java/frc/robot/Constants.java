@@ -58,10 +58,10 @@ public final class Constants
   public static class Shooter
   {
     /* Shooter PID constants */
-    public static final double k_ShooterMotorP = 0.000005;
+    public static final double k_ShooterMotorP = 0.00025;
     public static final double k_ShooterMotorI = 0.0;
-    public static final double k_ShooterMotorD = 0.0;
-    public static final double k_ShooterMotorFF = 0.00002;
+    public static final double k_ShooterMotorD = 0.00001;
+    public static final double k_ShooterMotorFF = 0.000159;
 
     /* Shooter Motor ID's */
     public static final int k_ShooterTopMotorCanId = 12;
