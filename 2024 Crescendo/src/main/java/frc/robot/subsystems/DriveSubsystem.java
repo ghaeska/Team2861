@@ -302,7 +302,7 @@ public class DriveSubsystem extends SubsystemBase
     SmartDashboard.getBoolean("Heading Reset", false );
     //m_gyro.reset();
     //m_gyro.setYaw(0);
-    resetYawToAngle(0.0);
+    resetYawToAngle(90.0);
   }
 
   public void resetYawToAngle(double yawDeg) 

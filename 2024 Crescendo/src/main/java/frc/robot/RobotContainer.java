@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import frc.robot.Constants.Index;
 //import frc.utils.CommandXboxController;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.SwerveConstants.AutoConstants;
@@ -60,7 +61,7 @@ public class RobotContainer
 
  
   /* Initialize a controller that is plugged into the defined drive controller port. */
-  Joystick m_OperatorJoystick = new Joystick( OIConstants.k2ndDriverControllerPort );
+  CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
   CommandXboxController m_xboxController = new CommandXboxController( OIConstants.kDriverControllerPort );
   
 
@@ -100,22 +101,24 @@ public class RobotContainer
     m_xboxController.start().onTrue(new InstantCommand( m_robotDrive::ResetYaw ).ignoringDisable(true));
 
     /* Intake Commands */
-    // m_xboxController.a().toggleOnTrue( m_intake.runIntakeSlowCommand() );
-    // m_xboxController.b().onTrue( m_intake.ejectIntakeCommand() );
-    m_xboxController.x().onTrue( m_intake.runIntakeSlowCommand() );
-    m_xboxController.y().onTrue( m_intake.stopIntakeCommand() );
+    m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
+    m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
+    m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
+    m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
 
     /* Arm Commands */
     m_xboxController.a().onTrue( m_arm.runArmCommand() );
     m_xboxController.b().onTrue( m_arm.stopArmCommand() );
 
     /* Shooter Commands */
-    m_xboxController.rightBumper().onTrue( m_shooter.runShooterStageCommand() );
-    m_xboxController.leftBumper().onTrue( m_shooter.runShooterStopCommand() );
+    m_OperatorController.rightTrigger().onTrue( m_shooter.runShooterSpeakerCommand() );
+    m_OperatorController.leftTrigger().onTrue( m_shooter.runShooterStopCommand() );
 
     /* Indexer Commands */
-    m_xboxController.rightTrigger().whileTrue( m_index.runIndexFwdCommand() );
-    m_xboxController.leftTrigger().whileTrue( m_index.stopIndexCommand() );  
+    m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
+    m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
+    m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
+    m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
     
   }
 
