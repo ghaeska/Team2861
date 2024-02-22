@@ -52,8 +52,8 @@ public class ShooterSubsystem extends SubsystemBase
     m_BotShooterMotor.setInverted( false );
 
     /* Set the current limits on the Motors */
-    m_BotShooterMotor.setSmartCurrentLimit( 40 );
-    m_TopShooterMotor.setSmartCurrentLimit( 40 );
+    m_BotShooterMotor.setSmartCurrentLimit( 35 );
+    m_TopShooterMotor.setSmartCurrentLimit( 35 );
 
     /* Setup the Bang Bang Controller */
     //BBController = new BangBangController();

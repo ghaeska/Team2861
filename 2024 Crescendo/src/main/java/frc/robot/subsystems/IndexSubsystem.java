@@ -38,7 +38,7 @@ public class IndexSubsystem extends SubsystemBase
     m_IndexMotor.setIdleMode( CANSparkBase.IdleMode.kCoast );
 
     /* Set the current limits on the Motors */
-    m_IndexMotor.setSmartCurrentLimit( 35 );
+    m_IndexMotor.setSmartCurrentLimit( 20 );
 
     /* Setup the Motor Encoders */
     m_IndexEncoder = m_IndexMotor.getEncoder();

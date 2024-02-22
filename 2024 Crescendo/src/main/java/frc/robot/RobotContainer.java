@@ -77,8 +77,8 @@ public class RobotContainer
     m_robotDrive.setDefaultCommand(
       new RunCommand(
           () -> m_robotDrive.drive(
-              -MathUtil.applyDeadband( -m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
               -MathUtil.applyDeadband( m_xboxController.getLeftY(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( -m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
               -MathUtil.applyDeadband( m_xboxController.getRightX(), OIConstants.kDriveDeadband ),
               true, 
               true),

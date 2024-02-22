@@ -98,15 +98,16 @@ public final class Constants
     public static final int k_ArmLeftMotorCanId = 15;
     public static final int k_ArmRightMotorCanId = 16;
 
-    public static final double k_ArmMinOutput = 0;
-    public static final double k_ArmMaxOutput = .2; //GTH:TODO need to update value
+    public static final double k_ArmMinOutput = -0.5;
+    public static final double k_ArmMaxOutput =  0.5; //GTH:TODO need to update value
    
     /* Arm PID constants */
-    public static final double k_ArmMotorP = 18;
-    public static final double k_ArmMotorI = 0.00; 
-    public static final double k_ArmMotorD = 0.02;
-    public static final double k_ArmCruise = 4.0;
-    public static final double k_ArmAccel  = 10;
+    public static final double k_ArmMotorP  = 18;
+    public static final double k_ArmMotorI  = 0.00; 
+    public static final double k_ArmMotorD  = 0.02;
+    public static final double k_ArmMotorFF = 0.001;
+    public static final double k_ArmCruise  = 4.0;
+    public static final double k_ArmAccel   = 10;
 
     /* Digital Input/Output ID's */
     public static final int k_ArmEncoderId = 0;
