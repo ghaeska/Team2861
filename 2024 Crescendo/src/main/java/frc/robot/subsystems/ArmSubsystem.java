@@ -37,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase
   private CANSparkMax m_LeftArmMotor;
   private CANSparkMax m_RightArmMotor;
 
-  private SparkPIDController ArmPIDController;
+  //private SparkPIDController ArmPIDController;
 
   private double m_armSetpointRadians;
   private double m_ArmRPM;
@@ -68,8 +68,8 @@ public class ArmSubsystem extends SubsystemBase
     m_RightArmMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
 
     /* Set the motor Inversions */
-    m_LeftArmMotor.setInverted( true ); // GTH:TODO need to update
-    m_RightArmMotor.setInverted( true ); // GTH:TODO need to update
+    m_LeftArmMotor.setInverted( false ); // GTH:TODO need to update
+    m_RightArmMotor.setInverted( false ); // GTH:TODO need to update
 
     /* Set the current limits on the Motors */
     m_LeftArmMotor.setSmartCurrentLimit( 30 );
@@ -92,12 +92,12 @@ public class ArmSubsystem extends SubsystemBase
 
     m_ArmEncoder = m_LeftArmMotor.getAbsoluteEncoder( Type.kDutyCycle );
 
-    ArmPIDController.setFeedbackDevice( m_ArmEncoder );
-    ArmPIDController.setP( Arm.k_ArmMotorP );
-    ArmPIDController.setI( Arm.k_ArmMotorI );
-    ArmPIDController.setD( Arm.k_ArmMotorD );
-    ArmPIDController.setFF( Arm.k_ArmMotorFF );
-    ArmPIDController.setOutputRange( Arm.k_ArmMinOutput, Arm.k_ArmMaxOutput );
+    // ArmPIDController.setFeedbackDevice( m_ArmEncoder );
+    // ArmPIDController.setP( Arm.k_ArmMotorP );
+    // ArmPIDController.setI( Arm.k_ArmMotorI );
+    // ArmPIDController.setD( Arm.k_ArmMotorD );
+    // ArmPIDController.setFF( Arm.k_ArmMotorFF );
+    // ArmPIDController.setOutputRange( Arm.k_ArmMinOutput, Arm.k_ArmMaxOutput );
     //ArmPIDController.set
 
     /* Create a Leader/Follower Motor for Arm System */
@@ -134,11 +134,13 @@ public class ArmSubsystem extends SubsystemBase
   public void runArm( double setPointRadians )
   {
     m_armSetpointRadians = setPointRadians;
-    ArmPIDController.setReference(m_armSetpointRadians, CANSparkMax.ControlType.kPosition);
+    //ArmPIDController.setReference(m_armSetpointRadians, CANSparkMax.ControlType.kPosition);
+    m_LeftArmMotor.set(setPointRadians);
   }
 
   public void stopArm()
   {
+    m_LeftArmMotor.set( 0.0 );
     //m_armSetpointRadians = setPointRadians;
     //ArmPIDController.setReference(m_armSetpointRadians, CANSparkMax.ControlType.kPosition);
   }
@@ -148,13 +150,16 @@ public class ArmSubsystem extends SubsystemBase
 /***************************** Commands ************************************* */
   public Command runArmCommand()
   {
-    //m_IntakeState = IntakeState.INTAKE_FAST;
     return new RunCommand(()->this.runArm( 0.4 ), this );
+  }
+
+  public Command runArmRevCommand()
+  {
+    return new RunCommand(()->this.runArm( -0.4 ), this );
   }
 
   public Command stopArmCommand()
   {
-    //m_IntakeState = IntakeState.INTAKE_FAST;
     return new RunCommand(()->this.stopArm(), this );
   }
 
