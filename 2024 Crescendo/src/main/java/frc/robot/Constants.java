@@ -7,6 +7,7 @@ package frc.robot;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -102,9 +103,9 @@ public final class Constants
     public static final double k_ArmMaxOutput =  0.5; //GTH:TODO need to update value
    
     /* Arm PID constants */
-    public static final double k_ArmMotorP  = 18;
+    public static final double k_ArmMotorP  = 0.026;
     public static final double k_ArmMotorI  = 0.00; 
-    public static final double k_ArmMotorD  = 0.02;
+    public static final double k_ArmMotorD  = 0.00;
     public static final double k_ArmMotorFF = 0.001;
     public static final double k_ArmCruise  = 4.0;
     public static final double k_ArmAccel   = 10;
@@ -116,12 +117,12 @@ public final class Constants
     public static final double k_ArmEncoderOffset = 0.000000; //GTH:TODO need to get value
 
     /* Pivot Angle Set Points */
-    public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
-    public static final double k_ArmAngleAmp    = 190; //GTH:TODO need to get value
-    public static final double k_ArmAngleStowed = 270; //GTH:TODO need to get value
-    public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
-    public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
-    public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
+    //public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
+    public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(24.8); //GTH:TODO need to get value
+    public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(32.7); //GTH:TODO need to get value
+    //public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
+    //public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
+    //public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
 
   }
 
@@ -132,6 +133,6 @@ public final class Constants
     
     /* Index Motor Speeds */
     public static final double k_IndexForwardSpeed =  0.3;
-    public static final double k_IndexReverseSpeed = -0.2;
+    public static final double k_IndexReverseSpeed = -0.3;
   }
 }
