@@ -3,9 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
-import frc.robot.Constants;
 import frc.robot.Constants.Index;
-import frc.robot.Constants.Intake;
 
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -13,11 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
 
 public class IndexSubsystem extends SubsystemBase
 {
@@ -83,12 +77,5 @@ public class IndexSubsystem extends SubsystemBase
   {
     return new RunCommand(()->this.stopIndex(), this );
   }
-
-
-
-
-
-
-
 
 }
