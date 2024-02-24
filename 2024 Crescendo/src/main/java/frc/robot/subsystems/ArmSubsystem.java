@@ -87,19 +87,19 @@ public class ArmSubsystem extends SubsystemBase
     m_LeftArmMotor.burnFlash();
     m_RightArmMotor.burnFlash();
 
-    setArmSetpoint( getArmAngle() );
+    //setArmSetpoint( getArmAngle() );
 
   }
 
   public void setArmSetpoint( Rotation2d setpoint_radians ) 
   {        
-    if( setpoint_radians.getDegrees() < 20 ) 
+    if( setpoint_radians.getDegrees() < 170 ) 
     {
-      setpoint_radians = Rotation2d.fromDegrees( 25 );
+      setpoint_radians = Rotation2d.fromDegrees( 175 );
     } 
-    else if( setpoint_radians.getDegrees() > 35 )
+    else if( setpoint_radians.getDegrees() > 240 )
     {
-      setpoint_radians = Rotation2d.fromDegrees(30);
+      setpoint_radians = Rotation2d.fromDegrees(235);
     }
 
     m_ArmSetpoint = setpoint_radians;
@@ -111,6 +111,8 @@ public class ArmSubsystem extends SubsystemBase
   public Rotation2d getArmAngle() 
   {
     //SmartDashboard.putNumber( "GetArmAngle Value",  Rotation2d.fromDegrees( m_ArmEncoder.getPosition() );
+    //double temp = (double)Rotation2d.fromDegrees( m_ArmEncoder.getPosition() );
+    
     return Rotation2d.fromDegrees( m_ArmEncoder.getPosition() );
   }
 
@@ -126,7 +128,7 @@ public class ArmSubsystem extends SubsystemBase
 
     //SmartDashboard.putNumber("Shooter Arm Abs Enc (get):", m_ArmEncoder.get());
     SmartDashboard.putNumber("Arm Abs Enc (getAbsolutePosition):", m_ArmEncoder.getPosition());
-    SmartDashboard.putNumber("Arm Abs Enc (Degrees):", ConvertRadiansToDegrees(m_ArmEncoder.getPosition()) );
+    //SmartDashboard.putNumber("Arm Abs Enc (Degrees):", ConvertRadiansToDegrees(m_ArmEncoder.getPosition()) );
     
     System.out.print("Arm PID Set Reference: ");
     System.out.print( m_ArmSetpoint.getDegrees() );

@@ -118,8 +118,8 @@ public final class Constants
 
     /* Pivot Angle Set Points */
     //public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
-    public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(24.8); //GTH:TODO need to get value
-    public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(32.7); //GTH:TODO need to get value
+    public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(205); //GTH:TODO need to get value
+    public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(190); //GTH:TODO need to get value
     //public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
     //public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
     //public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
