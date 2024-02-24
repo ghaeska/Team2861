@@ -78,11 +78,16 @@ public class RobotContainer
       new RunCommand(
           () -> m_robotDrive.drive(
               -MathUtil.applyDeadband( m_xboxController.getLeftY(), OIConstants.kDriveDeadband ),
-              -MathUtil.applyDeadband( -m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
               -MathUtil.applyDeadband( m_xboxController.getRightX(), OIConstants.kDriveDeadband ),
               true, 
               true),
-              m_robotDrive ) );        
+              m_robotDrive ) );
+    
+    m_arm.setDefaultCommand( m_arm.defaultCommand( () -> MathUtil.applyDeadband
+                                                         (
+                                                          m_OperatorController.getLeftY(),
+                                                          0.2 ) ) );                                  
   }
 
   /**
@@ -107,8 +112,11 @@ public class RobotContainer
     m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
 
     /* Arm Commands */
-    m_xboxController.a().onTrue( m_arm.runArmCommand() );
-    m_xboxController.b().onTrue( m_arm.stopArmCommand() );
+    m_xboxController.x().onTrue( m_arm.StowArmCommand() );
+    m_xboxController.y().onTrue( m_arm.AmpArmCommand() );
+     m_xboxController.a().onTrue( m_arm.runArmCommand() );
+     m_xboxController.b().onTrue( m_arm.stopArmCommand() );
+     //m_xboxController.y().onTrue( m_arm.runArmRevCommand() );
 
     /* Shooter Commands */
     m_OperatorController.rightTrigger().onTrue( m_shooter.runShooterSpeakerCommand() );

@@ -1,34 +1,22 @@
 package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.SoftLimitDirection;
+
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANSparkBase;
-import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.SparkRelativeEncoder;
-
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.BangBangController;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
-import frc.utils.Helpers;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -37,20 +25,13 @@ public class ArmSubsystem extends SubsystemBase
   private CANSparkMax m_LeftArmMotor;
   private CANSparkMax m_RightArmMotor;
 
-  //private SparkPIDController ArmPIDController;
-
-  private double m_armSetpointRadians;
-  private double m_ArmRPM;
-  private double m_armTolerance;
+  private SparkPIDController ArmPIDController;
 
   private RelativeEncoder m_LeftArmEncoder;
   private RelativeEncoder m_RightArmEncoder;
-  private AbsoluteEncoder m_ArmEncoder;
+  private SparkAbsoluteEncoder m_ArmEncoder;
 
-  //private Timer m_Timer;
-  private VoltageOut m_VoltageOutput = new VoltageOut(0.0);
-
-  //private DutyCycleEncoder m_ArmEncoder = new DutyCycleEncoder( Arm.k_ArmEncoderId );
+  private Rotation2d m_ArmSetpoint = new Rotation2d();
 
   public ArmSubsystem()
   {
@@ -75,30 +56,29 @@ public class ArmSubsystem extends SubsystemBase
     m_LeftArmMotor.setSmartCurrentLimit( 30 );
     m_RightArmMotor.setSmartCurrentLimit( 30 );
 
-    //ArmPIDController.setFeedbackDevice(m_ArmEncoder);
+    /* Set Periodic Frame limits */
+    m_RightArmMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+    m_LeftArmMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
 
-    /* Setup Arm Motor Encoders that are plugged into the main controller port. */
-    // m_RightArmEncoder = m_RightArmMotor.getEncoder( SparkRelativeEncoder.Type.kHallSensor, 42 );
-    // m_RightArmEncoder.setPositionConversionFactor( Arm.k_ArmPositionFactor );
-    // m_RightArmEncoder.setVelocityConversionFactor( Arm.k_ArmVelocityFactor );
-    // m_RightArmEncoder.setPosition(0.0);
+    ArmPIDController = m_LeftArmMotor.getPIDController();
 
-    // m_LeftArmEncoder = m_LeftArmMotor.getEncoder( SparkRelativeEncoder.Type.kHallSensor, 42 );
-    // m_LeftArmEncoder.setPositionConversionFactor( Arm.k_ArmPositionFactor );
-    // m_LeftArmEncoder.setVelocityConversionFactor( Arm.k_ArmVelocityFactor );
-    // m_LeftArmEncoder.setPosition(0.0);
     m_LeftArmEncoder = m_LeftArmMotor.getEncoder();
     m_RightArmEncoder = m_RightArmMotor.getEncoder();
 
     m_ArmEncoder = m_LeftArmMotor.getAbsoluteEncoder( Type.kDutyCycle );
+    m_ArmEncoder.setInverted( false ); //TODO: Do we need this?
+    m_ArmEncoder.setPositionConversionFactor( 360 );
 
-    // ArmPIDController.setFeedbackDevice( m_ArmEncoder );
-    // ArmPIDController.setP( Arm.k_ArmMotorP );
-    // ArmPIDController.setI( Arm.k_ArmMotorI );
-    // ArmPIDController.setD( Arm.k_ArmMotorD );
-    // ArmPIDController.setFF( Arm.k_ArmMotorFF );
-    // ArmPIDController.setOutputRange( Arm.k_ArmMinOutput, Arm.k_ArmMaxOutput );
-    //ArmPIDController.set
+    ArmPIDController.setFeedbackDevice( m_ArmEncoder );
+    
+    ArmPIDController.setP( Arm.k_ArmMotorP );
+    ArmPIDController.setI( Arm.k_ArmMotorI );
+    ArmPIDController.setD( Arm.k_ArmMotorD );
+    ArmPIDController.setFF( Arm.k_ArmMotorFF );
+    ArmPIDController.setOutputRange( Arm.k_ArmMinOutput, Arm.k_ArmMaxOutput );
+    ArmPIDController.setPositionPIDWrappingEnabled(false);
+    ArmPIDController.setPositionPIDWrappingMinInput(0.0);
+    ArmPIDController.setPositionPIDWrappingMaxInput(360);
 
     /* Create a Leader/Follower Motor for Arm System */
     /* Right motor will follow the output of the left motor. */
@@ -107,33 +87,68 @@ public class ArmSubsystem extends SubsystemBase
     m_LeftArmMotor.burnFlash();
     m_RightArmMotor.burnFlash();
 
+    setArmSetpoint( getArmAngle() );
+
   }
 
-  
+  public void setArmSetpoint( Rotation2d setpoint_radians ) 
+  {        
+    if( setpoint_radians.getDegrees() < 20 ) 
+    {
+      setpoint_radians = Rotation2d.fromDegrees( 25 );
+    } 
+    else if( setpoint_radians.getDegrees() > 35 )
+    {
+      setpoint_radians = Rotation2d.fromDegrees(30);
+    }
+
+    m_ArmSetpoint = setpoint_radians;
+    SmartDashboard.putNumber( " SetArmSetpoint value", setpoint_radians.getDegrees() );
+    SmartDashboard.putNumber( " Global Setpoint", m_ArmSetpoint.getDegrees() );
+    
+  }
+
+  public Rotation2d getArmAngle() 
+  {
+    //SmartDashboard.putNumber( "GetArmAngle Value",  Rotation2d.fromDegrees( m_ArmEncoder.getPosition() );
+    return Rotation2d.fromDegrees( m_ArmEncoder.getPosition() );
+  }
 
   
 
   @Override
   public void periodic() 
   {
-    SmartDashboard.putNumber("Arm speed (RPM):", m_ArmRPM );
-    //SmartDashboard.getNumber("Set Shooter Speed", m_Shooter_RPM ); // See if this allows for easy speed changes.
     SmartDashboard.putNumber("Right Arm Speed:", m_RightArmEncoder.getVelocity());
     SmartDashboard.putNumber("Left Arm Speed:", m_LeftArmEncoder.getVelocity());
-    //SmartDashboard.putNumber("Shooter Set Speed:", ShooterStateToSpeed( m_ShooterState ));
-    SmartDashboard.putNumber("Left Shooter Arm Position:", m_LeftArmEncoder.getPosition());
-    SmartDashboard.putNumber("Right Shooter Arm Position:", m_RightArmEncoder.getPosition());
+    SmartDashboard.putNumber("Left Arm Position:", m_LeftArmEncoder.getPosition());
+    SmartDashboard.putNumber("Right Arm Position:", m_RightArmEncoder.getPosition());
 
     //SmartDashboard.putNumber("Shooter Arm Abs Enc (get):", m_ArmEncoder.get());
-    SmartDashboard.putNumber("Shooter Arm Abs Enc (getAbsolutePosition):", m_ArmEncoder.getPosition());
-    // SmartDashboard.putNumber("Shooter Arm Abs Enc (getPivotAngleDegrees):", getPivotAngleDegrees());
+    SmartDashboard.putNumber("Arm Abs Enc (getAbsolutePosition):", m_ArmEncoder.getPosition());
+    SmartDashboard.putNumber("Arm Abs Enc (Degrees):", ConvertRadiansToDegrees(m_ArmEncoder.getPosition()) );
+    
+    System.out.print("Arm PID Set Reference: ");
+    System.out.print( m_ArmSetpoint.getDegrees() );
+    System.out.print( " \r\n" );
+    ArmPIDController.setReference(m_ArmSetpoint.getDegrees(), ControlType.kPosition);
 
+  }
 
+  public double ConvertRadiansToDegrees( double Radians )
+  {
+    return ( Radians / Math.PI ) * 180;
+  }
+
+  // Converts degrees to Radians
+  public double degreesToRadians(double degrees) 
+  {
+    return (degrees * Math.PI) / 180.0;
   }
 
   public void runArm( double setPointRadians )
   {
-    m_armSetpointRadians = setPointRadians;
+    //m_armSetpointRadians = setPointRadians;
     //ArmPIDController.setReference(m_armSetpointRadians, CANSparkMax.ControlType.kPosition);
     m_LeftArmMotor.set(setPointRadians);
   }
@@ -143,6 +158,16 @@ public class ArmSubsystem extends SubsystemBase
     m_LeftArmMotor.set( 0.0 );
     //m_armSetpointRadians = setPointRadians;
     //ArmPIDController.setReference(m_armSetpointRadians, CANSparkMax.ControlType.kPosition);
+  }
+
+  private boolean onTarget()
+  {
+    return Math.abs( getError().getDegrees() ) < 2;
+  }
+
+  private Rotation2d getError()
+  {
+    return getArmAngle().minus( m_ArmSetpoint);
   }
 
   
@@ -163,8 +188,29 @@ public class ArmSubsystem extends SubsystemBase
     return new RunCommand(()->this.stopArm(), this );
   }
 
+  public Command StowArmCommand()
+  {
+    return positionArmCommand( Constants.Arm.k_ArmAngleStowed );
+  }
 
+  public Command AmpArmCommand()
+  {
+    return positionArmCommand( Constants.Arm.k_ArmAngleAmp );
+  }
 
+  private Command positionArmCommand( Rotation2d position )
+  {
+    //SmartDashboard.putNumber( " Command Position ", position.getDegrees() );
+    System.out.print("Calling the positionArmCommand \r\n");
+    return run( () -> setArmSetpoint(position)).until(this::onTarget);
+  }
+
+  public Command defaultCommand(Supplier<Double> armChange) 
+  {
+    return run(() -> {
+           setArmSetpoint( m_ArmSetpoint.minus( Rotation2d.fromDegrees( armChange.get() ) ) );
+        });
+  }
 
 
 
