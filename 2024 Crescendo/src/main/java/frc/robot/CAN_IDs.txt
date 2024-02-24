@@ -15,7 +15,7 @@ Here is a master list of all CAN ID's that are used in our robot.
  |    8    | Back Right Driving Motor |        SwerveConstants.java            |
  |    9    |         Not Used         |                                        |
  |   10    |       Intake Motor       |           Constants.java               |
- |   11    |         Not Used         |                                        |
+ |   11    |       Index Motor        |           Constants.java               |
  |   12    |    Top Shooter Motor     |           Constants.java               |
  |   13    |    Bot Shooter Motor     |           Constants.java               |
  |   14    |         Not Used         |                                        |
