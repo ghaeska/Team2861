@@ -11,17 +11,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase
 {
 
 /*------------------------ Private Instance Variables ------------------------*/
-  //private static Intake m_Instance;
-  //private PeriodicIO m_PeriodicIO;
-
   private CANSparkMax m_IntakeMotor;
   private RelativeEncoder m_IntakeEncoder;
 
@@ -89,8 +84,5 @@ public class IntakeSubsystem extends SubsystemBase
   {
     return new RunCommand(()->this.runIntake( Intake.k_IntakeEjectSpeed ), this );
   }
-
-
-
-
+  
 }
