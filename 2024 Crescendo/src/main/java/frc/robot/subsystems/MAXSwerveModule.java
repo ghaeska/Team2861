@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /* Rev Robotics Imports */
 import com.revrobotics.CANSparkMax;
@@ -20,8 +19,6 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
 import frc.robot.SwerveConstants.ModuleConstants;
-//import frc.utils.Conversions;
-import frc.utils.Conversions;
 
 public class MAXSwerveModule {
   /* Spark Max controlled Driving and turning Motors/controllers */
