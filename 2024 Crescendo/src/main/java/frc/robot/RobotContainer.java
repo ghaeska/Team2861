@@ -114,8 +114,8 @@ public class RobotContainer
     /* Arm Commands */
     m_xboxController.x().onTrue( m_arm.StowArmCommand() );
     m_xboxController.y().onTrue( m_arm.AmpArmCommand() );
-     m_xboxController.a().onTrue( m_arm.runArmCommand() );
-     m_xboxController.b().onTrue( m_arm.stopArmCommand() );
+     //m_xboxController.a().onTrue( m_arm.runArmCommand() );
+     //m_xboxController.b().onTrue( m_arm.stopArmCommand() );
      //m_xboxController.y().onTrue( m_arm.runArmRevCommand() );
 
     /* Shooter Commands */
