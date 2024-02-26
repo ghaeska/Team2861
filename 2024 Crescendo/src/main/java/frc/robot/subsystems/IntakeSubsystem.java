@@ -9,9 +9,11 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class IntakeSubsystem extends SubsystemBase
 {
@@ -19,6 +21,8 @@ public class IntakeSubsystem extends SubsystemBase
 /*------------------------ Private Instance Variables ------------------------*/
   private CANSparkMax m_IntakeMotor;
   private RelativeEncoder m_IntakeEncoder;
+
+  private DigitalInput m_IntakeSensor;
 
   private double m_IntakeSpeed;
 
@@ -41,6 +45,14 @@ public class IntakeSubsystem extends SubsystemBase
 
     /* Burn the new settings into the flash. */
     m_IntakeMotor.burnFlash();
+
+    /* Setup Intake Beam Break sensor */
+    m_IntakeSensor = new DigitalInput( Constants.Intake.k_DIO_IntakeSensorID );
+  }
+
+  public boolean getIntakeSensor()
+  {
+    return !m_IntakeSensor.get();
   }
 
   public void runIntake( double speed )
@@ -84,5 +96,13 @@ public class IntakeSubsystem extends SubsystemBase
   {
     return new RunCommand(()->this.runIntake( Intake.k_IntakeEjectSpeed ), this );
   }
+
+  // public Command runIntakeUntilNoteCommand()
+  // {
+  //   return run( ()->this.runIntake( Intake.k_IntakeIntakeSpeedSlow )).until(this::IntakeNoteSensor);
+  // }
+
+  /* Triggers */
+  public Trigger IntakeNoteSensor = new Trigger( () -> this.getIntakeSensor() );
   
 }
