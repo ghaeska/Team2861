@@ -33,9 +33,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +67,9 @@ public class RobotContainer
   private final IndexSubsystem    m_index      = new IndexSubsystem();
 
   private SendableChooser<Command> autoChooser;// = new SendableChooser<>();
+  private SendableChooser<String> OverrideChooser = new SendableChooser<>();
+
+  private String m_lastControl = "Commands Are Auto";
 
   private void configureAutoCommands()
   {
@@ -103,8 +110,14 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    /* Check to see if we want to override the auto commands */
+    OverrideChooser.setDefaultOption( "Commands Are Auto", "Commands Are Auto" );
+    OverrideChooser.addOption( "Manual Control", "Manual Control" );
+    SmartDashboard.putData( "Command Override Chooser", OverrideChooser );
+
     /* Configure the button bindings, as defined. */ 
-    configureButtonBindings();    
+    configureButtonBindings();
+
     
     
     // Configure default commands
@@ -142,33 +155,66 @@ public class RobotContainer
    */
   private void configureButtonBindings() 
   {
+    /* Configure a trigger to change the control style when a selection is made. */
+    Trigger controlPick = new Trigger( () -> m_lastControl != OverrideChooser.getSelected() );
+    controlPick.onTrue( runOnce( () -> configureNewCommands() ) );
+
     /* DriveTrain Commands */
     m_xboxController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
     m_xboxController.start().onTrue(new InstantCommand( m_robotDrive::ResetYaw ).ignoringDisable(true));
 
-    /* Intake Commands */
-    m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
-    m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
-    m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
-    m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
-
     /* Arm Commands */
     m_xboxController.x().onTrue( m_arm.StowArmCommand() );
     m_xboxController.y().onTrue( m_arm.AmpArmCommand() );
-     //m_xboxController.a().onTrue( m_arm.runArmCommand() );
-     //m_xboxController.b().onTrue( m_arm.stopArmCommand() );
-     //m_xboxController.y().onTrue( m_arm.runArmRevCommand() );
+    // m_xboxController.a().onTrue( m_arm.runArmCommand() );
+    // m_xboxController.b().onTrue( m_arm.stopArmCommand() );
+    // m_xboxController.y().onTrue( m_arm.runArmRevCommand() );   
 
     /* Shooter Commands */
     m_OperatorController.rightTrigger().onTrue( m_shooter.runShooterSpeakerCommand() );
     m_OperatorController.leftTrigger().onTrue( m_shooter.runShooterStopCommand() );
 
-    /* Indexer Commands */
-    m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
-    m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
-    m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
-    m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
-    
+ 
+  }
+
+  private void configureNewCommands()
+  {
+    m_lastControl = OverrideChooser.getSelected();
+
+    switch( OverrideChooser.getSelected() )
+    {
+      case "Manual Control":
+      {
+        /* Intake Commands */
+        m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
+        m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
+        m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
+        m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
+
+        /* This command should run until the Intake sensor Triggers. */
+        // m_OperatorController.x().onTrue( new RunCommand( () -> m_intake.runIntakeSlowCommand().until( m_intake.IntakeNoteSensor ), m_intake ));
+
+        
+        /* Indexer Commands */
+        m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
+        m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
+        m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
+        m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
+      }
+      case "Commands Are Auto":
+      {
+        /* Setup Automation Commands */
+        /* Turn on the indexer when the intake senses a note. */
+        m_intake.IntakeNoteSensor.onTrue( m_index.runIndexFwdCommand().until( m_index.IndexNoteSensor ) ); 
+        
+        /* Turn on the Intake once the note leaves the shooter, with a slight delay */
+        m_index.IndexNoteSensor.onFalse( Commands.sequence( 
+                                                            Commands.waitSeconds(.5),
+                                                            m_intake.runIntakeSlowCommand() 
+                                                          )
+                                      );
+      }
+    }
   }
 
   /**
