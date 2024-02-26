@@ -65,6 +65,13 @@ public class IndexSubsystem extends SubsystemBase
 /***************************** Commands ************************************* */
   public Command runIndexFwdCommand()
   {
+    //Get this command to stop once Sensor detects Note.
+    return new RunCommand(()->this.runIndex( Index.k_IndexForwardSpeed ), this );
+  }
+
+  public Command runIndexShootCommand()
+  {
+    /* This Command is used in Auto to run the Index without worrying about the sensor. */
     return new RunCommand(()->this.runIndex( Index.k_IndexForwardSpeed ), this );
   }
 

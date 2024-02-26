@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.5,
+      "y": 5.5
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "StartShooter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StowArm"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpeakerShootSequence"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RunIntakeIndex"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center to Top"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopIntakeIndex"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top to Center"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpeakerShootSequence"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
