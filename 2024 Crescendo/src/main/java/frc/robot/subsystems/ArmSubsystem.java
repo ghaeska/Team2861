@@ -66,7 +66,7 @@ public class ArmSubsystem extends SubsystemBase
     m_RightArmEncoder = m_RightArmMotor.getEncoder();
 
     m_ArmEncoder = m_LeftArmMotor.getAbsoluteEncoder( Type.kDutyCycle );
-    m_ArmEncoder.setInverted( false ); //TODO: Do we need this?
+    m_ArmEncoder.setInverted( true ); //TODO: Do we need this?
     m_ArmEncoder.setPositionConversionFactor( 360 );
 
     ArmPIDController.setFeedbackDevice( m_ArmEncoder );
@@ -76,7 +76,7 @@ public class ArmSubsystem extends SubsystemBase
     ArmPIDController.setD( Arm.k_ArmMotorD );
     ArmPIDController.setFF( Arm.k_ArmMotorFF );
     ArmPIDController.setOutputRange( Arm.k_ArmMinOutput, Arm.k_ArmMaxOutput );
-    ArmPIDController.setPositionPIDWrappingEnabled(false);
+    ArmPIDController.setPositionPIDWrappingEnabled(true);
     ArmPIDController.setPositionPIDWrappingMinInput(0.0);
     ArmPIDController.setPositionPIDWrappingMaxInput(360);
 
@@ -87,20 +87,28 @@ public class ArmSubsystem extends SubsystemBase
     m_LeftArmMotor.burnFlash();
     m_RightArmMotor.burnFlash();
 
-    //setArmSetpoint( getArmAngle() );
+    m_ArmSetpoint = getArmAngle();
+    setArmSetpoint( m_ArmSetpoint );
 
   }
 
   public void setArmSetpoint( Rotation2d setpoint_radians ) 
   {        
-    if( setpoint_radians.getDegrees() < 170 ) 
+    if( setpoint_radians.getDegrees() < 250 ) 
     {
-      setpoint_radians = Rotation2d.fromDegrees( 175 );
+      // System.out.print("Arm Set Reference: ");
+      // System.out.print( setpoint_radians.getDegrees() );
+      // System.out.print( " \r\n" );
+      setpoint_radians = Rotation2d.fromDegrees( 270 );
     } 
-    else if( setpoint_radians.getDegrees() > 240 )
+    else if( setpoint_radians.getDegrees() > 350 )
     {
-      setpoint_radians = Rotation2d.fromDegrees(235);
+      setpoint_radians = Rotation2d.fromDegrees(340);
     }
+
+    System.out.print("Arm Set Reference: ");
+    System.out.print( setpoint_radians.getDegrees() );
+    System.out.print( " \r\n" );
 
     m_ArmSetpoint = setpoint_radians;
     SmartDashboard.putNumber( " SetArmSetpoint value", setpoint_radians.getDegrees() );
@@ -210,7 +218,7 @@ public class ArmSubsystem extends SubsystemBase
   public Command defaultCommand(Supplier<Double> armChange) 
   {
     return run(() -> {
-           setArmSetpoint( m_ArmSetpoint.minus( Rotation2d.fromDegrees( armChange.get() ) ) );
+           setArmSetpoint( m_ArmSetpoint );
         });
   }
 
