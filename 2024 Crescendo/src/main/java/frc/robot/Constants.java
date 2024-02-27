@@ -103,7 +103,7 @@ public final class Constants
     public static final double k_ArmMaxOutput =  0.5; //GTH:TODO need to update value
    
     /* Arm PID constants */
-    public static final double k_ArmMotorP  = 0.026;
+    public static final double k_ArmMotorP  = .1;
     public static final double k_ArmMotorI  = 0.00; 
     public static final double k_ArmMotorD  = 0.00;
     public static final double k_ArmMotorFF = 0.001;
@@ -118,8 +118,8 @@ public final class Constants
 
     /* Pivot Angle Set Points */
     //public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
-    public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(160); //GTH:TODO need to update values every time chain skips
-    public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(222); //GTH:TODO need to update values every time chain skips
+    public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(330); //GTH:TODO need to update values every time chain skips
+    public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(264); //GTH:TODO need to update values every time chain skips
     //public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
     //public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
     //public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
