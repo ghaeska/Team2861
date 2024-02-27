@@ -169,6 +169,8 @@ public class RobotContainer
     // m_xboxController.a().onTrue( m_arm.runArmCommand() );
     // m_xboxController.b().onTrue( m_arm.stopArmCommand() );
     // m_xboxController.y().onTrue( m_arm.runArmRevCommand() );   
+    m_OperatorController.povDown().onTrue( m_arm.StowArmCommand() );
+    m_OperatorController.povUp().onTrue( m_arm.AmpArmCommand() );
 
     /* Shooter Commands */
     m_OperatorController.rightTrigger().onTrue( m_shooter.runShooterSpeakerCommand() );
