@@ -120,7 +120,7 @@ public final class Constants
     //public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
     public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(330); //GTH:TODO need to update values every time chain skips
     public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(264); //GTH:TODO need to update values every time chain skips
-    //public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
+    public static final Rotation2d k_ArmAngleHang = Rotation2d.fromDegrees(340);  //GTH:TODO need to get value
     //public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
     //public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
 
