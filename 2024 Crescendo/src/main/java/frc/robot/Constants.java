@@ -50,7 +50,7 @@ public final class Constants
     public static final int k_IntakeMotorCanId = 10;
 
     /* Intake Beam Break Digital Input ID */
-    public static final int k_DIO_IntakeSensorID = 5;
+    public static final int k_DIO_IntakeSensorID = 3;
 
     /* Intake Speeds */
     /* positive value ejects, negative intakes. */
@@ -106,7 +106,7 @@ public final class Constants
     public static final double k_ArmMaxOutput =  0.5; //GTH:TODO need to update value
    
     /* Arm PID constants */
-    public static final double k_ArmMotorP  = .1;
+    public static final double k_ArmMotorP  = .05;
     public static final double k_ArmMotorI  = 0.00; 
     public static final double k_ArmMotorD  = 0.00;
     public static final double k_ArmMotorFF = 0.001;
