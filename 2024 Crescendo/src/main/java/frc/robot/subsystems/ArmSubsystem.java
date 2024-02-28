@@ -203,6 +203,11 @@ public class ArmSubsystem extends SubsystemBase
     return positionArmCommand( Constants.Arm.k_ArmAngleStowed );
   }
 
+  public Command HangArmCommand()
+  {
+    return positionArmCommand( Constants.Arm.k_ArmAngleHang );
+  }
+
   public Command AmpArmCommand()
   {
     return positionArmCommand( Constants.Arm.k_ArmAngleAmp );
