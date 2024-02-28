@@ -26,7 +26,7 @@ import frc.robot.SwerveConstants.OIConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
-//import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeIndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +36,11 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import java.util.List;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
+import frc.robot.commands.IntakeNote;
 
 /* Smartdashboard Calls */
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -51,10 +56,11 @@ public class RobotContainer
 {
   // The robot's subsystems
   private final DriveSubsystem    m_robotDrive = new DriveSubsystem();
-  private final IntakeSubsystem   m_intake     = new IntakeSubsystem();
+  //private final IntakeSubsystem   m_intake     = new IntakeSubsystem();
   private final ShooterSubsystem  m_shooter    = new ShooterSubsystem();
   private final ArmSubsystem      m_arm        = new ArmSubsystem();
-  private final IndexSubsystem    m_index      = new IndexSubsystem();
+  //private final IndexSubsystem    m_index      = new IndexSubsystem();
+  private final IntakeIndexSubsystem m_indexIntake = new IntakeIndexSubsystem();
 
   //public static SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
@@ -62,8 +68,12 @@ public class RobotContainer
  
   /* Initialize a controller that is plugged into the defined drive controller port. */
   CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
-  CommandXboxController m_xboxController = new CommandXboxController( OIConstants.kDriverControllerPort );
+  CommandXboxController m_driverController = new CommandXboxController( OIConstants.kDriverControllerPort );
   
+  private void registerNamedCommands()
+  {
+    NamedCommands.registerCommand( "IntakeNote", ( new IntakeNote( m_indexIntake ) ) );
+  }
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -77,9 +87,9 @@ public class RobotContainer
     m_robotDrive.setDefaultCommand(
       new RunCommand(
           () -> m_robotDrive.drive(
-              -MathUtil.applyDeadband( m_xboxController.getLeftY(), OIConstants.kDriveDeadband ),
-              -MathUtil.applyDeadband( m_xboxController.getLeftX(), OIConstants.kDriveDeadband ),
-              -MathUtil.applyDeadband( m_xboxController.getRightX(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_driverController.getLeftY(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_driverController.getLeftX(), OIConstants.kDriveDeadband ),
+              -MathUtil.applyDeadband( m_driverController.getRightX(), OIConstants.kDriveDeadband ),
               true, 
               true),
               m_robotDrive ) );
@@ -102,21 +112,22 @@ public class RobotContainer
   private void configureButtonBindings() 
   {
     /* DriveTrain Commands */
-    m_xboxController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
-    m_xboxController.start().onTrue(new InstantCommand( m_robotDrive::ResetYaw ).ignoringDisable(true));
+    m_driverController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
+    m_driverController.start().onTrue(new InstantCommand( m_robotDrive::ResetYaw ).ignoringDisable(true));
 
     /* Intake Commands */
-    m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
-    m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
-    m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
-    m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
+    // m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
+    // m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
+    // m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
+    // m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
 
-    /* Arm Commands */
-    m_xboxController.x().onTrue( m_arm.StowArmCommand() );
-    m_xboxController.y().onTrue( m_arm.AmpArmCommand() );
-     //m_xboxController.a().onTrue( m_arm.runArmCommand() );
-     //m_xboxController.b().onTrue( m_arm.stopArmCommand() );
-     //m_xboxController.y().onTrue( m_arm.runArmRevCommand() );
+    m_OperatorController.a().onTrue( m_indexIntake.IntakeToIndexCommand() );
+
+    m_OperatorController.b().onTrue( new IntakeNote( m_indexIntake ) );
+
+    m_OperatorController.y().onTrue( m_indexIntake.feedShooterFromIndexCommand() );
+
+    /* Arm Commands */    
     m_OperatorController.povDown().onTrue( m_arm.StowArmCommand() );
     m_OperatorController.povUp().onTrue( m_arm.AmpArmCommand() );
     m_OperatorController.povLeft().onTrue( m_arm.HangArmCommand() );
@@ -127,10 +138,10 @@ public class RobotContainer
     m_OperatorController.leftTrigger().onTrue( m_shooter.runShooterStopCommand() );
 
     /* Indexer Commands */
-    m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
-    m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
-    m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
-    m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
+    // m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
+    // m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
+    // m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
+    // m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
     
   }
 

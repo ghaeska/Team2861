@@ -24,6 +24,7 @@ public class IndexSubsystem extends SubsystemBase
   private RelativeEncoder m_IndexEncoder;
   
   private DigitalInput m_IndexSensor;
+  public boolean m_NoteInIndex;
 
   private double m_IndexSpeed;
 
@@ -54,15 +55,22 @@ public class IndexSubsystem extends SubsystemBase
   @Override
   public void periodic() 
   { 
+    m_NoteInIndex = m_IndexSensor.get() ? false : true;
+
     SmartDashboard.putNumber( "Index Set Speed:", m_IndexSpeed );
     SmartDashboard.putNumber( "Index Actual Speed:", m_IndexEncoder.getVelocity() );
     SmartDashboard.putNumber( "Index Motor Current", m_IndexMotor.getOutputCurrent() );
-    SmartDashboard.putBoolean( "Index Sensor", getIndexSensor() );
+    SmartDashboard.putBoolean( "Index Sensor", m_NoteInIndex );
   } 
 
   public boolean getIndexSensor()
   {
     return !m_IndexSensor.get();
+  }
+  
+  public boolean isNoteInIndex()
+  {
+    return m_NoteInIndex;
   }
 
   public void runIndex( double speed )

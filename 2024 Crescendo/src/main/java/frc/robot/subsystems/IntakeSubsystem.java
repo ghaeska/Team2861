@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -28,6 +29,7 @@ public class IntakeSubsystem extends SubsystemBase
   private RelativeEncoder m_IntakeEncoder;
 
   public DigitalInput m_IntakeSensor;
+  public boolean m_NoteInIntake = false;
 
   private double m_IntakeSpeed;
 
@@ -61,6 +63,11 @@ public class IntakeSubsystem extends SubsystemBase
     return !m_IntakeSensor.get();
   }
 
+  public boolean isNoteInIntake()
+  {
+    return m_NoteInIntake;
+  }
+
   public void runIntake( double speed )
   {
     m_IntakeSpeed = speed;
@@ -77,10 +84,12 @@ public class IntakeSubsystem extends SubsystemBase
   @Override
   public void periodic() 
   { 
+    m_NoteInIntake = m_IntakeSensor.get() ? false : true;
+
     SmartDashboard.putNumber( "Intake Set Speed:", m_IntakeSpeed );
     SmartDashboard.putNumber( "Intake Actual Speed:", m_IntakeEncoder.getVelocity() );
     SmartDashboard.putNumber( "Intake Motor Current", m_IntakeMotor.getOutputCurrent() );
-    SmartDashboard.putBoolean( "Intake Sensor", getIntakeSensor() );
+    SmartDashboard.putBoolean( "Intake Sensor", m_NoteInIntake );
   } 
 
 /***************************** Commands ************************************* */
@@ -96,29 +105,13 @@ public class IntakeSubsystem extends SubsystemBase
 
   public Command stopIntakeCommand()
   {
-    return new RunCommand(()->this.stopIntake(), this );
+    return new InstantCommand(()->this.stopIntake(), this );
   }
 
   public Command ejectIntakeCommand()
   {
     return new RunCommand(()->this.runIntake( Intake.k_IntakeEjectSpeed ), this );
-  }
-
-  public Command AutoIntakeCommand()
-  {
-    if( getIntakeSensor() == false )
-    {
-      return new RunCommand(()->this.runIntake( Intake.k_IntakeIntakeSpeedSlow ), this );
-    }
-    else if( getIntakeSensor() == true )
-    {
-      return new RunCommand(()->this.stopIntake(), this );
-    }
-    else
-    {
-      return new RunCommand(()->this.stopIntake(), this );
-    }
-  }
+  } 
 
   /* Triggers */
   //public Trigger IntakeNoteTrigger = new Trigger( () -> this.getIntakeSensor() );
