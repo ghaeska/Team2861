@@ -69,7 +69,7 @@ public class RobotContainer
   private SendableChooser<Command> autoChooser;// = new SendableChooser<>();
   private SendableChooser<String> OverrideChooser = new SendableChooser<>();
 
-  private String m_lastControl = "Commands Are Auto";
+  //private String m_lastControl = "Commands Are Auto";
 
   private void configureAutoCommands()
   {
@@ -155,9 +155,9 @@ public class RobotContainer
    */
   private void configureButtonBindings() 
   {
-    /* Configure a trigger to change the control style when a selection is made. */
-    Trigger controlPick = new Trigger( () -> m_lastControl != OverrideChooser.getSelected() );
-    controlPick.onTrue( runOnce( () -> configureNewCommands() ) );
+    // /* Configure a trigger to change the control style when a selection is made. */
+    // Trigger controlPick = new Trigger( () -> m_lastControl != OverrideChooser.getSelected() );
+    // controlPick.onTrue( runOnce( () -> configureNewCommands() ) );
 
     /* DriveTrain Commands */
     m_xboxController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
@@ -174,48 +174,44 @@ public class RobotContainer
     m_OperatorController.rightTrigger().onTrue( m_shooter.runShooterSpeakerCommand() );
     m_OperatorController.leftTrigger().onTrue( m_shooter.runShooterStopCommand() );
 
+    /* Intake Commands */
+    m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
+    m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
+    m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
+    m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
+
+    /* This command should run until the Intake sensor Triggers. */
+    // m_OperatorController.x().onTrue( new RunCommand( () -> m_intake.runIntakeSlowCommand().until( m_intake.IntakeNoteSensor ), m_intake ));
+
+    
+    /* Indexer Commands */
+    m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
+    m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
+    m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
+    m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
+
+    /* Setup Automation Commands */
+    /* Turn on the indexer when the intake senses a note. */
+    // m_intake.IntakeNoteSensor.onFalse( m_index.runIndexFwdCommand() ); 
+    
+    // /* Turn on the Intake once the note leaves the shooter, with a slight delay */
+    // m_index.IndexNoteSensor.onFalse( Commands.sequence( 
+    //                                                     Commands.waitSeconds(.5),
+    //                                                     m_intake.runIntakeSlowCommand() 
+    //                                                   )
+    //                                );
+    if( !m_intake.getIntakeSensor() )
+    {
+      m_intake.runIntakeSlowCommand();
+    }
+
+    m_intake.runIntakeSlowCommand();
+
+    //m_index.IndexNoteSensor.whileFalse(m_intake.runIntakeSlowCommand() );
+
  
   }
 
-  private void configureNewCommands()
-  {
-    m_lastControl = OverrideChooser.getSelected();
-
-    switch( OverrideChooser.getSelected() )
-    {
-      case "Manual Control":
-      {
-        /* Intake Commands */
-        m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
-        m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
-        m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
-        m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
-
-        /* This command should run until the Intake sensor Triggers. */
-        // m_OperatorController.x().onTrue( new RunCommand( () -> m_intake.runIntakeSlowCommand().until( m_intake.IntakeNoteSensor ), m_intake ));
-
-        
-        /* Indexer Commands */
-        m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
-        m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
-        m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
-        m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
-      }
-      case "Commands Are Auto":
-      {
-        /* Setup Automation Commands */
-        /* Turn on the indexer when the intake senses a note. */
-        m_intake.IntakeNoteSensor.onTrue( m_index.runIndexFwdCommand().until( m_index.IndexNoteSensor ) ); 
-        
-        /* Turn on the Intake once the note leaves the shooter, with a slight delay */
-        m_index.IndexNoteSensor.onFalse( Commands.sequence( 
-                                                            Commands.waitSeconds(.5),
-                                                            m_intake.runIntakeSlowCommand() 
-                                                          )
-                                      );
-      }
-    }
-  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

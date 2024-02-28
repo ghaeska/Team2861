@@ -59,6 +59,7 @@ public class IndexSubsystem extends SubsystemBase
     SmartDashboard.putNumber( "Index Set Speed:", m_IndexSpeed );
     SmartDashboard.putNumber( "Index Actual Speed:", m_IndexEncoder.getVelocity() );
     SmartDashboard.putNumber( "Index Motor Current", m_IndexMotor.getOutputCurrent() );
+    SmartDashboard.putBoolean( "Index Sensor", getIndexSensor() );
   } 
 
   public void runIndex( double speed )

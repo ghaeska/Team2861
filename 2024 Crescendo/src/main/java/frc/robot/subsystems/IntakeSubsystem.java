@@ -74,6 +74,7 @@ public class IntakeSubsystem extends SubsystemBase
     SmartDashboard.putNumber( "Intake Set Speed:", m_IntakeSpeed );
     SmartDashboard.putNumber( "Intake Actual Speed:", m_IntakeEncoder.getVelocity() );
     SmartDashboard.putNumber( "Index Motor Current", m_IntakeMotor.getOutputCurrent() );
+    SmartDashboard.putBoolean( "Intake Sensor", getIntakeSensor() );
   } 
 
 /***************************** Commands ************************************* */
@@ -95,6 +96,18 @@ public class IntakeSubsystem extends SubsystemBase
   public Command ejectIntakeCommand()
   {
     return new RunCommand(()->this.runIntake( Intake.k_IntakeEjectSpeed ), this );
+  }
+
+  public Command autoIntakeCommand()
+  {
+    if( getIntakeSensor() == false )
+    {
+      return new RunCommand(()->this.runIntake( Intake.k_IntakeIntakeSpeedSlow ), this );
+    }
+    else
+    {
+      return new RunCommand(()->this.stopIntake(), this );
+    }
   }
 
   // public Command runIntakeUntilNoteCommand()
