@@ -148,6 +148,7 @@ public class RobotContainer
     // m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
     // m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
 
+    // Need to see which ones of these commands works for the automation.
     m_OperatorController.a().onTrue( m_indexIntake.IntakeToIndexCommand() );
 
     m_OperatorController.b().onTrue( new IntakeNote( m_indexIntake ) );
