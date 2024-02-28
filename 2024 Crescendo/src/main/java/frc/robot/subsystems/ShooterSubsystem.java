@@ -121,20 +121,11 @@ public class ShooterSubsystem extends SubsystemBase
     return new RunCommand(()->this.stopShooter(), this );
   }
 
-  public Command runShooterAmpCommand()
-  {
-    return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Amp ), this );
-  }
-
   public Command runShooterPassCommand()
   {
     return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Pass ), this );
   }
 
-  public Command runShooterStageCommand()
-  {
-    return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Stage ), this );
-  }
 
   public Command runShooterDefaultSpeedCommand()
   {

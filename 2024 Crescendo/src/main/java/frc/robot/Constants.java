@@ -4,13 +4,7 @@
 
 package frc.robot;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -76,33 +70,19 @@ public final class Constants
     public static final double k_ShooterMaxOutput = 1;
     
     /* Shooter Speeds (RPM) */
-    public static final double k_ShooterSpeed_Speaker = 3000; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Amp = 1000; //GTH:TODO need to update value
-    public static final double k_ShooterSpeed_Stage = 4000; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Speaker = 1250; //GTH:TODO need to update value
+    public static final double k_ShooterSpeed_Amp = 0;
+    //public static final double k_ShooterSpeed_Stage = 4000;
     public static final double k_ShooterSpeed_Pass = 1000; //GTH:TODO need to update value
-
-    // public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
-    // public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
-    // public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
-    // public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
   }
 
   public static class Arm
   {
-    public static final double k_ArmGearRatio = ( 1/100 ) * ( 24/72 ); // GTH:TODO need to update with proper values. (24/54)
-    public static final double k_ArmPositionFactor = k_ArmGearRatio * 2.0 * Math.PI;
-    public static final double k_ArmVelocityFactor = k_ArmGearRatio * 2.0 * Math.PI / 60.0;
-    public static final double k_ArmFreeSpeed = 5676.0 * k_ArmVelocityFactor;
-    public static final double k_ArmZeroCosineOffset = 0.873; //GTH:TODO need to get proper angle and convert to raidans, currently at 50degrees
-
-    public static final TrapezoidProfile.Constraints k_ArmMotionConstraint = new TrapezoidProfile.Constraints(1.0, 2.0);
-    public static final ArmFeedforward k_ArmFeedForward = new ArmFeedforward( 0.5, 0.25, 3.45, 0.01 );//values taken from team 3467
-
     /* Arm Motor ID's */
     public static final int k_ArmLeftMotorCanId = 15;
     public static final int k_ArmRightMotorCanId = 16;
 
-    public static final double k_ArmMinOutput = -0.5;
+    public static final double k_ArmMinOutput = -0.5; //GTH:TODO need to update value
     public static final double k_ArmMaxOutput =  0.5; //GTH:TODO need to update value
    
     /* Arm PID constants */
@@ -110,23 +90,11 @@ public final class Constants
     public static final double k_ArmMotorI  = 0.00; 
     public static final double k_ArmMotorD  = 0.00;
     public static final double k_ArmMotorFF = 0.001;
-    public static final double k_ArmCruise  = 4.0;
-    public static final double k_ArmAccel   = 10;
-
-    /* Digital Input/Output ID's */
-    //public static final int k_ArmEncoderId = 0;
-
-    /* Absolute Encoder Offset */
-    public static final double k_ArmEncoderOffset = 0.000000; //GTH:TODO need to get value
 
     /* Pivot Angle Set Points */
-    //public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
     public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(330); //GTH:TODO need to update values every time chain skips
     public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(264); //GTH:TODO need to update values every time chain skips
     public static final Rotation2d k_ArmAngleHang = Rotation2d.fromDegrees(340);  //GTH:TODO need to get value
-    //public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
-    //public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
-
   }
 
   public static class Index
