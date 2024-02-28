@@ -8,12 +8,12 @@ import frc.robot.Constants.Index;
 //import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeIndexSubsystem;
 
-public class IntakeNote extends Command
+public class FeedNote extends Command
 {
   IntakeIndexSubsystem m_IntakeIndexSubsystem;
   boolean m_isDone;
 
-  public IntakeNote( IntakeIndexSubsystem subsytem )
+  public FeedNote( IntakeIndexSubsystem subsytem )
   {
     m_IntakeIndexSubsystem = subsytem;
     addRequirements( m_IntakeIndexSubsystem );
@@ -29,21 +29,21 @@ public class IntakeNote extends Command
   public void execute() 
   {
 
-    // Turn on the Intake
-    m_IntakeIndexSubsystem.runIntake(Constants.Intake.k_IntakeIntakeSpeedSlow );
+    // Turn on the Index
+    m_IntakeIndexSubsystem.runIndex(Constants.Index.k_IndexForwardSpeed );
 
-    // Run the Intake until a Note is inside the index
-    if( m_IntakeIndexSubsystem.isNoteInIntake() )
+    // Run the Index until a Note is out of the index
+    if( m_IntakeIndexSubsystem.isNoteInIndex() )
     {
-      System.out.print("Note is in the Intake \r\n");
+      System.out.print("Note is in the Index \r\n");
       m_IntakeIndexSubsystem.runIndex( Constants.Index.k_IndexForwardSpeed );
     }
 
-    if( m_IntakeIndexSubsystem.isNoteInIndex() )
+    if( !m_IntakeIndexSubsystem.isNoteInIndex() )
     {
-      System.out.print(" Note is in the Index \r\n");
+      System.out.print(" Note is out of the Index \r\n");
       m_IntakeIndexSubsystem.stopIndex();
-      m_IntakeIndexSubsystem.stopIntake();
+      //m_IntakeIndexSubsystem.stopIntake();
       m_isDone = true;
     }
 

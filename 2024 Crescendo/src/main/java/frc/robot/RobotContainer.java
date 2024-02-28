@@ -42,6 +42,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.PrepareShootNote;
+import frc.robot.commands.FeedNote;
 
 /* Smartdashboard Calls */
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -73,19 +75,23 @@ public class RobotContainer
   private void registerNamedCommands()
   {
     NamedCommands.registerCommand( "IntakeNote", ( new IntakeNote( m_indexIntake ) ) );
+    NamedCommands.registerCommand( "ShootNote", ( new PrepareShootNote(m_indexIntake, m_shooter)));
+    NamedCommands.registerCommand("FeedNote", (new FeedNote(m_indexIntake)));
     NamedCommands.registerCommand( "StowArm", 
                                   Commands.sequence( 
                                   m_arm.StowArmCommand(),
                                   Commands.waitSeconds(.125) ) );
     NamedCommands.registerCommand( "StartShooter", 
+                                  //Commands.sequence(
+                                  m_shooter.runShooterSpeakerCommand() );
+                                  //Commands.waitSeconds(2) ) );
+    NamedCommands.registerCommand( "FeedShooter2Index",
+                                  Commands.sequence( 
+                                  m_indexIntake.runIndexFwdCommand(),
+                                  Commands.waitSeconds(1),
+                                  m_indexIntake.stopIndexCommand() ) );
+    NamedCommands.registerCommand( "StopIntakeIndex",
                                   Commands.sequence(
-                                  m_shooter.runShooterDefaultSpeedCommand() ) );
-    NamedCommands.registerCommand( "RunIntakeIndex", 
-                                  Commands.parallel(
-                                  m_indexIntake.runIntakeSlowCommand(),
-                                  m_indexIntake.runIndexFwdCommand() ) );
-    NamedCommands.registerCommand( "StopIntakeIndex", 
-                                  Commands.parallel(
                                   m_indexIntake.stopIndexCommand(),
                                   m_indexIntake.stopIntakeCommand() ) );
     NamedCommands.registerCommand( "SpeakerShootSequence", 
@@ -149,7 +155,7 @@ public class RobotContainer
     // m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
 
     // Need to see which ones of these commands works for the automation.
-    m_OperatorController.a().onTrue( m_indexIntake.IntakeToIndexCommand() );
+    //m_OperatorController.a().onTrue( m_indexIntake.IntakeToIndexCommand() );
 
     m_OperatorController.b().onTrue( new IntakeNote( m_indexIntake ) );
 
@@ -166,10 +172,10 @@ public class RobotContainer
     m_OperatorController.leftTrigger().onTrue( m_shooter.runShooterStopCommand() );
 
     /* Indexer Commands */
-    // m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_index.runIndex( Index.k_IndexForwardSpeed ), m_index) );
-    // m_OperatorController.rightBumper().whileFalse( m_index.stopIndexCommand() );  
-    // m_OperatorController.leftBumper().whileTrue( m_index.runIndexRevCommand() );
-    // m_OperatorController.leftBumper().whileFalse( m_index.stopIndexCommand() );
+    m_OperatorController.rightBumper().whileTrue( new RunCommand( ()-> m_indexIntake.runIndex( Constants.Index.k_IndexForwardSpeed ), m_indexIntake) );
+    m_OperatorController.rightBumper().whileFalse( m_indexIntake.stopIndexCommand() );  
+    m_OperatorController.leftBumper().whileTrue( m_indexIntake.runIndexRevCommand() );
+    m_OperatorController.leftBumper().whileFalse( m_indexIntake.stopIndexCommand() );
     
   }
 

@@ -52,7 +52,7 @@ public class IntakeIndexSubsystem extends SubsystemBase
     m_IntakeMotor.setIdleMode( CANSparkBase.IdleMode.kCoast );
 
     /* Set the current limits on the Motors */
-    m_IndexMotor.setSmartCurrentLimit( 20 );
+    m_IndexMotor.setSmartCurrentLimit( 30 );
     m_IntakeMotor.setSmartCurrentLimit( 35 );
 
     /* Setup the Motor Encoders */
@@ -136,7 +136,10 @@ public class IntakeIndexSubsystem extends SubsystemBase
 /***************************** Index Commands *********************************/
   public Command runIndexFwdCommand()
   {
-    return new RunCommand(()->this.runIndex( Index.k_IndexForwardSpeed ), this );
+    return new RunCommand(()->this.runIndex( Index.k_IndexForwardSpeed ), this )
+    .until( () -> !this.isNoteInIntake() )
+    .andThen( () -> this.stopIndexCommand()
+    .andThen( () -> this.stopIntakeCommand() ) );
   }
 
   public Command runIndexRevCommand()
@@ -187,9 +190,9 @@ public Command runIntakeFastCommand()
   public Command IntakeToIndexCommand()
   {
     return new RunCommand(()->this.runIntake( Intake.k_IntakeIntakeSpeedSlow ), this )
-    .until( () -> this.isNoteInIntake() )
+    .until( () -> !this.isNoteInIntake() )
     .andThen( () -> this.runIndex( Index.k_IndexForwardSpeed ), this )
-    .until( () -> this.isNoteInIndex() )
+    .until( () -> !this.isNoteInIndex() )
     .andThen( () -> this.stopIndex() )
     .andThen( () -> this.stopIntake() );
   }

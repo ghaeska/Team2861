@@ -24,13 +24,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "StowArm"
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -39,7 +33,7 @@
         {
           "type": "named",
           "data": {
-            "name": "FeedShooter2Index"
+            "name": "FeedNote"
           }
         },
         {
@@ -47,18 +41,49 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
                   "pathName": "Center to Middle"
                 }
-              },
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle to Center"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "RunIntakeIndex"
+                  "name": "StartShooter"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.0
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedNote"
           }
         }
       ]

@@ -26,10 +26,10 @@ public class ShooterSubsystem extends SubsystemBase
   private SparkPIDController m_TopShooterPID;
   private SparkPIDController m_BottomShooterPID;
 
-  private RelativeEncoder m_TopShooterEncoder;
-  private RelativeEncoder m_BottomShooterEncoder;
+  public RelativeEncoder m_TopShooterEncoder;
+  public RelativeEncoder m_BottomShooterEncoder;
 
-  private BangBangController BBController;
+  //private BangBangController BBController;
 
   private double m_Shooter_RPM;
   
