@@ -13,12 +13,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 public class IntakeSubsystem extends SubsystemBase
 {
 
 /*------------------------ Private Instance Variables ------------------------*/
   private CANSparkMax m_IntakeMotor;
   private RelativeEncoder m_IntakeEncoder;
+
+  private DigitalInput m_IndexSensor;
 
   private double m_IntakeSpeed;
 
@@ -41,6 +46,14 @@ public class IntakeSubsystem extends SubsystemBase
 
     /* Burn the new settings into the flash. */
     m_IntakeMotor.burnFlash();
+
+    /* Setup Index Beam Break sensor */
+    m_IndexSensor = new DigitalInput( Constants.Index.k_DIO_IndexSensorID );
+  }
+
+  public boolean getIndexSensor()
+  {
+    return !m_IndexSensor.get();
   }
 
   public void runIntake( double speed )
@@ -62,6 +75,7 @@ public class IntakeSubsystem extends SubsystemBase
     SmartDashboard.putNumber( "Intake Set Speed:", m_IntakeSpeed );
     SmartDashboard.putNumber( "Intake Actual Speed:", m_IntakeEncoder.getVelocity() );
     SmartDashboard.putNumber( "Index Motor Current", m_IntakeMotor.getOutputCurrent() );
+    SmartDashboard.putBoolean( "Index Sensor", getIndexSensor() );
   } 
 
 /***************************** Commands ************************************* */
@@ -84,5 +98,9 @@ public class IntakeSubsystem extends SubsystemBase
   {
     return new RunCommand(()->this.runIntake( Intake.k_IntakeEjectSpeed ), this );
   }
+
+  /* Triggers */
+  public Trigger IndexNoteSensor = new Trigger( () -> this.getIndexSensor() );
+
   
 }

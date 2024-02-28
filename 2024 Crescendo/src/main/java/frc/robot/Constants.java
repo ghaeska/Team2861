@@ -47,7 +47,10 @@ public final class Constants
   public static class Intake
   {
     /* Intake Motor ID's */
-    public static final int k_IntakeMotorCanId = 10;  
+    public static final int k_IntakeMotorCanId = 10;
+
+    /* Intake Beam Break Digital Input ID */
+    public static final int k_DIO_IntakeSensorID = 5;
 
     /* Intake Speeds */
     /* positive value ejects, negative intakes. */
@@ -111,7 +114,7 @@ public final class Constants
     public static final double k_ArmAccel   = 10;
 
     /* Digital Input/Output ID's */
-    public static final int k_ArmEncoderId = 0;
+    //public static final int k_ArmEncoderId = 0;
 
     /* Absolute Encoder Offset */
     public static final double k_ArmEncoderOffset = 0.000000; //GTH:TODO need to get value
@@ -130,6 +133,9 @@ public final class Constants
   {
     /* Index Motor ID's */
     public static final int k_IndexMotorCanId = 11;
+
+    /* Index Beam Break Digital Input ID */
+    public static final int k_DIO_IndexSensorID = 4;
     
     /* Index Motor Speeds */
     public static final double k_IndexForwardSpeed =  0.3;
