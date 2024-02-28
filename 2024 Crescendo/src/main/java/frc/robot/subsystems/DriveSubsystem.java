@@ -19,10 +19,19 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.SwerveConstants.DriveConstants;
+import frc.robot.SwerveConstants.ModuleConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+/* Pathplanner Imports */
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 public class DriveSubsystem extends SubsystemBase 
 {
@@ -86,7 +95,7 @@ public class DriveSubsystem extends SubsystemBase
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() 
   {
-    
+    configurePathPlanner();
     m_yawGetter = m_gyro.getYaw().clone();
   }
 
@@ -343,6 +352,78 @@ public class DriveSubsystem extends SubsystemBase
       m_rearLeft.getPosition(),
       m_rearRight.getPosition()
     };
+  }
+
+  private ChassisSpeeds getRobotRelativeSpeeds() 
+  {
+    return DriveConstants.kDriveKinematics.toChassisSpeeds( getModuleStates() );
+  }
+
+  private SwerveModuleState[] getModuleStates() 
+  {
+    return new SwerveModuleState[] 
+    {
+      m_frontLeft.getState(),
+      m_frontRight.getState(),
+      m_rearLeft.getState(),
+      m_rearRight.getState()
+    };
+  }
+
+  private void driveRobotRelative(ChassisSpeeds speeds) 
+  {
+    drive(speeds, false);
+  }
+
+  private void drive(ChassisSpeeds speeds, boolean fieldRelative) 
+  {
+    if (fieldRelative)
+    {
+      speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
+    }
+        
+    //speeds = ChassisSpeeds.discretize(speeds, LoggedRobot.defaultPeriodSecs);
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    setModuleStates(swerveModuleStates);
+  }
+
+  private void configurePathPlanner()
+  {
+    AutoBuilder.configureHolonomic(
+      this::getPose,
+      this::resetOdometry,
+      this::getRobotRelativeSpeeds, 
+      this::driveRobotRelative, 
+      new HolonomicPathFollowerConfig( new PIDConstants( 
+                                                          ModuleConstants.kDrivingP,
+                                                          ModuleConstants.kDrivingI,
+                                                          ModuleConstants.kDrivingD
+                                                       ), 
+                                       new PIDConstants(
+                                                          ModuleConstants.kTurningP,
+                                                          ModuleConstants.kTurningI,
+                                                          ModuleConstants.kDrivingD
+                                                       ), 
+                                       DriveConstants.kMaxSpeedMetersPerSecond,
+                                       .43,
+                                       new ReplanningConfig()
+      ),
+      () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red
+              // alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if( alliance.isPresent() ) 
+              {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+      this 
+    );
   }
 
 }
