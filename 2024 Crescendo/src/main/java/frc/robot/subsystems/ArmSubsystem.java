@@ -49,8 +49,8 @@ public class ArmSubsystem extends SubsystemBase
     m_RightArmMotor.setIdleMode( CANSparkBase.IdleMode.kBrake );
 
     /* Set the motor Inversions */
-    m_LeftArmMotor.setInverted( true ); // GTH:TODO need to update
-    m_RightArmMotor.setInverted( true ); // GTH:TODO need to update
+    m_LeftArmMotor.setInverted( false ); // GTH:TODO need to update
+    m_RightArmMotor.setInverted( false ); // GTH:TODO need to update
 
     /* Set the current limits on the Motors */
     m_LeftArmMotor.setSmartCurrentLimit( 30 );
@@ -66,7 +66,7 @@ public class ArmSubsystem extends SubsystemBase
     m_RightArmEncoder = m_RightArmMotor.getEncoder();
 
     m_ArmEncoder = m_LeftArmMotor.getAbsoluteEncoder( Type.kDutyCycle );
-    m_ArmEncoder.setInverted( false ); //TODO: Do we need this?
+    m_ArmEncoder.setInverted( true ); //TODO: Do we need this?
     m_ArmEncoder.setPositionConversionFactor( 360 );
 
     ArmPIDController.setFeedbackDevice( m_ArmEncoder );
@@ -94,16 +94,16 @@ public class ArmSubsystem extends SubsystemBase
 
   public void setArmSetpoint( Rotation2d setpoint_radians ) 
   {        
-    if( setpoint_radians.getDegrees() < 120 ) 
+    if( setpoint_radians.getDegrees() < 250 ) 
     {
       // System.out.print("Arm Set Reference: ");
       // System.out.print( setpoint_radians.getDegrees() );
       // System.out.print( " \r\n" );
-      setpoint_radians = Rotation2d.fromDegrees( 180 );
+      setpoint_radians = Rotation2d.fromDegrees( 270 );
     } 
-    else if( setpoint_radians.getDegrees() > 240 )
+    else if( setpoint_radians.getDegrees() > 350 )
     {
-      setpoint_radians = Rotation2d.fromDegrees(230);
+      setpoint_radians = Rotation2d.fromDegrees(340);
     }
 
     System.out.print("Arm Set Reference: ");
