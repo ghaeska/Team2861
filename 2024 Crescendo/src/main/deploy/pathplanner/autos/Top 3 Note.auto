@@ -2,29 +2,42 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5,
-      "y": 5.5
+      "x": 1.3552185662929883,
+      "y": 6.4990263313859975
     },
-    "rotation": 0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "race",
                 "data": {
-                  "name": "StartShooter"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "StartShooter"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "wait",
+                "type": "path",
                 "data": {
-                  "waitTime": 1.0
+                  "pathName": "Top Start - Rotation"
                 }
               }
             ]
@@ -49,7 +62,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center to Middle"
+                  "pathName": "Top to Top - Start"
                 }
               }
             ]
@@ -58,26 +71,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle to Center"
+            "pathName": "Top to Top - End"
           }
         },
         {
-          "type": "race",
+          "type": "named",
+          "data": {
+            "name": "FeedNote"
+          }
+        },
+        {
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "StartShooter"
+                  "name": "IntakeNote"
                 }
               },
               {
-                "type": "wait",
+                "type": "path",
                 "data": {
-                  "waitTime": 0.0
+                  "pathName": "Top to Half-Field (1)"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Half-Field (1) to Top"
           }
         },
         {
@@ -89,6 +114,6 @@
       ]
     }
   },
-  "folder": "Testing Commands",
+  "folder": null,
   "choreoAuto": false
 }

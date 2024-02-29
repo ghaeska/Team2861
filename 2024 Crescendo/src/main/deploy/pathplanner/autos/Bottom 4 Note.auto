@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5,
-      "y": 5.5
+      "x": 1.0,
+      "y": 4.4
     },
-    "rotation": 0
+    "rotation": -35.47740731094534
   },
   "command": {
     "type": "sequential",
@@ -49,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center to Middle"
+                  "pathName": "Bottom to Bottom Start"
                 }
               }
             ]
@@ -58,26 +58,69 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle to Center"
+            "pathName": "Bottom to Bottom - End"
           }
         },
         {
-          "type": "race",
+          "type": "named",
+          "data": {
+            "name": "FeedNote"
+          }
+        },
+        {
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "StartShooter"
+                  "name": "IntakeNote"
                 }
               },
               {
-                "type": "wait",
+                "type": "path",
                 "data": {
-                  "waitTime": 0.0
+                  "pathName": "Bottom to Half-Field(5) Bottom"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Half-Field(5) to Bottom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedNote"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom to Half-Field(4)"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Half-Field(4) to Bottom"
           }
         },
         {
@@ -89,6 +132,6 @@
       ]
     }
   },
-  "folder": "Testing Commands",
+  "folder": null,
   "choreoAuto": false
 }
