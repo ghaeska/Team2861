@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5,
-      "y": 5.5
+      "x": 0.7792735585471178,
+      "y": 6.743350629558403
     },
-    "rotation": 0
+    "rotation": 56.08256946302963
   },
   "command": {
     "type": "sequential",
@@ -24,13 +24,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "StowArm"
+                  "waitTime": 1.0
                 }
               }
             ]
@@ -39,26 +33,19 @@
         {
           "type": "named",
           "data": {
-            "name": "FeedShooter2Index"
+            "name": "FeedNote"
           }
         },
         {
-          "type": "parallel",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Center to Middle"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RunIntakeIndex"
-                }
-              }
-            ]
+            "waitTime": 10.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top Out to Center"
           }
         }
       ]

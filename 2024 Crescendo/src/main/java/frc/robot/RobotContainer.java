@@ -44,6 +44,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareShootNote;
 import frc.robot.commands.FeedNote;
+import frc.robot.commands.DriveToIndex;
+import frc.robot.commands.IntakeToDrive;
 
 /* Smartdashboard Calls */
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -77,6 +79,8 @@ public class RobotContainer
     NamedCommands.registerCommand( "IntakeNote", ( new IntakeNote( m_indexIntake ) ) );
     NamedCommands.registerCommand( "ShootNote", ( new PrepareShootNote(m_indexIntake, m_shooter)));
     NamedCommands.registerCommand("FeedNote", (new FeedNote(m_indexIntake)));
+    NamedCommands.registerCommand("IntakeToDrive",( new IntakeToDrive(m_indexIntake)) );
+    NamedCommands.registerCommand("DriveToIndex", ( new DriveToIndex(m_indexIntake)) );
     NamedCommands.registerCommand( "StowArm", 
                                   Commands.sequence( 
                                   m_arm.StowArmCommand(),
@@ -150,8 +154,8 @@ public class RobotContainer
 
     /* Intake Commands */
     // m_OperatorController.x().onTrue( m_intake.runIntakeFastCommand() );
-    // m_OperatorController.y().onTrue( m_intake.ejectIntakeCommand() );
-    // m_OperatorController.a().onTrue( m_intake.runIntakeSlowCommand() );
+    m_OperatorController.y().onTrue( m_indexIntake.ejectIntakeCommand() );
+    m_OperatorController.a().onTrue( m_indexIntake.runIntakeSlowCommand() );
     // m_OperatorController.b().onTrue( m_intake.stopIntakeCommand() );
 
     // Need to see which ones of these commands works for the automation.
@@ -159,7 +163,7 @@ public class RobotContainer
 
     m_OperatorController.b().onTrue( new IntakeNote( m_indexIntake ) );
 
-    m_OperatorController.y().onTrue( m_indexIntake.feedShooterFromIndexCommand() );
+    //m_OperatorController.y().onTrue( m_indexIntake.feedShooterFromIndexCommand() );
 
     /* Arm Commands */    
     m_OperatorController.povDown().onTrue( m_arm.StowArmCommand() );

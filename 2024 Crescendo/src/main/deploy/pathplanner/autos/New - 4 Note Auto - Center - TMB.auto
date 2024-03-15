@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.9,
-      "y": 6.7
+      "x": 1.5,
+      "y": 5.5
     },
-    "rotation": 53.82972257343823
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -43,22 +43,35 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "IntakeToDrive"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top to Top - Start"
+                  "pathName": "Center to Top"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Top to Top - End"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToIndex"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Top to Center"
+                }
+              }
+            ]
           }
         },
         {
@@ -80,7 +93,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top to Half-Field (1)"
+                  "pathName": "Center to Middle"
                 }
               }
             ]
@@ -99,7 +112,51 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Half-Field (1) to Top"
+                  "pathName": "Middle to Center"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedNote"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center to Bottom"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToIndex"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom to Center"
                 }
               }
             ]

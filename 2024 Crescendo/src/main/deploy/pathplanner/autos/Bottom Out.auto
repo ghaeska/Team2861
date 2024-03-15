@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5,
-      "y": 5.5
+      "x": 0.7912916726734353,
+      "y": 4.345010491822786
     },
-    "rotation": 0
+    "rotation": -55.570906450143084
   },
   "command": {
     "type": "sequential",
@@ -43,52 +43,21 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "IntakeToDrive"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center to Middle"
+                  "pathName": "Bottom to Half-Field(5) Bottom"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Middle to Center"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "StartShooter"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedNote"
           }
         }
       ]
     }
   },
-  "folder": "Testing Commands",
+  "folder": null,
   "choreoAuto": false
 }

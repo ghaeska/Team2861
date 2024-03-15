@@ -43,7 +43,51 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "IntakeToDrive"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center to Bottom"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToIndex"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom to Center"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedNote"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeToDrive"
                 }
               },
               {
@@ -56,9 +100,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Middle to Center"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToIndex"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle to Center"
+                }
+              }
+            ]
           }
         },
         {
@@ -87,40 +144,22 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Top to Center"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedNote"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "DriveToIndex"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center to Bottom"
+                  "pathName": "Top to Center"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bottom to Center"
           }
         },
         {

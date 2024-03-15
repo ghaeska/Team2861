@@ -43,22 +43,35 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "IntakeToDrive"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center to Top"
+                  "pathName": "Center to Middle"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Top to Center"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToIndex"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle to Center"
+                }
+              }
+            ]
           }
         },
         {
@@ -74,22 +87,35 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "IntakeToDrive"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center to Middle"
+                  "pathName": "Center to Top"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Middle to Center"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToIndex"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Top to Center"
+                }
+              }
+            ]
           }
         },
         {
@@ -118,9 +144,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Bottom to Center"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToIndex"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom to Center"
+                }
+              }
+            ]
           }
         },
         {
