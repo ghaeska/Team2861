@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -21,82 +23,136 @@ import edu.wpi.first.math.util.Units;
  * wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants {
-  public static final class DriveConstants {
-    // Driving Parameters - Note that these are not the maximum capable speeds of
-    // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
-
-    // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
-    // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
-    // Distance between front and back wheels on robot
-    public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-        new Translation2d(kWheelBase / 2, kTrackWidth / 2),
-        new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
-        new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-        new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
-
-    // Angular offsets of the modules relative to the chassis in radians
-    public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
-    public static final double kFrontRightChassisAngularOffset = 0;
-    public static final double kBackLeftChassisAngularOffset = Math.PI;
-    public static final double kBackRightChassisAngularOffset = Math.PI / 2;
-
-    // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 11;
-    public static final int kRearLeftDrivingCanId = 13;
-    public static final int kFrontRightDrivingCanId = 15;
-    public static final int kRearRightDrivingCanId = 17;
-
-    public static final int kFrontLeftTurningCanId = 10;
-    public static final int kRearLeftTurningCanId = 12;
-    public static final int kFrontRightTurningCanId = 14;
-    public static final int kRearRightTurningCanId = 16;
-
-    public static final boolean kGyroReversed = false;
+public final class Constants 
+{
+  public static class Field 
+  {
+    public static final double k_width = Units.feetToMeters(54.0);
+    public static final double k_length = Units.feetToMeters(27.0);
   }
 
-  public static final class ModuleConstants {
-    // The MAXSwerve module can be configured with one of three pinion gears: 12T,
-    // 13T, or 14T. This changes the drive speed of the module (a pinion gear with
-    // more teeth will result in a robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 14;
+  public static final class DriveConstants 
+  {
+    /* PID control values for auto turning */
+    public static final double k_turnPID_P = 0.00;
+    public static final double k_turnPID_I = 0.00;
+    public static final double k_turnPID_D = 0.00;
+    public static final double k_turnPID_F = 0.00;
 
-    // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0762;
-    public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
-    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
-    // teeth on the bevel pinion
-    public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
-    public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
-        / kDrivingMotorReduction;
+    public static final double k_tolerance_degrees = 2.0f;
   }
 
-  public static final class OIConstants {
-    public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.05;
-  }
+  // public static class Intake
+  // {
+  //   /* Intake Motor ID's */
+  //   public static final int k_IntakeMotorCanId = 10;
+
+  //   /* Intake Beam Break Digital Input ID */
+  //   public static final int k_DIO_IntakeSensorID = 0;
+
+  //   /* Intake Speeds */
+  //   /* positive value ejects, negative intakes. */
+  //   public static final double k_IntakeIntakeSpeedSlow = 0.5; 
+  //   public static final double k_IntakeIntakeSpeedFast = 1.0; 
+  //   public static final double k_IntakeEjectSpeed = -0.3;
+  // }
+
+  // public static class Shooter
+  // {
+  //   /* Shooter PID constants */
+  //   public static final double k_ShooterMotorP = 0.00025;
+  //   public static final double k_ShooterMotorI = 0.0;
+  //   public static final double k_ShooterMotorD = 0.00001;
+  //   public static final double k_ShooterMotorFF = 0.000159;
+
+  //   /* Shooter Motor ID's */
+  //   public static final int k_ShooterTopMotorCanId = 12;
+  //   public static final int k_ShooterBotMotorCanId = 13;
+
+  //   /* Shooter Min/Max Outputs */
+  //   public static final double k_ShooterMinOutput = 0;
+  //   public static final double k_ShooterMaxOutput = 1;
+    
+  //   /* Shooter Speeds (RPM) */
+  //   public static final double k_ShooterSpeed_Speaker = 3000; //GTH:TODO need to update value
+  //   public static final double k_ShooterSpeed_Amp = 1000; //GTH:TODO need to update value
+  //   public static final double k_ShooterSpeed_Stage = 4000; //GTH:TODO need to update value
+  //   public static final double k_ShooterSpeed_Pass = 1000; //GTH:TODO need to update value
+
+  //   // public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
+  //   // public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
+  //   // public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
+  //   // public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
+  // }
+
+  // public static class Arm
+  // {
+  //   public static final double k_ArmGearRatio = ( 1/100 ) * ( 24/72 ); // GTH:TODO need to update with proper values. (24/54)
+  //   public static final double k_ArmPositionFactor = k_ArmGearRatio * 2.0 * Math.PI;
+  //   public static final double k_ArmVelocityFactor = k_ArmGearRatio * 2.0 * Math.PI / 60.0;
+  //   public static final double k_ArmFreeSpeed = 5676.0 * k_ArmVelocityFactor;
+  //   public static final double k_ArmZeroCosineOffset = 0.873; //GTH:TODO need to get proper angle and convert to raidans, currently at 50degrees
+
+  //   public static final TrapezoidProfile.Constraints k_ArmMotionConstraint = new TrapezoidProfile.Constraints(1.0, 2.0);
+  //   public static final ArmFeedforward k_ArmFeedForward = new ArmFeedforward( 0.5, 0.25, 3.45, 0.01 );//values taken from team 3467
+
+  //   /* Arm Motor ID's */
+  //   public static final int k_ArmLeftMotorCanId = 15;
+  //   public static final int k_ArmRightMotorCanId = 16;
+
+  //   public static final double k_ArmMinOutput = -0.5;
+  //   public static final double k_ArmMaxOutput =  0.5; //GTH:TODO need to update value
+   
+  //   /* Arm PID constants */
+  //   public static final double k_ArmMotorP  = 0.026;
+  //   public static final double k_ArmMotorI  = 0.00; 
+  //   public static final double k_ArmMotorD  = 0.00;
+  //   public static final double k_ArmMotorFF = 0.001;
+  //   public static final double k_ArmCruise  = 4.0;
+  //   public static final double k_ArmAccel   = 10;
+
+  //   /* Digital Input/Output ID's */
+  //   public static final int k_ArmEncoderId = 0;
+
+  //   /* Absolute Encoder Offset */
+  //   public static final double k_ArmEncoderOffset = 0.000000; //GTH:TODO need to get value
+
+  //   /* Pivot Angle Set Points */
+  //   //public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
+  //   public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(160); //GTH:TODO need to update values every time chain skips
+  //   public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(222); //GTH:TODO need to update values every time chain skips
+  //   //public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
+  //   //public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
+  //   //public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
+
+  // }
+
+  // public static class Index
+  // {
+  //   /* Index Motor ID's */
+  //   public static final int k_IndexMotorCanId = 11;
+
+  //   /* Index Beam Break Digital Input ID */
+  //   public static final int k_DIO_IndexSensorID = 1;
+    
+  //   /* Index Motor Speeds */
+  //   public static final double k_IndexForwardSpeed =  0.3;
+  //   public static final double k_IndexReverseSpeed = -0.3;
+  // }
 
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 3;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+}
 
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+public static final class OIConstants {
+  public static final int kDriverControllerPort = 0;
+  public static final double kDriveDeadband = 0.05;
+  public static final double k_tolerance_degrees = 2.0f;
+}
 
-    // Constraint for the motion profiled robot angle controller
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-  }
 
-  public static final class NeoMotorConstants {
-    public static final double kFreeSpeedRpm = 5676;
-  }
+
 }

@@ -111,4 +111,9 @@ public class MAXSwerveModule {
   public void resetEncoders() {
     m_drivingEncoder.setPosition(0);
   }
+
+  public RelativeEncoder getDriveMotorEncoder() 
+  {
+    return m_drivingSpark.getEncoder();
+  }
 }
