@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -25,6 +26,14 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
+/* Pathplanner Calls */
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
+/* Smartdashboard Calls */
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -34,14 +43,25 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  // TODO: Elevator subsystem here.
+  // TODO: coral manipulator system here.
+  // TODO: algea manipulator system here.
+  // TODO: climb system manipulator here.
+
+  /* Auto stuff here.  Line 69-99 in 2024 code. */
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+
+  // TODO: Add operator and secondary controller?
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    // TODO: add auto chooser stuff here.
+    final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -67,11 +87,17 @@ public class RobotContainer {
    * passing it to a
    * {@link JoystickButton}.
    */
-  private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+  private void configureButtonBindings() 
+  {
+    new JoystickButton(m_driverController, Button.kR1.value).whileTrue(new RunCommand(
+            () -> m_robotDrive.setX(), m_robotDrive));
+
+    // TODO: Add more button mindings here.
+  } 
+
+  private void configureNewCommands()
+  {
+
   }
 
   /**
@@ -79,6 +105,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
+   // TODO: Update this auto stuff.
   public Command getAutonomousCommand() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
@@ -118,5 +146,4 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-  }
 }

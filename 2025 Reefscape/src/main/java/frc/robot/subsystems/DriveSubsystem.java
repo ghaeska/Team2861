@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -16,8 +18,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import frc.robot.SwerveConstants.DriveConstants;
+import frc.robot.SwerveConstants.ModuleConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -41,7 +45,13 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightChassisAngularOffset);
 
+  private final RelativeEncoder m_FrontRightEncoder = m_frontRight.getDriveMotorEncoder();
+  private final RelativeEncoder m_FrontLeftEncoder = m_frontLeft.getDriveMotorEncoder();
+  private final RelativeEncoder m_BackRightEncoder = m_rearRight.getDriveMotorEncoder();
+  private final RelativeEncoder m_BackLeftEncoder = m_rearLeft.getDriveMotorEncoder();
+
   // The gyro sensor
+  //TODO: Update to the pidgeon gyro
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
   // Odometry class for tracking robot pose
