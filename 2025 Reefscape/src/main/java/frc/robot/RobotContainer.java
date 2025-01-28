@@ -18,11 +18,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
+// import frc.robot.Constants.OIConstants;
+import frc.robot.SwerveConstants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
@@ -51,10 +53,11 @@ public class RobotContainer {
   /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+ // XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-  // TODO TODAY: Add operator and secondary controller? LINE 64/65
-
+  // TODO DONE: Add operator and secondary controller? LINE 64/65
+   CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
+     CommandXboxController m_xboxController = new CommandXboxController( OIConstants.kDriverControllerPort );
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -71,9 +74,10 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_OperatorController.getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_OperatorController.getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_OperatorController.getRightX(), OIConstants.kDriveDeadband),
+                true,
                 true),
             m_robotDrive));
   }
@@ -89,8 +93,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() 
   {
-    new JoystickButton(m_driverController, Button.kR1.value).whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(), m_robotDrive));
+    m_xboxController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
 
     // TODO: Add more button mindings here.
   } 
@@ -108,3 +111,5 @@ public class RobotContainer {
 
    // TODO: Update this auto stuff.
   //public Command getAutonomousCommand() { }
+
+} 
