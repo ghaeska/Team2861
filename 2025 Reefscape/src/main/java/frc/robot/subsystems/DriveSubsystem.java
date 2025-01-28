@@ -19,13 +19,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.SwerveUtils;
 
 import frc.robot.SwerveConstants.DriveConstants;
-import frc.robot.SwerveConstants.ModuleConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -49,14 +46,14 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightChassisAngularOffset);
 
-  private final RelativeEncoder m_FrontRightEncoder = m_frontRight.getDriveMotorEncoder();
-  private final RelativeEncoder m_FrontLeftEncoder = m_frontLeft.getDriveMotorEncoder();
-  private final RelativeEncoder m_BackRightEncoder = m_rearRight.getDriveMotorEncoder();
-  private final RelativeEncoder m_BackLeftEncoder = m_rearLeft.getDriveMotorEncoder();
+  /* These values are only needed if printing to the dashboard. */
+  // private final RelativeEncoder m_FrontRightEncoder = m_frontRight.getDriveMotorEncoder();
+  // private final RelativeEncoder m_FrontLeftEncoder = m_frontLeft.getDriveMotorEncoder();
+  // private final RelativeEncoder m_BackRightEncoder = m_rearRight.getDriveMotorEncoder();
+  // private final RelativeEncoder m_BackLeftEncoder = m_rearLeft.getDriveMotorEncoder();
 
   // The gyro sensor
-  //TODO TODAY: Update this to the pidgeon gyro line 59
- public static final Pigeon2 m_gyro = new Pigeon2( DriveConstants.kGyroCanId );
+  public static final Pigeon2 m_gyro = new Pigeon2( DriveConstants.kGyroCanId );
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(

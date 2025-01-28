@@ -1,0 +1,12 @@
+Welcome to the yearly development guide.
+
+1. Download the latest WPILIB development tools.
+2. Use the tools to update the ROBORIO to the latest Version.
+3. Use the Rev Hardware manager to update the SPARK Max Motor controllers to the latest firmware.
+4. Use the Rev Hardware manager to update the NEO Vortext motor controllers to the latest firmware.
+5. Update the limelight camera to the latest firmware.
+6. Update the Pidgeon 2.0 gyro to the latest firmware.
+7.
+8.
+9.
+10.

@@ -52,12 +52,10 @@ public class RobotContainer {
 
   /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
 
-  // The driver's controller
- // XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-  // TODO DONE: Add operator and secondary controller? LINE 64/65
-   CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
-     CommandXboxController m_xboxController = new CommandXboxController( OIConstants.kDriverControllerPort );
+  /* The controller that are used to control the robot.  Initialized here. */
+  CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
+  CommandXboxController m_xboxController     = new CommandXboxController( OIConstants.kDriverControllerPort );
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -70,16 +68,15 @@ public class RobotContainer {
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_OperatorController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_OperatorController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_OperatorController.getRightX(), OIConstants.kDriveDeadband),
-                true,
-                true),
-            m_robotDrive));
+      // The left stick controls translation of the robot.
+      // Turning is controlled by the X axis of the right stick.
+      new RunCommand( () -> m_robotDrive.drive(
+        -MathUtil.applyDeadband(m_OperatorController.getLeftY(), OIConstants.kDriveDeadband),
+        -MathUtil.applyDeadband(m_OperatorController.getLeftX(), OIConstants.kDriveDeadband),
+        -MathUtil.applyDeadband(m_OperatorController.getRightX(), OIConstants.kDriveDeadband),
+        true,
+        true),
+        m_robotDrive ));
   }
 
   /**
@@ -95,7 +92,7 @@ public class RobotContainer {
   {
     m_xboxController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
 
-    // TODO: Add more button mindings here.
+    // TODO: Add more button bindings here.
   } 
 
   private void configureNewCommands()
