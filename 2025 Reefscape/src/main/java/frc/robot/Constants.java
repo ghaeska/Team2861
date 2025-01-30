@@ -42,6 +42,39 @@ public final class Constants
     public static final double k_tolerance_degrees = 2.0f;
   }
 
+  public static final class ElevatorConstants
+  {
+    /* Elevator Motor ID's */
+    public static final int k_LeftElevatorMotorCANId = 10;
+    public static final int k_RightElevatorMotorCANId = 11;
+
+    /* Elevator PID Settings */
+    public static final double k_Ele_PID_P = 0.027;
+    public static final double k_Ele_PID_I = 0;
+    public static final double k_Ele_PID_D = 0.0;
+    public static final double k_Ele_PID_FF = 0.0085;
+    public static final double k_Ele_PID_IZone = 5.0;
+    public static final double k_Ele_PID_G = 0.5;
+
+    public static final double k_Ele_MaxVelocity = 65;
+    public static final double k_Ele_MaxAcceleration = 200;
+
+    public static final int k_Ele_MaxCurrent = 40;
+
+    public static final double k_Ele_StowHeight = 0.0;
+    public static final double k_Ele_SrcHeight = 8.75;    
+    public static final double k_Ele_L1Height = 3.0;
+    public static final double k_Ele_L2Height = 5.5;
+    public static final double k_Ele_L3Height = 21.5;
+    public static final double k_Ele_L4Height = 52.5;
+    public static final double k_Ele_MaxHeight = 56.2;
+    //public static final double k_Ele_GroundAlgaeHeight = 0.0;
+    public static final double k_Ele_ScoreAlgaeHeight = 0.0;
+    //public static final double k_Ele_LowAlgaeHeight = 24.8;
+    public static final double k_Ele_HighAlgaeHeight = 40;
+
+  }
+
   // public static class Intake
   // {
   //   /* Intake Motor ID's */
