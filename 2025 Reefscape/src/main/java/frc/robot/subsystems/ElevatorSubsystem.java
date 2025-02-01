@@ -7,11 +7,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import java.util.function.Supplier;
-
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.revrobotics.RelativeEncoder;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,20 +21,15 @@ import frc.robot.Configs;
 
 public class ElevatorSubsystem extends SubsystemBase
 {
-    // Please note that somethings that were defined last year have changed this year.
-    //So instead of CANSparkMax, you need to define it as SparkMax.
-
-    //TODO: TODAY: define two motors, a left and right elevator motor.
+    //Define the Motors
     private final SparkMax m_LeftEleMotor;
     private final SparkMax m_RightEleMotor;    
 
-    //TODO: TODAY: Define spark pid controller.
+    //Define spark pid controller.
     private SparkClosedLoopController m_LeftElePIDController;
 
-    //TODO: TODAY: define a relative encoder for both elevator motors
+    //Define a relative encoder for both elevator motors
     private RelativeEncoder m_LeftEleEncoder;
-
-    //TODO: TODAY: define a Rotation 2d, to we can use it to track height. Maybe?
 
   public ElevatorSubsystem()
   {
