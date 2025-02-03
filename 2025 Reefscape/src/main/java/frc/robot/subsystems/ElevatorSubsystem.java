@@ -92,12 +92,12 @@ public class ElevatorSubsystem extends SubsystemBase
 
   private void setElePosition( double position )
   {
-    m_LeftEleMotor.getClosedLoopController().setReference(position, ControlType.kPosition );
+    m_LeftElePIDController.setReference(position, ControlType.kPosition );
+    //m_LeftEleMotor.getClosedLoopController().setReference(position, ControlType.kPosition );
   }
 
   /***************************** Commands **************************************/
-  /* Commands will go down here.  See lines 186 - 224 in ArmSubystem.java */
-
+  
   /* Lift to the coral Source Command. */
   public Command ElevatorToSourceCmd()
   {

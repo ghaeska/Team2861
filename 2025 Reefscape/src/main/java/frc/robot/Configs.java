@@ -60,6 +60,20 @@ public static final class MAXSwerveModule
         }
     }
 
+  public static final class AlgaeModule
+  {
+    public static final SparkMaxConfig AlgaeMotorConfig = new SparkMaxConfig();
+
+    static
+    {
+      /* ------------------ Algae Motor Configs. ------------------------- */
+      /* Set the idle mode to brake, so the Algae cant fall out. */
+      AlgaeMotorConfig.idleMode( IdleMode.kBrake );
+      /* set the smart current limit to 30A to prevent motor damage */
+      AlgaeMotorConfig.smartCurrentLimit( Constants.AlgaeConstants.k_Algae_MaxCurrent );
+    }
+  }
+
   public static final class ElevatorModule
   {
     public static final SparkMaxConfig ElevatorMotorCfg = new SparkMaxConfig();

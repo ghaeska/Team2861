@@ -42,6 +42,14 @@ public final class Constants
     public static final double k_tolerance_degrees = 2.0f;
   }
 
+  public static final class AlgaeConstants
+  {
+    /* Algae Motor ID's */
+    public static final int k_LeftAlgaeMotorCANId = 12;
+    public static final int k_RightAlgaeMotorCANId = 13;
+
+    public static final int k_Algae_MaxCurrent = 40;
+  }
   public static final class ElevatorConstants
   {
     /* Elevator Motor ID's */
