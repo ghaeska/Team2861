@@ -48,8 +48,44 @@ public final class Constants
     public static final int k_LeftAlgaeMotorCANId = 12;
     public static final int k_RightAlgaeMotorCANId = 13;
 
-    public static final int k_Algae_MaxCurrent = 40;
+    public static final int k_Algae_MaxCurrent = 30;
   }
+
+  public static final class CoralConstants
+  {
+    /* Coral Motor ID's */
+    public static final int k_LeftCoralMotorCANId = 15;
+    public static final int k_RightCoralMotorCANId = 16;
+    public static final int k_PivotCoralMotorCANId = 17;
+
+    public static final int k_Coral_MaxCurrent = 30;
+
+    /* Coral Beam Break Sensors */
+    public static final int k_DIO_LeftCoralSensorID = 1;
+    public static final int k_DIO_RightCoralSensorID = 2;
+
+    /* Because the Coral is on a pivot, we need to have a PID to hold the position */
+    public static final double k_PivotCoralMotorP  = 0.026;
+    public static final double k_PivotCoralMotorI  = 0.00; 
+    public static final double k_PivotCoralMotorD  = 0.00;
+    public static final double k_PivotCoralMotorFF = 0.001;
+
+    /* Absolute Encoder for knowing exact angle */
+    public static final int k_PivotCoralEncoderId = 0;
+
+    /* Absolute Encoder Offset */
+    public static final double k_PivotCoralEncoderOffset = 0.000000;
+
+    /* Pivot Angle Set points */
+    public static final Rotation2d k_PivotCoralAngleStowed = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL1 = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL2 = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL3 = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL4 = Rotation2d.fromDegrees( 0 );
+
+
+  }
+
   public static final class ElevatorConstants
   {
     /* Elevator Motor ID's */

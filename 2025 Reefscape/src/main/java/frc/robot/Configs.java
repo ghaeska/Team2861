@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -74,6 +75,34 @@ public static final class MAXSwerveModule
     }
   }
 
+
+  public static final class CoralModule
+  {
+    public static final SparkMaxConfig CoralSparkMaxConfig = new SparkMaxConfig();
+    public static final SparkFlexConfig CoralSparkFlexConfig = new SparkFlexConfig();
+
+    static
+    {
+      /* ------------------ Coral Motor Configs. ------------------------- */
+      CoralSparkMaxConfig.idleMode( IdleMode.kBrake );
+      CoralSparkMaxConfig.smartCurrentLimit( Constants.CoralConstants.k_Coral_MaxCurrent );
+
+      CoralSparkFlexConfig.idleMode( IdleMode.kBrake );
+      CoralSparkFlexConfig.smartCurrentLimit( Constants.CoralConstants.k_Coral_MaxCurrent );
+
+      CoralSparkMaxConfig.closedLoop
+      .pidf
+      (
+        Constants.CoralConstants.k_PivotCoralMotorP, 
+        Constants.CoralConstants.k_PivotCoralMotorI,
+        Constants.CoralConstants.k_PivotCoralMotorD,
+        Constants.CoralConstants.k_PivotCoralMotorFF
+      );
+    }
+
+
+  }
+
   public static final class ElevatorModule
   {
     public static final SparkMaxConfig ElevatorMotorCfg = new SparkMaxConfig();
@@ -88,10 +117,13 @@ public static final class MAXSwerveModule
       ElevatorMotorCfg.smartCurrentLimit( Constants.ElevatorConstants.k_Ele_MaxCurrent );
       /* Set the PID LOOP up for the Elevator. */
       ElevatorMotorCfg.closedLoop
-        .pidf( Constants.ElevatorConstants.k_Ele_PID_P, 
-              Constants.ElevatorConstants.k_Ele_PID_I,
-              Constants.ElevatorConstants.k_Ele_PID_D,
-              Constants.ElevatorConstants.k_Ele_PID_FF );
+        .pidf
+        ( 
+          Constants.ElevatorConstants.k_Ele_PID_P, 
+          Constants.ElevatorConstants.k_Ele_PID_I,
+          Constants.ElevatorConstants.k_Ele_PID_D,
+          Constants.ElevatorConstants.k_Ele_PID_FF 
+        );
         //.iZone( Constants.ElevatorConstants.k_Ele_PID_FF );      
     }
   }

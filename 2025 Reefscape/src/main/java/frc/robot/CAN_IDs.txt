@@ -14,14 +14,14 @@ Here is a master list of all CAN ID's that are used in our robot.
  |    7    | Back Right Turning Motor |        SwerveConstants.java            |
  |    8    | Back Right Driving Motor |        SwerveConstants.java            |
  |    9    |         Not Used         |                                        |
- |   10    |         Not Used         |           Constants.java               |
- |   11    |         Not Used         |           Constants.java               |
- |   12    |         Not Used         |           Constants.java               |
- |   13    |         Not Used         |           Constants.java               |
+ |   10    |   Left Elevator Motor    |           Constants.java               |
+ |   11    |  Right Elevator Motor    |           Constants.java               |
+ |   12    |  Left Algae Drive Motor  |           Constants.java               |
+ |   13    | Right Algae Drive Motor  |           Constants.java               |
  |   14    |         Not Used         |                                        |
- |   15    |         Not Used         |           Constants.java               |
- |   16    |         Not Used         |           Constants.java               |
- |   17    |         Not Used         |                                        |
+ |   15    |     Left Coral Motor     |           Constants.java               |
+ |   16    |    Right Coral Motor     |           Constants.java               |
+ |   17    |    Coral Pivor Motor     |           Constants.java                             |
  |   18    |         Not Used         |                                        |
  |   19    |         Not Used         |                                        |
  |   20    |       Pidgeon 2.0        |        SwerveConstants.java            |
