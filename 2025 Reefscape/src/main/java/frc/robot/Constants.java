@@ -42,116 +42,46 @@ public final class Constants
     public static final double k_tolerance_degrees = 2.0f;
   }
 
-  // public static class Intake
-  // {
-  //   /* Intake Motor ID's */
-  //   public static final int k_IntakeMotorCanId = 10;
+  public static final class ElevatorConstants
+  {
+    //TODO TODAY: I want you to name all the constants with the following format:
 
-  //   /* Intake Beam Break Digital Input ID */
-  //   public static final int k_DIO_IntakeSensorID = 0;
+    //  k_Ele_placeholder
 
-  //   /* Intake Speeds */
-  //   /* positive value ejects, negative intakes. */
-  //   public static final double k_IntakeIntakeSpeedSlow = 0.5; 
-  //   public static final double k_IntakeIntakeSpeedFast = 1.0; 
-  //   public static final double k_IntakeEjectSpeed = -0.3;
-  // }
+    //where k stands for constant
+    //where Ele signifies that its for the elevator
+    // where placeholder is replaced with what you are defining.
 
-  // public static class Shooter
-  // {
-  //   /* Shooter PID constants */
-  //   public static final double k_ShooterMotorP = 0.00025;
-  //   public static final double k_ShooterMotorI = 0.0;
-  //   public static final double k_ShooterMotorD = 0.00001;
-  //   public static final double k_ShooterMotorFF = 0.000159;
+    /* Elevator Motor ID's */
+    // TODO TODAY: Define a left elevator motor with a value of 10.  Right motor with value of 11.    
 
-  //   /* Shooter Motor ID's */
-  //   public static final int k_ShooterTopMotorCanId = 12;
-  //   public static final int k_ShooterBotMotorCanId = 13;
-
-  //   /* Shooter Min/Max Outputs */
-  //   public static final double k_ShooterMinOutput = 0;
-  //   public static final double k_ShooterMaxOutput = 1;
+    /* Elevator PID Settings */
+    // TODO TODAY: Define PID settings,
+    // P has a value of 0.027, I: 0, D: 0, FF: 0.0085
     
-  //   /* Shooter Speeds (RPM) */
-  //   public static final double k_ShooterSpeed_Speaker = 3000; //GTH:TODO need to update value
-  //   public static final double k_ShooterSpeed_Amp = 1000; //GTH:TODO need to update value
-  //   public static final double k_ShooterSpeed_Stage = 4000; //GTH:TODO need to update value
-  //   public static final double k_ShooterSpeed_Pass = 1000; //GTH:TODO need to update value
+    // TODO TODAY: Define MaxVelocity value of 65, Max Acceleration of 200.
 
-  //   // public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
-  //   // public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
-  //   // public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
-  //   // public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
-  // }
+    // TODO TODAY: Define Max current of 40.
 
-  // public static class Arm
-  // {
-  //   public static final double k_ArmGearRatio = ( 1/100 ) * ( 24/72 ); // GTH:TODO need to update with proper values. (24/54)
-  //   public static final double k_ArmPositionFactor = k_ArmGearRatio * 2.0 * Math.PI;
-  //   public static final double k_ArmVelocityFactor = k_ArmGearRatio * 2.0 * Math.PI / 60.0;
-  //   public static final double k_ArmFreeSpeed = 5676.0 * k_ArmVelocityFactor;
-  //   public static final double k_ArmZeroCosineOffset = 0.873; //GTH:TODO need to get proper angle and convert to raidans, currently at 50degrees
+    // TODO TODAY:  Create values for different heights.  we need the following defined.
+    // stow, source, L1, L2, L3, L4, Max, AlgaeScore, Algae High, Algae Low
 
-  //   public static final TrapezoidProfile.Constraints k_ArmMotionConstraint = new TrapezoidProfile.Constraints(1.0, 2.0);
-  //   public static final ArmFeedforward k_ArmFeedForward = new ArmFeedforward( 0.5, 0.25, 3.45, 0.01 );//values taken from team 3467
+  }  
 
-  //   /* Arm Motor ID's */
-  //   public static final int k_ArmLeftMotorCanId = 15;
-  //   public static final int k_ArmRightMotorCanId = 16;
-
-  //   public static final double k_ArmMinOutput = -0.5;
-  //   public static final double k_ArmMaxOutput =  0.5; //GTH:TODO need to update value
-   
-  //   /* Arm PID constants */
-  //   public static final double k_ArmMotorP  = 0.026;
-  //   public static final double k_ArmMotorI  = 0.00; 
-  //   public static final double k_ArmMotorD  = 0.00;
-  //   public static final double k_ArmMotorFF = 0.001;
-  //   public static final double k_ArmCruise  = 4.0;
-  //   public static final double k_ArmAccel   = 10;
-
-  //   /* Digital Input/Output ID's */
-  //   public static final int k_ArmEncoderId = 0;
-
-  //   /* Absolute Encoder Offset */
-  //   public static final double k_ArmEncoderOffset = 0.000000; //GTH:TODO need to get value
-
-  //   /* Pivot Angle Set Points */
-  //   //public static final double k_ArmAngleSource = 190; //GTH:TODO need to get value
-  //   public static final Rotation2d k_ArmAngleAmp    = Rotation2d.fromDegrees(160); //GTH:TODO need to update values every time chain skips
-  //   public static final Rotation2d k_ArmAngleStowed = Rotation2d.fromDegrees(222); //GTH:TODO need to update values every time chain skips
-  //   //public static final double k_ArmAngleSpeaker = 270; //GTH:TODO need to get value
-  //   //public static final double k_ArmAngleStage = 270; //GTH:TODO need to get value
-  //   //public static final double k_ArmAnglePass = 270; //GTH:TODO need to get value
-
-  // }
-
-  // public static class Index
-  // {
-  //   /* Index Motor ID's */
-  //   public static final int k_IndexMotorCanId = 11;
-
-  //   /* Index Beam Break Digital Input ID */
-  //   public static final int k_DIO_IndexSensorID = 1;
-    
-  //   /* Index Motor Speeds */
-  //   public static final double k_IndexForwardSpeed =  0.3;
-  //   public static final double k_IndexReverseSpeed = -0.3;
-  // }
-
-  public static final class AutoConstants {
+  public static final class AutoConstants 
+  {
     public static final double kMaxSpeedMetersPerSecond = 3;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
-}
+  }
 
-public static final class OIConstants {
-  public static final int kDriverControllerPort = 0;
-  public static final double kDriveDeadband = 0.05;
-  public static final double k_tolerance_degrees = 2.0f;
-}
+  public static final class OIConstants 
+  {
+    public static final int kDriverControllerPort = 0;
+    public static final double kDriveDeadband = 0.05;
+    public static final double k_tolerance_degrees = 2.0f;
+  }
 
 
 
