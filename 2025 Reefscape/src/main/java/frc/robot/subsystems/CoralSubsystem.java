@@ -55,19 +55,61 @@ public class CoralSubsystem extends SubsystemBase
     /* Setup the motor Encoders. */
     m_LeftCoralEncoder = m_LeftCoralMotor.getEncoder();
     m_rightCoralEncoder = m_RightCoralMotor.getEncoder();
-    
 
+    /* Configure the left motor */
+    m_LeftCoralMotor.configure
+    (
+      Configs.CoralModule.CoralSparkFlexConfig, 
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters 
+    );
 
-
-
-
+    /* Configure the Pivot motor. */
+    m_PivotCoralMotor.configure
+    (
+      Configs.CoralModule.CoralSparkMaxConfig, 
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters 
+    );
 
   }
+/*********************** Helper Functions for Coral ***************************/
+  public void runLeftCoralMotor( double voltage )
+  {
+    m_LeftCoralMotor.set( voltage );
+  }
 
+  public void runPivotCoralMotor( double voltage )
+  {
+    m_PivotCoralMotor.set( voltage );
+  }
 
+  public double getCoralPivotPosition()
+  {
+    return m_LeftCoralEncoder.getPosition();
+  }
 
+  public void resetCoralPivotPosition()
+  {
+    m_LeftCoralEncoder.setPosition( 0 );
+  }
 
+  public void stopCoralPivot()
+  {
+    m_PivotCoralMotor.set( 0 );
+  }
 
+  public void stopLeftCoral()
+  {
+    m_LeftCoralMotor.set( 0 );
+  }
+
+  private void setCoralPivotPosition( double position )
+  {
+    m_PivotCoralPIDController.setReference( position, ControlType.kPosition );
+  }
+
+/****************************** Commands **************************************/
 
 
 

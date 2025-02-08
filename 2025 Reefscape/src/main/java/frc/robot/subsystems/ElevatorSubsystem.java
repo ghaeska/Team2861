@@ -134,7 +134,15 @@ public class ElevatorSubsystem extends SubsystemBase
     return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_ScoreAlgaeHeight ), this );
   }
 
+  public Command ElevatorManualUp( double speed )
+  {
+    return new RunCommand( ()->this.runElevator( speed ), this );
+  }
 
+  public Command ElevatorManualDown( double speed )
+  {
+    return new RunCommand( ()->this.runElevator( -speed ), this );
+  }
 
   /* Manual Lifting of Elevator Command. */
   public Command ElevatorManualCmd(CommandXboxController controller )

@@ -21,6 +21,7 @@ import frc.robot.Constants.DriveConstants;
 // import frc.robot.Constants.OIConstants;
 import frc.robot.SwerveConstants.OIConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -59,8 +60,8 @@ public class RobotContainer {
 
 
   /* The controller that are used to control the robot.  Initialized here. */
+  CommandXboxController m_DriverController = new CommandXboxController( OIConstants.kDriverControllerPort );
   CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
-  CommandXboxController m_xboxController     = new CommandXboxController( OIConstants.kDriverControllerPort );
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -76,9 +77,9 @@ public class RobotContainer {
       // The left stick controls translation of the robot.
       // Turning is controlled by the X axis of the right stick.
       new RunCommand( () -> m_robotDrive.drive(
-        -MathUtil.applyDeadband(m_OperatorController.getLeftY(), OIConstants.kDriveDeadband),
-        -MathUtil.applyDeadband(m_OperatorController.getLeftX(), OIConstants.kDriveDeadband),
-        -MathUtil.applyDeadband(m_OperatorController.getRightX(), OIConstants.kDriveDeadband),
+        -MathUtil.applyDeadband(m_DriverController.getLeftY(), OIConstants.kDriveDeadband),
+        -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband),
+        -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband),
         true,
         true),
         m_robotDrive ));
@@ -95,7 +96,37 @@ public class RobotContainer {
    */
   private void configureButtonBindings() 
   {
-    m_xboxController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
+    /************************* DriveTrain Commands ****************************/
+    /* Command to set wheels in X formation when right stick gets pushed down. */
+    m_DriverController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
+
+    /* Command to reset the robot heading when "start" gets pushed. */
+    m_DriverController.start().onTrue(new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true));
+
+    /************************** Elevator Commands *****************************/
+    /* Command to run the elevator with the left joystick of the op controller. */
+    /* *****Note: Must hold left trigger to do so. */
+    m_OperatorController.leftTrigger().whileTrue( m_Elevator.ElevatorManualCmd( m_OperatorController )  );
+
+    /* Command to reset the elevator encoders. */
+    m_OperatorController.povLeft().onTrue( new InstantCommand( m_Elevator::resetElevatorPosition ) );
+
+    /* Command to run elevator up with POV hat up. */
+    m_OperatorController.povUp().onTrue( m_Elevator.ElevatorManualUp( .1 ) );
+
+    /* Command to run the elevator down with POV hat down. */
+    m_OperatorController.povDown().onTrue( m_Elevator.ElevatorManualDown( .1 ) );
+
+
+
+
+    /*************************** Algae Commands *******************************/
+
+    /*************************** Coral Commands *******************************/
+
+    /*************************** Climb Commands *******************************/
+
+
 
     // TODO: Add more button bindings here.
   } 
