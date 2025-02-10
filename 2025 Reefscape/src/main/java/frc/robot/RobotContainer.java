@@ -109,13 +109,13 @@ public class RobotContainer {
     m_OperatorController.leftTrigger().whileTrue( m_Elevator.ElevatorManualCmd( m_OperatorController )  );
 
     /* Command to reset the elevator encoders. */
-    m_OperatorController.povLeft().onTrue( new InstantCommand( m_Elevator::resetElevatorPosition ) );
+    m_OperatorController.povLeft().whileTrue( new InstantCommand( m_Elevator::resetElevatorPosition ) );
 
     /* Command to run elevator up with POV hat up. */
-    m_OperatorController.povUp().onTrue( m_Elevator.ElevatorManualUp( .1 ) );
+    m_OperatorController.povUp().whileTrue( m_Elevator.ElevatorManualUp( .1 ) );
 
     /* Command to run the elevator down with POV hat down. */
-    m_OperatorController.povDown().onTrue( m_Elevator.ElevatorManualDown( .1 ) );
+    m_OperatorController.povDown().whileTrue( m_Elevator.ElevatorManualDown( .1 ) );
 
 
 

@@ -58,7 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase
       Configs.ElevatorModule.ElevatorMotorCfg.follow
       ( 
         Constants.ElevatorConstants.k_LeftElevatorMotorCANId, 
-        true
+        false
       ),
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
