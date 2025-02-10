@@ -90,7 +90,16 @@ public static final class MAXSwerveModule
       CoralSparkFlexConfig.idleMode( IdleMode.kBrake );
       CoralSparkFlexConfig.smartCurrentLimit( Constants.CoralConstants.k_Coral_MaxCurrent );
 
+      CoralSparkMaxConfig.absoluteEncoder
+      .inverted( false )
+      .positionConversionFactor( 360 );
+
       CoralSparkMaxConfig.closedLoop
+      .feedbackSensor( FeedbackSensor.kAbsoluteEncoder )
+      .outputRange( Constants.CoralConstants.k_PivotMinOutput, Constants.CoralConstants.k_PivotMaxOutput )
+      .positionWrappingEnabled( true )
+      .positionWrappingMinInput( 0.0 )
+      .positionWrappingMaxInput( 360 )
       .pidf
       (
         Constants.CoralConstants.k_PivotCoralMotorP, 
@@ -98,6 +107,7 @@ public static final class MAXSwerveModule
         Constants.CoralConstants.k_PivotCoralMotorD,
         Constants.CoralConstants.k_PivotCoralMotorFF
       );
+      
     }
 
 

@@ -13,8 +13,6 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.AlgaeConstants;
 import frc.robot.Configs;
@@ -27,6 +25,7 @@ public class AlgaeSubsystem extends SubsystemBase
 
   // Define a relative encoder for algae motors
   private RelativeEncoder m_LeftAlgaeEncoder;
+  private RelativeEncoder m_RightAlgaeEncoder;
 
   public AlgaeSubsystem()
   {
@@ -36,6 +35,7 @@ public class AlgaeSubsystem extends SubsystemBase
 
     /* Need to setup an encoder, dont think we will need one. */
     m_LeftAlgaeEncoder = m_LeftAlgaeMotor.getEncoder();
+    m_RightAlgaeEncoder = m_RightAlgaeMotor.getEncoder();
 
     /* No need to setup a PID loop, shouldnt need one. */
 
@@ -63,6 +63,20 @@ public class AlgaeSubsystem extends SubsystemBase
 
 
   }
+
+/************************** Smart Dashboard Values ****************************/
+@Override
+  public void periodic() 
+  {
+    /* Print out the Algae Encoder positions and velocities */
+    SmartDashboard.putNumber("LeftAlgaeEncoder:", m_LeftAlgaeEncoder.getPosition() );
+    SmartDashboard.putNumber("LeftAlgaeSpeed:", m_LeftAlgaeEncoder.getVelocity() );
+
+    SmartDashboard.putNumber("RightAlgaeEncoder:", m_RightAlgaeEncoder.getPosition() );
+    SmartDashboard.putNumber("RightAlgaeSpeed:", m_RightAlgaeEncoder.getVelocity() );
+
+}
+
 
   /********************* Helper Functions for Algae *************************/
   public void runAlgae( double voltage )

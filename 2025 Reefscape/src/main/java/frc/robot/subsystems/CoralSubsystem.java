@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,10 +17,9 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants.CoralConstants;;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Configs;
 
 
@@ -72,7 +72,27 @@ public class CoralSubsystem extends SubsystemBase
       PersistMode.kPersistParameters 
     );
 
+    m_PivotCoralEncoder = m_PivotCoralMotor.getAbsoluteEncoder();
+
+    m_PivotCoralPIDController = m_LeftCoralMotor.getClosedLoopController();
+
   }
+
+/************************** Smart Dashboard Values ****************************/
+@Override
+  public void periodic() 
+  {
+    /* Print out the Coral Encoder positions and velocities */
+    SmartDashboard.putNumber("LeftCoralEncoder:", m_LeftCoralEncoder.getPosition() );
+    SmartDashboard.putNumber("LeftCoralSpeed:", m_LeftCoralEncoder.getVelocity() );
+
+    SmartDashboard.putNumber("RightCoralEncoder:", m_rightCoralEncoder.getPosition() );
+    SmartDashboard.putNumber("RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );
+
+    SmartDashboard.putNumber("PivotAbsoluteEncoder:", m_PivotCoralEncoder.getPosition() );
+    SmartDashboard.putNumber("PivotCoralSpeed:", m_PivotCoralEncoder.getVelocity() );
+  }
+
 /*********************** Helper Functions for Coral ***************************/
   public void runLeftCoralMotor( double voltage )
   {

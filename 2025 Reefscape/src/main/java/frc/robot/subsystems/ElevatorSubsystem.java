@@ -30,6 +30,7 @@ public class ElevatorSubsystem extends SubsystemBase
 
     //Define a relative encoder for both elevator motors
     private RelativeEncoder m_LeftEleEncoder;
+    private RelativeEncoder m_RightEleEncoder;
 
   public ElevatorSubsystem()
   {
@@ -39,6 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase
 
     /* Setup the Elevator Encoder. */
     m_LeftEleEncoder = m_LeftEleMotor.getEncoder();
+    m_RightEleEncoder = m_RightEleMotor.getEncoder();
 
     /* Setup the Elevator PID Loop. */
     m_LeftElePIDController = m_LeftEleMotor.getClosedLoopController();
@@ -63,8 +65,20 @@ public class ElevatorSubsystem extends SubsystemBase
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
-  }  
-  /********************* Helper Functions for Elevator *************************/
+  }
+/************************** Smart Dashboard Values ****************************/
+@Override
+  public void periodic() 
+  {
+    /* Print out the Elevator Encoder positions. */
+    SmartDashboard.putNumber("RightElevatorPosition:", m_RightEleEncoder.getPosition() );
+    SmartDashboard.putNumber("LeftElevatorPosition:", m_LeftEleEncoder.getPosition() );
+  }
+
+
+
+
+/********************* Helper Functions for Elevator **************************/
     
   public void runElevator( double voltage )
   {

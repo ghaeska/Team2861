@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -70,6 +69,9 @@ public final class Constants
     public static final double k_PivotCoralMotorD  = 0.00;
     public static final double k_PivotCoralMotorFF = 0.001;
 
+    public static final double k_PivotMinOutput = -0.5;
+    public static final double k_PivotMaxOutput = 0.5;
+
     /* Absolute Encoder for knowing exact angle */
     public static final int k_PivotCoralEncoderId = 0;
 
@@ -119,48 +121,7 @@ public final class Constants
 
   }
 
-  // public static class Intake
-  // {
-  //   /* Intake Motor ID's */
-  //   public static final int k_IntakeMotorCanId = 10;
-
-  //   /* Intake Beam Break Digital Input ID */
-  //   public static final int k_DIO_IntakeSensorID = 0;
-
-  //   /* Intake Speeds */
-  //   /* positive value ejects, negative intakes. */
-  //   public static final double k_IntakeIntakeSpeedSlow = 0.5; 
-  //   public static final double k_IntakeIntakeSpeedFast = 1.0; 
-  //   public static final double k_IntakeEjectSpeed = -0.3;
-  // }
-
-  // public static class Shooter
-  // {
-  //   /* Shooter PID constants */
-  //   public static final double k_ShooterMotorP = 0.00025;
-  //   public static final double k_ShooterMotorI = 0.0;
-  //   public static final double k_ShooterMotorD = 0.00001;
-  //   public static final double k_ShooterMotorFF = 0.000159;
-
-  //   /* Shooter Motor ID's */
-  //   public static final int k_ShooterTopMotorCanId = 12;
-  //   public static final int k_ShooterBotMotorCanId = 13;
-
-  //   /* Shooter Min/Max Outputs */
-  //   public static final double k_ShooterMinOutput = 0;
-  //   public static final double k_ShooterMaxOutput = 1;
-    
-  //   /* Shooter Speeds (RPM) */
-  //   public static final double k_ShooterSpeed_Speaker = 3000; //GTH:TODO need to update value
-  //   public static final double k_ShooterSpeed_Amp = 1000; //GTH:TODO need to update value
-  //   public static final double k_ShooterSpeed_Stage = 4000; //GTH:TODO need to update value
-  //   public static final double k_ShooterSpeed_Pass = 1000; //GTH:TODO need to update value
-
-  //   // public static final double k_ShooterSpeed_Speaker = 0.4; //GTH:TODO need to update value
-  //   // public static final double k_ShooterSpeed_Amp = 0.4; //GTH:TODO need to update value
-  //   // public static final double k_ShooterSpeed_Stage = 0.4; //GTH:TODO need to update value
-  //   // public static final double k_ShooterSpeed_Pass = 0.4; //GTH:TODO need to update value
-  // }
+  
 
   // public static class Arm
   // {

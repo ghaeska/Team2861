@@ -28,10 +28,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
+
+
 /* Subsystem Imports */
 
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem;
 
 /* Pathplanner Calls */
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -50,10 +53,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  // TODO: Elevator subsystem here.
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
   // TODO: coral manipulator system here.
-  // TODO: algea manipulator system here.
+  private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
   // TODO: climb system manipulator here.
 
   /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
@@ -121,6 +123,10 @@ public class RobotContainer {
 
 
     /*************************** Algae Commands *******************************/
+    m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
+
+    m_OperatorController.y().whileTrue( m_Algae.IntakeAlgaeReverseCommand() );
+
 
     /*************************** Coral Commands *******************************/
 
