@@ -121,9 +121,6 @@ public final class Constants
 
   }
 
-
-  }  
-
   public static final class AutoConstants 
   {
     public static final double kMaxSpeedMetersPerSecond = 3;
@@ -138,7 +135,5 @@ public final class Constants
     public static final double kDriveDeadband = 0.05;
     public static final double k_tolerance_degrees = 2.0f;
   }
-
-
 
 }
