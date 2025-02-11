@@ -82,7 +82,35 @@ public class ElevatorSubsystem extends SubsystemBase
     
   public void runElevator( double voltage )
   {
-    m_LeftEleMotor.set( voltage );
+    if( m_LeftEleEncoder.getPosition() > Constants.ElevatorConstants.k_Ele_MaxHeight )
+    {
+      if( voltage > 0 )
+      {
+        m_LeftEleMotor.set( 0 );
+      }
+      else
+      {
+        m_LeftEleMotor.set( voltage );
+      }
+      
+    }
+    else if( m_LeftEleEncoder.getPosition() < 0 )
+    {
+      if( voltage < 0 )
+      {
+        m_LeftEleMotor.set( 0 );
+      }
+      else
+      {
+        m_LeftEleMotor.set( voltage );
+      }
+
+    }
+    else
+    {
+       m_LeftEleMotor.set( voltage );
+    }
+   
   }
   public double getElevatorPosition()
   {
@@ -97,6 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase
   public void resetElevatorPosition()
   {
     m_LeftEleEncoder.setPosition( 0 );
+    m_RightEleEncoder.setPosition( 0 );
   }
 
   public void stopElevator()
@@ -162,6 +191,6 @@ public class ElevatorSubsystem extends SubsystemBase
   public Command ElevatorManualCmd(CommandXboxController controller )
   {
     //GTH TODO: update this so that the controller can move the elevator faster.
-    return new RunCommand(()->this.runElevator( -controller.getLeftY() * .1 ), this );
+    return new RunCommand(()->this.runElevator( -controller.getLeftY() * 1.0 ), this );
   }
 }

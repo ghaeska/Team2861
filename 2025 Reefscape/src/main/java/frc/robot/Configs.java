@@ -125,6 +125,9 @@ public static final class MAXSwerveModule
       ElevatorMotorCfg.idleMode( IdleMode.kBrake );
       /* Set the Smart Current limit to 40A to prevent motor damage. */
       ElevatorMotorCfg.smartCurrentLimit( Constants.ElevatorConstants.k_Ele_MaxCurrent );
+      
+      ElevatorMotorCfg.inverted( true );
+      
       /* Set the PID LOOP up for the Elevator. */
       ElevatorMotorCfg.closedLoop
         .pidf
@@ -134,7 +137,9 @@ public static final class MAXSwerveModule
           Constants.ElevatorConstants.k_Ele_PID_D,
           Constants.ElevatorConstants.k_Ele_PID_FF 
         );
-        //.iZone( Constants.ElevatorConstants.k_Ele_PID_FF );      
+
+      //ElevatorMotorCfg.encoder
+      //.inverted( true );
     }
   }
 }

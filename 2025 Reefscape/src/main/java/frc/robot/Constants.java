@@ -113,7 +113,7 @@ public final class Constants
     public static final double k_Ele_L2Height = 5.5;
     public static final double k_Ele_L3Height = 21.5;
     public static final double k_Ele_L4Height = 52.5;
-    public static final double k_Ele_MaxHeight = 56.2;
+    public static final double k_Ele_MaxHeight = 84;
     //public static final double k_Ele_GroundAlgaeHeight = 0.0;
     public static final double k_Ele_ScoreAlgaeHeight = 0.0;
     //public static final double k_Ele_LowAlgaeHeight = 24.8;

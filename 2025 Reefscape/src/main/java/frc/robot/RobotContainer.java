@@ -55,7 +55,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
   // TODO: coral manipulator system here.
-  private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
+  //private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
   // TODO: climb system manipulator here.
 
   /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
@@ -123,9 +123,9 @@ public class RobotContainer {
 
 
     /*************************** Algae Commands *******************************/
-    m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
+    //m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
 
-    m_OperatorController.y().whileTrue( m_Algae.IntakeAlgaeReverseCommand() );
+    //m_OperatorController.y().whileTrue( m_Algae.IntakeAlgaeReverseCommand() );
 
 
     /*************************** Coral Commands *******************************/
