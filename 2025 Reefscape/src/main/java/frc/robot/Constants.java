@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -42,29 +41,86 @@ public final class Constants
     public static final double k_tolerance_degrees = 2.0f;
   }
 
+  public static final class AlgaeConstants
+  {
+    /* Algae Motor ID's */
+    public static final int k_LeftAlgaeMotorCANId = 12;
+    public static final int k_RightAlgaeMotorCANId = 13;
+
+    public static final int k_Algae_MaxCurrent = 20;
+  }
+
+  public static final class CoralConstants
+  {
+    /* Coral Motor ID's */
+    public static final int k_LeftCoralMotorCANId = 15;
+    public static final int k_RightCoralMotorCANId = 16;
+    public static final int k_PivotCoralMotorCANId = 17;
+
+    public static final int k_Coral_MaxCurrent = 30;
+
+    /* Coral Beam Break Sensors */
+    public static final int k_DIO_LeftCoralSensorID = 1;
+    public static final int k_DIO_RightCoralSensorID = 2;
+
+    /* Because the Coral is on a pivot, we need to have a PID to hold the position */
+    public static final double k_PivotCoralMotorP  = 0.026;
+    public static final double k_PivotCoralMotorI  = 0.00; 
+    public static final double k_PivotCoralMotorD  = 0.00;
+    public static final double k_PivotCoralMotorFF = 0.001;
+
+    public static final double k_PivotMinOutput = -0.5;
+    public static final double k_PivotMaxOutput = 0.5;
+
+    /* Absolute Encoder for knowing exact angle */
+    public static final int k_PivotCoralEncoderId = 0;
+
+    /* Absolute Encoder Offset */
+    public static final double k_PivotCoralEncoderOffset = 0.000000;
+
+    /* Pivot Angle Set points */
+    public static final Rotation2d k_PivotCoralAngleStowed = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL1 = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL2 = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL3 = Rotation2d.fromDegrees( 0 );
+    public static final Rotation2d k_PivotCoralAngleL4 = Rotation2d.fromDegrees( 0 );
+
+
+  }
+
   public static final class ElevatorConstants
   {
-    //TODO TODAY: I want you to name all the constants with the following format:
-
-    //  k_Ele_placeholder
-
-    //where k stands for constant
-    //where Ele signifies that its for the elevator
-    // where placeholder is replaced with what you are defining.
-
     /* Elevator Motor ID's */
-    // TODO TODAY: Define a left elevator motor with a value of 10.  Right motor with value of 11.    
+    public static final int k_LeftElevatorMotorCANId = 10;
+    public static final int k_RightElevatorMotorCANId = 11;
 
     /* Elevator PID Settings */
-    // TODO TODAY: Define PID settings,
-    // P has a value of 0.027, I: 0, D: 0, FF: 0.0085
-    
-    // TODO TODAY: Define MaxVelocity value of 65, Max Acceleration of 200.
+    public static final double k_Ele_PID_P = 0.027;
+    public static final double k_Ele_PID_I = 0;
+    public static final double k_Ele_PID_D = 0.0;
+    public static final double k_Ele_PID_FF = 0.0085;
+    public static final double k_Ele_PID_IZone = 5.0;
+    public static final double k_Ele_PID_G = 0.5;
 
-    // TODO TODAY: Define Max current of 40.
+    public static final double k_Ele_MaxVelocity = 65;
+    public static final double k_Ele_MaxAcceleration = 200;
 
-    // TODO TODAY:  Create values for different heights.  we need the following defined.
-    // stow, source, L1, L2, L3, L4, Max, AlgaeScore, Algae High, Algae Low
+    public static final int k_Ele_MaxCurrent = 40;
+
+    public static final double k_Ele_StowHeight = 0.0;
+    public static final double k_Ele_SrcHeight = 8.75;    
+    public static final double k_Ele_L1Height = 3.0;
+    public static final double k_Ele_L2Height = 5.5;
+    public static final double k_Ele_L3Height = 21.5;
+    public static final double k_Ele_L4Height = 52.5;
+    public static final double k_Ele_MaxHeight = 84;
+    //public static final double k_Ele_GroundAlgaeHeight = 0.0;
+    public static final double k_Ele_ScoreAlgaeHeight = 0.0;
+    //public static final double k_Ele_LowAlgaeHeight = 24.8;
+    public static final double k_Ele_HighAlgaeHeight = 40;
+
+  }
+
 
   }  
 

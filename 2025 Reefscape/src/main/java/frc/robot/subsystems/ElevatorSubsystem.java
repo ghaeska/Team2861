@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.SwerveConstants.OIConstants;
+import edu.wpi.first.math.MathUtil;
+
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Configs;
 
@@ -30,16 +33,17 @@ public class ElevatorSubsystem extends SubsystemBase
 
     //Define a relative encoder for both elevator motors
     private RelativeEncoder m_LeftEleEncoder;
-
+    private RelativeEncoder m_RightEleEncoder;
+    
   public ElevatorSubsystem()
   {
     /* Assign the CAN Id's to the motors for the elevator. */
-    //TODO TODAY: use the defines from constants.java to have the motor ID's here.
-    m_LeftEleMotor  = new SparkMax( Constants.ElevatorConstants./*leftmotorplaceholder*/, MotorType.kBrushless );
-    m_RightEleMotor = new SparkMax( Constants.ElevatorConstants./*rightmotorplaceholder*/, MotorType.kBrushless );
+    m_LeftEleMotor  = new SparkMax( Constants.ElevatorConstants.k_LeftElevatorMotorCANId, MotorType.kBrushless );
+    m_RightEleMotor = new SparkMax( Constants.ElevatorConstants.k_RightElevatorMotorCANId, MotorType.kBrushless );
 
     /* Setup the Elevator Encoder. */
     m_LeftEleEncoder = m_LeftEleMotor.getEncoder();
+    m_RightEleEncoder = m_RightEleMotor.getEncoder();
 
     /* Setup the Elevator PID Loop. */
     m_LeftElePIDController = m_LeftEleMotor.getClosedLoopController();
@@ -58,19 +62,58 @@ public class ElevatorSubsystem extends SubsystemBase
       /* The right motor has to follow the left, set that up. */
       Configs.ElevatorModule.ElevatorMotorCfg.follow
       ( 
-        //TODO TODAY: change this to the right motor ID
-        Constants.ElevatorConstants./*rightmotorplaceholder*/, 
-        true
+        Constants.ElevatorConstants.k_LeftElevatorMotorCANId, 
+        false
       ),
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
-  }  
-  /********************* Helper Functions for Elevator *************************/
+  }
+/************************** Smart Dashboard Values ****************************/
+@Override
+  public void periodic() 
+  {
+    /* Print out the Elevator Encoder positions. */
+    SmartDashboard.putNumber("RightElevatorPosition:", m_RightEleEncoder.getPosition() );
+    SmartDashboard.putNumber("LeftElevatorPosition:", m_LeftEleEncoder.getPosition() );
+  }
+
+
+
+
+/********************* Helper Functions for Elevator **************************/
     
   public void runElevator( double voltage )
   {
-    m_LeftEleMotor.set( voltage );
+    if( m_LeftEleEncoder.getPosition() > Constants.ElevatorConstants.k_Ele_MaxHeight )
+    {
+      if( voltage > 0 )
+      {
+        m_LeftEleMotor.set( 0 );
+      }
+      else
+      {
+        m_LeftEleMotor.set( voltage );
+      }
+      
+    }
+    else if( m_LeftEleEncoder.getPosition() < 0 )
+    {
+      if( voltage < 0 )
+      {
+        m_LeftEleMotor.set( 0 );
+      }
+      else
+      {
+        m_LeftEleMotor.set( voltage );
+      }
+
+    }
+    else
+    {
+       m_LeftEleMotor.set( voltage );
+    }
+   
   }
   public double getElevatorPosition()
   {
@@ -85,6 +128,7 @@ public class ElevatorSubsystem extends SubsystemBase
   public void resetElevatorPosition()
   {
     m_LeftEleEncoder.setPosition( 0 );
+    m_RightEleEncoder.setPosition( 0 );
   }
 
   public void stopElevator()
@@ -99,65 +143,69 @@ public class ElevatorSubsystem extends SubsystemBase
   }
 
   /***************************** Commands **************************************/
-
-  /*TODO TODAY:  All commands below need to be created.
-   all command run in the following format:
-
-    return new RunCommand(()->this.*FunctionFromAbove*( *DataThatFunctionNeeds* ), this );
-
-    Note: *FunctionFromAbove* is probably going to mainly be setElePosition()
-          and *DataThatFunctionNeeds* is a position height.  That is something you
-          are going to have defined in the constants.java file.  Something like:
-          ElevatorConstants.k_Ele_SrcHeight
-  */
+  
   /* Lift to the coral Source Command. */
   public Command ElevatorToSourceCmd()
   {
-
+    return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_SrcHeight ), this );
   }
-  
   /* Lift to L1 reef Command. */
   public Command ElevatorToL1Cmd()
   {
-
+    return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_L1Height ), this );
   }
-
   /* Lift to L2 reef Command. */
   public Command ElevatorToL2Cmd()
   {
-
+    return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_L2Height ), this );
   }
-
   /* Lift to L3 reef Command. */
   public Command ElevatorToL3Cmd()
   {
-
+    return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_L3Height ), this );
   }
-
   /* Lift to L4 reef Command. */
   public Command ElevatorToL4Cmd()
   {
-
+    return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_L4Height ), this );
   }
-
   /* Lift to top Algea in reef Command. */
   public Command ElevatorToTopAlgaeCmd()
   {
-
+    return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_HighAlgaeHeight ), this );
   }
-
   /* Lift to Proccessor Command. */
   public Command ElevatorToProcessorCmd()
   {
-    
+    return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_ScoreAlgaeHeight ), this );
   }
-
-
+  /* Manual Up with button Command */
+  public Command ElevatorManualUp( double speed )
+  {
+    return new RunCommand( ()->this.runElevator( speed ), this );
+  }
+  /* Manual Down with Button Command */
+  public Command ElevatorManualDown( double speed )
+  {
+    return new RunCommand( ()->this.runElevator( -speed ), this );
+  }
 
   /* Manual Lifting of Elevator Command. */
   public Command ElevatorManualCmd(CommandXboxController controller )
   {
-    //GTH TODO: update this so that the controller can move the elevator faster.
-    return new RunCommand(()->this.runElevator( -controller.getLeftY() * .1 ), this );
+    return new RunCommand
+    (
+      () -> this.runElevator
+      ( 
+        -MathUtil.applyDeadband
+        (
+          controller.getLeftY(), 
+          OIConstants.kDriveDeadband
+        ) 
+        * 1.0
+      ), 
+      this 
+    );
+
   }
 }

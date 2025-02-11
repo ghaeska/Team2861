@@ -6,7 +6,6 @@ import java.security.Key;
 //import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /* REV Robotics Imports */
-//import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -47,7 +46,7 @@ public final class SwerveConstants
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(24.0);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(24.0);
+    public static final double kWheelBase = Units.inchesToMeters(33.0);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(  kWheelBase / 2,  kTrackWidth / 2 ),
