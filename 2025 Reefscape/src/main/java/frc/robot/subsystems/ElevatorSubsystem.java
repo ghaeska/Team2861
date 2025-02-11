@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase
     //Define a relative encoder for both elevator motors
     private RelativeEncoder m_LeftEleEncoder;
     private RelativeEncoder m_RightEleEncoder;
-
+    
   public ElevatorSubsystem()
   {
     /* Assign the CAN Id's to the motors for the elevator. */
@@ -206,5 +206,6 @@ public class ElevatorSubsystem extends SubsystemBase
       ), 
       this 
     );
+
   }
 }
