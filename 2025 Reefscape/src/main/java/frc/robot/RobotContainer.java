@@ -31,10 +31,10 @@ import java.util.List;
 
 
 /* Subsystem Imports */
-
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.CoralSubsystem;
 
 /* Pathplanner Calls */
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -54,8 +54,8 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
-  // TODO: coral manipulator system here.
-  //private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
+  private final CoralSubsystem m_coral = new CoralSubsystem();
+  private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
   // TODO: climb system manipulator here.
 
   /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
@@ -114,21 +114,25 @@ public class RobotContainer {
     m_OperatorController.povLeft().whileTrue( new InstantCommand( m_Elevator::resetElevatorPosition ) );
 
     /* Command to run elevator up with POV hat up. */
-    m_OperatorController.povUp().whileTrue( m_Elevator.ElevatorManualUp( .1 ) );
+    //m_OperatorController.povUp().whileTrue( m_Elevator.ElevatorManualUp( .1 ) );
 
     /* Command to run the elevator down with POV hat down. */
-    m_OperatorController.povDown().whileTrue( m_Elevator.ElevatorManualDown( .1 ) );
+    //m_OperatorController.povDown().whileTrue( m_Elevator.ElevatorManualDown( .1 ) );
 
 
 
 
     /*************************** Algae Commands *******************************/
-    //m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
+    m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
+    m_OperatorController.x().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
 
-    //m_OperatorController.y().whileTrue( m_Algae.IntakeAlgaeReverseCommand() );
+    m_OperatorController.y().whileTrue( m_Algae.IntakeAlgaeReverseCommand() );
+    m_OperatorController.y().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
 
 
     /*************************** Coral Commands *******************************/
+
+    m_OperatorController.rightTrigger().whileTrue(m_coral.CoralPivotCmd( m_OperatorController ) );
 
     /*************************** Climb Commands *******************************/
 

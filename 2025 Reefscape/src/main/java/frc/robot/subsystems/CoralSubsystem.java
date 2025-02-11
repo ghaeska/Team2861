@@ -19,6 +19,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.SwerveConstants.OIConstants;
+import edu.wpi.first.math.MathUtil;
+
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Configs;
 
@@ -133,6 +137,22 @@ public class CoralSubsystem extends SubsystemBase
 
 
 
-
+  /* Manual Lifing of Coral Pivot Command */
+  public Command CoralPivotCmd( CommandXboxController controller )
+  {
+    return new RunCommand
+    ( 
+      () -> this.runPivotCoralMotor
+      (
+        -MathUtil.applyDeadband
+        (
+          controller.getRightY(), 
+          OIConstants.kDriveDeadband
+        ) 
+        * 1.0 
+      ), 
+      this 
+    );
+  }
 
 }

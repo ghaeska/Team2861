@@ -179,12 +179,12 @@ public class ElevatorSubsystem extends SubsystemBase
   {
     return new RunCommand(()->this.setElePosition( ElevatorConstants.k_Ele_ScoreAlgaeHeight ), this );
   }
-
+  /* Manual Up with button Command */
   public Command ElevatorManualUp( double speed )
   {
     return new RunCommand( ()->this.runElevator( speed ), this );
   }
-
+  /* Manual Down with Button Command */
   public Command ElevatorManualDown( double speed )
   {
     return new RunCommand( ()->this.runElevator( -speed ), this );
@@ -193,6 +193,18 @@ public class ElevatorSubsystem extends SubsystemBase
   /* Manual Lifting of Elevator Command. */
   public Command ElevatorManualCmd(CommandXboxController controller )
   {
-    return new RunCommand(()->this.runElevator( -MathUtil.applyDeadband(controller.getLeftY(), OIConstants.kDriveDeadband) * 1.0 ), this );
+    return new RunCommand
+    (
+      () -> this.runElevator
+      ( 
+        -MathUtil.applyDeadband
+        (
+          controller.getLeftY(), 
+          OIConstants.kDriveDeadband
+        ) 
+        * 1.0
+      ), 
+      this 
+    );
   }
 }

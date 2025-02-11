@@ -47,7 +47,7 @@ public final class Constants
     public static final int k_LeftAlgaeMotorCANId = 12;
     public static final int k_RightAlgaeMotorCANId = 13;
 
-    public static final int k_Algae_MaxCurrent = 30;
+    public static final int k_Algae_MaxCurrent = 20;
   }
 
   public static final class CoralConstants
