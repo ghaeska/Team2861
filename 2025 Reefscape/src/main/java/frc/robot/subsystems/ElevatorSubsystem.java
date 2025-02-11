@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.SwerveConstants.OIConstants;
+import edu.wpi.first.math.MathUtil;
+
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Configs;
 
@@ -190,7 +193,6 @@ public class ElevatorSubsystem extends SubsystemBase
   /* Manual Lifting of Elevator Command. */
   public Command ElevatorManualCmd(CommandXboxController controller )
   {
-    //GTH TODO: update this so that the controller can move the elevator faster.
-    return new RunCommand(()->this.runElevator( -controller.getLeftY() * 1.0 ), this );
+    return new RunCommand(()->this.runElevator( -MathUtil.applyDeadband(controller.getLeftY(), OIConstants.kDriveDeadband) * 1.0 ), this );
   }
 }
