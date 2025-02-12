@@ -98,10 +98,15 @@ public class CoralSubsystem extends SubsystemBase
   }
 
 /*********************** Helper Functions for Coral ***************************/
-  public void runLeftCoralMotor( double voltage )
+  public void runCoralMotor( double voltage )
   {
-    m_LeftCoralMotor.set( voltage );
-  }
+    if( !currentLimitReached()  )
+    {
+      m_LeftCoralMotor.set( voltage );
+      m_RightCoralMotor.set( voltage );
+    }
+    stopCoral();
+  }  
 
   public void runPivotCoralMotor( double voltage )
   {
@@ -123,15 +128,31 @@ public class CoralSubsystem extends SubsystemBase
     m_PivotCoralMotor.set( 0 );
   }
 
-  public void stopLeftCoral()
+  public void stopCoral()
   {
     m_LeftCoralMotor.set( 0 );
+    m_RightCoralMotor.set( 0 );
   }
 
   private void setCoralPivotPosition( double position )
   {
     m_PivotCoralPIDController.setReference( position, ControlType.kPosition );
   }
+
+  private boolean currentLimitReached()
+  {
+    if( ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) ||
+        ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) )
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  
 
 /****************************** Commands **************************************/
 
