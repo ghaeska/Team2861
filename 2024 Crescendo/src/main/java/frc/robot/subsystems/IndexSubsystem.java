@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
+import frc.robot.Constants;
 import frc.robot.Constants.Index;
 
 import com.revrobotics.CANSparkBase;
@@ -13,10 +14,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 public class IndexSubsystem extends SubsystemBase
 {
   private CANSparkMax m_IndexMotor;
   private RelativeEncoder m_IndexEncoder;
+  
+  private DigitalInput m_IndexSensor;
+  public boolean m_NoteInIndex;
 
   private double m_IndexSpeed;
 
@@ -39,15 +47,31 @@ public class IndexSubsystem extends SubsystemBase
 
     /* Burn the new settings into the flash. */
     m_IndexMotor.burnFlash();
-  }
+    
+    /* Setup Index Beam Break sensor */
+    m_IndexSensor = new DigitalInput( Constants.Index.k_DIO_IndexSensorID );
+    }
 
   @Override
   public void periodic() 
   { 
+    m_NoteInIndex = m_IndexSensor.get() ? false : true;
+
     SmartDashboard.putNumber( "Index Set Speed:", m_IndexSpeed );
     SmartDashboard.putNumber( "Index Actual Speed:", m_IndexEncoder.getVelocity() );
     SmartDashboard.putNumber( "Index Motor Current", m_IndexMotor.getOutputCurrent() );
+    SmartDashboard.putBoolean( "Index Sensor", m_NoteInIndex );
   } 
+
+  public boolean getIndexSensor()
+  {
+    return !m_IndexSensor.get();
+  }
+  
+  public boolean isNoteInIndex()
+  {
+    return m_NoteInIndex;
+  }
 
   public void runIndex( double speed )
   {
@@ -77,5 +101,9 @@ public class IndexSubsystem extends SubsystemBase
   {
     return new RunCommand(()->this.stopIndex(), this );
   }
+
+  /* Triggers */
+  public Trigger IndexNoteSensor = new Trigger( () -> this.getIndexSensor() );
+
 
 }
