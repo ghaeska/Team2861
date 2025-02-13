@@ -26,10 +26,10 @@ public class ShooterSubsystem extends SubsystemBase
   private SparkPIDController m_TopShooterPID;
   private SparkPIDController m_BottomShooterPID;
 
-  private RelativeEncoder m_TopShooterEncoder;
-  private RelativeEncoder m_BottomShooterEncoder;
+  public RelativeEncoder m_TopShooterEncoder;
+  public RelativeEncoder m_BottomShooterEncoder;
 
-  private BangBangController BBController;
+  //private BangBangController BBController;
 
   private double m_Shooter_RPM;
   
@@ -121,19 +121,15 @@ public class ShooterSubsystem extends SubsystemBase
     return new RunCommand(()->this.stopShooter(), this );
   }
 
-  public Command runShooterAmpCommand()
-  {
-    return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Amp ), this );
-  }
-
   public Command runShooterPassCommand()
   {
     return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Pass ), this );
   }
 
-  public Command runShooterStageCommand()
+
+  public Command runShooterDefaultSpeedCommand()
   {
-    return new RunCommand(()->this.runShooter( Shooter.k_ShooterSpeed_Stage ), this );
+    return new RunCommand( ()-> this.runShooter( 500 ), this );
   }
 
 

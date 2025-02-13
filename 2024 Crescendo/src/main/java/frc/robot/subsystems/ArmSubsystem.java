@@ -106,9 +106,9 @@ public class ArmSubsystem extends SubsystemBase
       setpoint_radians = Rotation2d.fromDegrees(340);
     }
 
-    System.out.print("Arm Set Reference: ");
-    System.out.print( setpoint_radians.getDegrees() );
-    System.out.print( " \r\n" );
+    // System.out.print("Arm Set Reference: ");
+    // System.out.print( setpoint_radians.getDegrees() );
+    // System.out.print( " \r\n" );
 
     m_ArmSetpoint = setpoint_radians;
     SmartDashboard.putNumber( " SetArmSetpoint value", setpoint_radians.getDegrees() );
@@ -138,9 +138,9 @@ public class ArmSubsystem extends SubsystemBase
     SmartDashboard.putNumber("Arm Abs Enc (getAbsolutePosition):", m_ArmEncoder.getPosition());
     //SmartDashboard.putNumber("Arm Abs Enc (Degrees):", ConvertRadiansToDegrees(m_ArmEncoder.getPosition()) );
     
-    System.out.print("Arm PID Set Reference: ");
-    System.out.print( m_ArmSetpoint.getDegrees() );
-    System.out.print( " \r\n" );
+    // System.out.print("Arm PID Set Reference: ");
+    // System.out.print( m_ArmSetpoint.getDegrees() );
+    // System.out.print( " \r\n" );
     ArmPIDController.setReference(m_ArmSetpoint.getDegrees(), ControlType.kPosition);
 
   }
@@ -216,7 +216,7 @@ public class ArmSubsystem extends SubsystemBase
   private Command positionArmCommand( Rotation2d position )
   {
     //SmartDashboard.putNumber( " Command Position ", position.getDegrees() );
-    System.out.print("Calling the positionArmCommand \r\n");
+    //System.out.print("Calling the positionArmCommand \r\n");
     return run( () -> setArmSetpoint(position)).until(this::onTarget);
   }
 
