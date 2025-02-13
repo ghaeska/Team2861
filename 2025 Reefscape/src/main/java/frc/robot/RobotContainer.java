@@ -35,6 +35,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.LEDsSubsystem;
 
 /* Pathplanner Calls */
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -56,6 +57,10 @@ public class RobotContainer {
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
   private final CoralSubsystem m_coral = new CoralSubsystem();
   private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
+
+  private final LEDsSubsystem m_LEDs = new LEDsSubsystem();
+
+
   // TODO: climb system manipulator here.
 
   /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
@@ -120,6 +125,12 @@ public class RobotContainer {
     //m_OperatorController.povDown().whileTrue( m_Elevator.ElevatorManualDown( .1 ) );
 
 
+    /* LED Commands */
+    m_DriverController.leftBumper().whileTrue( m_LEDs.ElevatorViewRed()) ;
+
+
+    m_DriverController.rightBumper().whileTrue( m_LEDs.LeftCoralViewGreen()).whileFalse(m_LEDs.LeftCoralViewRed());
+    
 
 
     /*************************** Algae Commands *******************************/

@@ -2,17 +2,20 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
 
+import frc.robot.Constants;
+
 
 public class LEDsSubsystem 
 {
   /* Create a LED class on PWM port 1. */
-  private AddressableLED m_LED_1 = new AddressableLED( 1 );
+  private AddressableLED m_LED_1 = new AddressableLED( 0 );
 
   /* Create a LED buffer that consists of 60 LED's */
   private AddressableLEDBuffer m_LEDBuffer = new AddressableLEDBuffer( 60 );
@@ -49,6 +52,7 @@ public class LEDsSubsystem
     m_YelLedPattern.applyTo( m_LEDBuffer );
     /* Write the buffer out to the LED String. */
     m_LED_1.setData( m_LEDBuffer );
+    m_LED_1.start();
   }
 
 /******************* Functions for the Right Coral ****************************/
@@ -82,6 +86,7 @@ public class LEDsSubsystem
   {
     m_RedLedPattern.applyTo( m_ElevatorView );
     m_LED_1.setData( m_LEDBuffer );
+    
   }
 
   public void setElevatorGreen()
@@ -90,8 +95,19 @@ public class LEDsSubsystem
     m_LED_1.setData( m_LEDBuffer );
   }
 
+/* LED Commands */
 
+public Command ElevatorViewRed()
+{return new RunCommand(()->setElevatorRed());}
 
+public Command ElevatorViewGreen()
+{return new RunCommand(()->setElevatorGreen());}
+
+public Command LeftCoralViewRed()
+{return new RunCommand(()->setLeftCoralRed());}
+
+public Command LeftCoralViewGreen()
+{return new RunCommand(()->setLeftCoralGreen());}
 
 }
 
