@@ -86,18 +86,19 @@ public static final class MAXSwerveModule
       /* ------------------ Coral Motor Configs. ------------------------- */
       CoralSparkMaxConfig.idleMode( IdleMode.kBrake );
       CoralSparkMaxConfig.smartCurrentLimit( Constants.CoralConstants.k_Coral_MaxCurrent );
+      CoralSparkMaxConfig.inverted( true );
 
       CoralSparkFlexConfig.idleMode( IdleMode.kBrake );
       CoralSparkFlexConfig.smartCurrentLimit( Constants.CoralConstants.k_Coral_MaxCurrent );
 
       CoralSparkMaxConfig.absoluteEncoder
-      .inverted( false )
+      .inverted( true )
       .positionConversionFactor( 360 );
 
       CoralSparkMaxConfig.closedLoop
       .feedbackSensor( FeedbackSensor.kAbsoluteEncoder )
       .outputRange( Constants.CoralConstants.k_PivotMinOutput, Constants.CoralConstants.k_PivotMaxOutput )
-      .positionWrappingEnabled( true )
+      .positionWrappingEnabled( false )
       .positionWrappingMinInput( 0.0 )
       .positionWrappingMaxInput( 360 )
       .pidf
@@ -130,13 +131,20 @@ public static final class MAXSwerveModule
       
       /* Set the PID LOOP up for the Elevator. */
       ElevatorMotorCfg.closedLoop
+      .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
         .pidf
         ( 
           Constants.ElevatorConstants.k_Ele_PID_P, 
           Constants.ElevatorConstants.k_Ele_PID_I,
           Constants.ElevatorConstants.k_Ele_PID_D,
           Constants.ElevatorConstants.k_Ele_PID_FF 
-        );
+        )
+        .outputRange(-1, 1)
+        // .maxMotion
+        // .maxVelocity(4200)
+        // .maxAcceleration(6000)
+        // .allowedClosedLoopError(.5)
+        ;
 
       //ElevatorMotorCfg.encoder
       //.inverted( true );

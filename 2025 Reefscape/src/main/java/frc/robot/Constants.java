@@ -24,6 +24,8 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants 
 {
+public static final boolean DEBUG_MODE = true;
+
   public static class Field 
   {
     public static final double k_width = Units.feetToMeters(54.0);
@@ -57,17 +59,17 @@ public final class Constants
     public static final int k_RightCoralMotorCANId = 16;
     public static final int k_PivotCoralMotorCANId = 17;
 
-    public static final int k_Coral_MaxCurrent = 30;
+    public static final int k_Coral_MaxCurrent = 40;
 
     /* Coral Beam Break Sensors */
     public static final int k_DIO_LeftCoralSensorID = 1;
     public static final int k_DIO_RightCoralSensorID = 2;
 
     /* Because the Coral is on a pivot, we need to have a PID to hold the position */
-    public static final double k_PivotCoralMotorP  = 0.026;
+    public static final double k_PivotCoralMotorP  = 0.006;
     public static final double k_PivotCoralMotorI  = 0.00; 
     public static final double k_PivotCoralMotorD  = 0.00;
-    public static final double k_PivotCoralMotorFF = 0.001;
+    public static final double k_PivotCoralMotorFF = 0.00;
 
     public static final double k_PivotMinOutput = -0.5;
     public static final double k_PivotMaxOutput = 0.5;
@@ -79,12 +81,14 @@ public final class Constants
     public static final double k_PivotCoralEncoderOffset = 0.000000;
 
     /* Pivot Angle Set points */
-    public static final Rotation2d k_PivotCoralAngleStowed = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL1 = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL2 = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL3 = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL4 = Rotation2d.fromDegrees( 0 );
-
+    public static final Rotation2d k_PivotCoralAngleStowed = Rotation2d.fromDegrees( 210 );
+    public static final Rotation2d k_PivotCoralAngleL1 = Rotation2d.fromDegrees( 115 );
+    public static final Rotation2d k_PivotCoralAngleL2 = Rotation2d.fromDegrees( 115 );
+    public static final Rotation2d k_PivotCoralAngleL3 = Rotation2d.fromDegrees( 115);
+    public static final Rotation2d k_PivotCoralAngleL4 = Rotation2d.fromDegrees( 70 );
+    public static final Rotation2d k_PivotCoralAngleSource = Rotation2d.fromDegrees(180);
+    public static final Rotation2d k_PivotCoralAngleMax = Rotation2d.fromDegrees( 220 );
+    public static final Rotation2d k_PivotCoralAngleMin = Rotation2d.fromDegrees( 0 );
 
   }
 
@@ -95,12 +99,10 @@ public final class Constants
     public static final int k_RightElevatorMotorCANId = 11;
 
     /* Elevator PID Settings */
-    public static final double k_Ele_PID_P = 0.027;
+    public static final double k_Ele_PID_P = 0.012;
     public static final double k_Ele_PID_I = 0;
     public static final double k_Ele_PID_D = 0.0;
-    public static final double k_Ele_PID_FF = 0.0085;
-    public static final double k_Ele_PID_IZone = 5.0;
-    public static final double k_Ele_PID_G = 0.5;
+    public static final double k_Ele_PID_FF = 0.0;
 
     public static final double k_Ele_MaxVelocity = 65;
     public static final double k_Ele_MaxAcceleration = 200;
@@ -109,10 +111,10 @@ public final class Constants
 
     public static final double k_Ele_StowHeight = 0.0;
     public static final double k_Ele_SrcHeight = 8.75;    
-    public static final double k_Ele_L1Height = 3.0;
-    public static final double k_Ele_L2Height = 5.5;
-    public static final double k_Ele_L3Height = 21.5;
-    public static final double k_Ele_L4Height = 52.5;
+    public static final double k_Ele_L1Height = 0;
+    public static final double k_Ele_L2Height = 38;
+    public static final double k_Ele_L3Height = 62;
+    public static final double k_Ele_L4Height = 80;
     public static final double k_Ele_MaxHeight = 84;
     //public static final double k_Ele_GroundAlgaeHeight = 0.0;
     public static final double k_Ele_ScoreAlgaeHeight = 0.0;

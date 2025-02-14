@@ -9,14 +9,12 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -67,6 +65,14 @@ public class CoralSubsystem extends SubsystemBase
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
+    /* Configure the right motor */
+    m_RightCoralMotor.configure
+    (
+      Configs.CoralModule.CoralSparkFlexConfig
+      .inverted( true ), 
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters 
+    );
 
     /* Configure the Pivot motor. */
     m_PivotCoralMotor.configure
@@ -78,7 +84,10 @@ public class CoralSubsystem extends SubsystemBase
 
     m_PivotCoralEncoder = m_PivotCoralMotor.getAbsoluteEncoder();
 
-    m_PivotCoralPIDController = m_LeftCoralMotor.getClosedLoopController();
+    m_PivotCoralPIDController = m_PivotCoralMotor.getClosedLoopController();
+
+    m_CoralPivotSetpoint = getPivotAngle();
+    setCoralPivotPosition( m_CoralPivotSetpoint );
 
   }
 
@@ -87,25 +96,49 @@ public class CoralSubsystem extends SubsystemBase
   public void periodic() 
   {
     /* Print out the Coral Encoder positions and velocities */
-    SmartDashboard.putNumber("LeftCoralEncoder:", m_LeftCoralEncoder.getPosition() );
-    SmartDashboard.putNumber("LeftCoralSpeed:", m_LeftCoralEncoder.getVelocity() );
+    SmartDashboard.putNumber( "LeftCoralEncoder:", m_LeftCoralEncoder.getPosition() );
+    SmartDashboard.putNumber( "LeftCoralSpeed:", m_LeftCoralEncoder.getVelocity() );
 
-    SmartDashboard.putNumber("RightCoralEncoder:", m_rightCoralEncoder.getPosition() );
-    SmartDashboard.putNumber("RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );
+    SmartDashboard.putNumber( "RightCoralEncoder:", m_rightCoralEncoder.getPosition() );
+    SmartDashboard.putNumber( "RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );
 
-    SmartDashboard.putNumber("PivotAbsoluteEncoder:", m_PivotCoralEncoder.getPosition() );
-    SmartDashboard.putNumber("PivotCoralSpeed:", m_PivotCoralEncoder.getVelocity() );
+    SmartDashboard.putNumber( "PivotAbsoluteEncoder:", m_PivotCoralEncoder.getPosition() );
+    SmartDashboard.putNumber( "PivotCoralSpeed:", m_PivotCoralEncoder.getVelocity() );
+
+    SmartDashboard.putNumber( " LeftCoralCurrent", m_LeftCoralMotor.getOutputCurrent() );
+    SmartDashboard.putNumber( "RightCoralCurrent", m_RightCoralMotor.getOutputCurrent() );
+  
+    SmartDashboard.putNumber( "SetpointAngle", m_CoralPivotSetpoint.getDegrees() );
+    m_PivotCoralPIDController.setReference( m_CoralPivotSetpoint.getDegrees(),  ControlType.kPosition );
+  
+  
   }
 
 /*********************** Helper Functions for Coral ***************************/
-  public void runCoralMotor( double voltage )
+public Rotation2d getPivotAngle()
+{
+  return Rotation2d.fromDegrees( m_PivotCoralEncoder.getPosition() );
+}  
+
+private boolean onTarget()
+{
+  return Math.abs( getError().getDegrees() ) < 1;
+}
+
+private Rotation2d getError()
+{
+  return getPivotAngle().minus( m_CoralPivotSetpoint );
+}
+
+
+public void runCoralMotor( double voltage )
   {
-    if( !currentLimitReached()  )
-    {
+    //if( !currentLimitReached()  )
+    //{
       m_LeftCoralMotor.set( voltage );
-      m_RightCoralMotor.set( voltage );
-    }
-    stopCoral();
+      //m_RightCoralMotor.set( voltage );
+    //}
+    //stopCoral();
   }  
 
   public void runPivotCoralMotor( double voltage )
@@ -134,46 +167,126 @@ public class CoralSubsystem extends SubsystemBase
     m_RightCoralMotor.set( 0 );
   }
 
-  private void setCoralPivotPosition( double position )
+  private void setCoralPivotPosition( Rotation2d position )
   {
-    m_PivotCoralPIDController.setReference( position, ControlType.kPosition );
+    // if( position.getDegrees() < 1 )
+    // {
+    //   position = Rotation2d.fromDegrees( 1 );
+    // }
+    // else if( position.getDegrees() > 200 )
+    // {
+    //   position = Rotation2d.fromDegrees( 190 );
+    // }
+
+    m_CoralPivotSetpoint = position;
+
+
+
+    //m_PivotCoralPIDController.setReference( position, ControlType.kPosition );
   }
 
-  private boolean currentLimitReached()
-  {
-    if( ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) ||
-        ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) )
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
+  // private boolean currentLimitReached()
+  // {
+  //   if( ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) ||
+  //       ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) )
+  //   {
+  //     return true;
+  //   }
+  //   else
+  //   {
+  //     return false;
+  //   }
+  // }
 
   
 
 /****************************** Commands **************************************/
 
-
-
-  /* Manual Lifing of Coral Pivot Command */
-  public Command CoralPivotCmd( CommandXboxController controller )
+  public Command CoralRunMotorCmd( double voltage)
   {
     return new RunCommand
     ( 
-      () -> this.runPivotCoralMotor
-      (
-        -MathUtil.applyDeadband
-        (
-          controller.getRightY(), 
-          OIConstants.kDriveDeadband
-        ) 
-        * 1.0 
-      ), 
+      () -> this.runCoralMotor( voltage ) , 
       this 
     );
   }
+
+  public Command CoralPivotReefL1Cmd()
+  {
+    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleL1);
+  }
+
+  public Command CoralPivotReefL2L3Cmd()
+  {
+    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleL2);
+  }
+
+  public Command CoralPivotStowCmd()
+  {
+    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleStowed);
+  }
+
+  public Command CoralPivotL4Cmd()
+  {
+    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleL4);
+  }
+
+  public Command CoralPivotSourceCmd()
+  {
+    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleSource );
+  }
+
+  private Command PositionPivotCmd( Rotation2d position )
+  {
+    
+    System.out.print( "Calling Pivot Position Command \r\n " );
+    return run( ()-> setCoralPivotPosition(position)).until( this::onTarget );
+  }
+
+  
+
+  public Command defaultCommand()
+  {
+    return run
+    (
+      () ->
+      {
+        setCoralPivotPosition(m_CoralPivotSetpoint);
+      }
+    );
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* Manual Lifing of Coral Pivot Command */
+  // public Command CoralPivotCmd( CommandXboxController controller )
+  // {
+  //   return new RunCommand
+  //   ( 
+  //     () -> this.runPivotCoralMotor
+  //     (
+  //       -MathUtil.applyDeadband
+  //       (
+  //         controller.getRightY(), 
+  //         OIConstants.kDriveDeadband
+  //       ) 
+  //       * .5
+  //     ), 
+  //     this 
+  //   );
+  // }
 
 }
