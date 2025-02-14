@@ -81,6 +81,17 @@ public static final boolean DEBUG_MODE = true;
     public static final double k_PivotCoralEncoderOffset = 0.000000;
 
     /* Pivot Angle Set points */
+    public static final class PivotCoralSetpoints
+    {
+      public static final double k_stow = 0;
+      public static final double k_feederStation = 0;
+      public static final double k_l1 = 0;
+      public static final double k_l2 = 0;
+      public static final double k_l3 = 0;
+      public static final double k_l4 = 0;
+    }
+
+    /* OLD DATA
     public static final Rotation2d k_PivotCoralAngleStowed = Rotation2d.fromDegrees( 210 );
     public static final Rotation2d k_PivotCoralAngleL1 = Rotation2d.fromDegrees( 115 );
     public static final Rotation2d k_PivotCoralAngleL2 = Rotation2d.fromDegrees( 115 );
@@ -89,7 +100,7 @@ public static final boolean DEBUG_MODE = true;
     public static final Rotation2d k_PivotCoralAngleSource = Rotation2d.fromDegrees(180);
     public static final Rotation2d k_PivotCoralAngleMax = Rotation2d.fromDegrees( 220 );
     public static final Rotation2d k_PivotCoralAngleMin = Rotation2d.fromDegrees( 0 );
-
+    */
   }
 
   public static final class ElevatorConstants
@@ -109,6 +120,18 @@ public static final boolean DEBUG_MODE = true;
 
     public static final int k_Ele_MaxCurrent = 40;
 
+    /* Pivot Angle Set points */
+    public static final class ElevatorSetpoints
+    {
+      public static final double k_stow = 0;
+      public static final double k_feederStation = 9;
+      public static final double k_l1 = 0;
+      public static final double k_l2 = 38;
+      public static final double k_l3 = 62;
+      public static final double k_l4 = 80;
+    }
+
+    /* OLD way
     public static final double k_Ele_StowHeight = 0.0;
     public static final double k_Ele_SrcHeight = 8.75;    
     public static final double k_Ele_L1Height = 0;
@@ -120,7 +143,7 @@ public static final boolean DEBUG_MODE = true;
     public static final double k_Ele_ScoreAlgaeHeight = 0.0;
     //public static final double k_Ele_LowAlgaeHeight = 24.8;
     public static final double k_Ele_HighAlgaeHeight = 40;
-
+    */
   }
 
   public static final class AutoConstants 

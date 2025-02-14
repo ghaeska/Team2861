@@ -30,20 +30,15 @@ public class CoralSubsystem extends SubsystemBase
   /* Define the motors */
   private final SparkFlex m_LeftCoralMotor;
   private final SparkFlex m_RightCoralMotor;
-  private final SparkMax m_PivotCoralMotor;
+  //private final SparkMax m_PivotCoralMotor;
 
-  /* Define spark PID controller */
-  private SparkClosedLoopController m_PivotCoralPIDController;
+  
 
   /* Define Relative motor Encoders */
   private RelativeEncoder m_LeftCoralEncoder;
   private RelativeEncoder m_rightCoralEncoder;
 
-  /* Define Absolute Encoder for pivot */
-  private AbsoluteEncoder m_PivotCoralEncoder;
-
-  /* Define Rotation2d for Angular tracking */
-  private Rotation2d m_CoralPivotSetpoint = new Rotation2d();
+  
 
   public CoralSubsystem()
   {
@@ -51,9 +46,7 @@ public class CoralSubsystem extends SubsystemBase
     m_LeftCoralMotor = new SparkFlex(Constants.CoralConstants.k_LeftCoralMotorCANId, MotorType.kBrushless );
     m_RightCoralMotor = new SparkFlex(Constants.CoralConstants.k_RightCoralMotorCANId, MotorType.kBrushless );
 
-    /* Assign the Pivot Motor ID */
-    m_PivotCoralMotor = new SparkMax(Constants.CoralConstants.k_PivotCoralMotorCANId, MotorType.kBrushless );
-
+    
     /* Setup the motor Encoders. */
     m_LeftCoralEncoder = m_LeftCoralMotor.getEncoder();
     m_rightCoralEncoder = m_RightCoralMotor.getEncoder();
@@ -74,20 +67,7 @@ public class CoralSubsystem extends SubsystemBase
       PersistMode.kPersistParameters 
     );
 
-    /* Configure the Pivot motor. */
-    m_PivotCoralMotor.configure
-    (
-      Configs.CoralModule.CoralSparkMaxConfig, 
-      ResetMode.kResetSafeParameters,
-      PersistMode.kPersistParameters 
-    );
-
-    m_PivotCoralEncoder = m_PivotCoralMotor.getAbsoluteEncoder();
-
-    m_PivotCoralPIDController = m_PivotCoralMotor.getClosedLoopController();
-
-    m_CoralPivotSetpoint = getPivotAngle();
-    setCoralPivotPosition( m_CoralPivotSetpoint );
+   
 
   }
 
@@ -102,33 +82,18 @@ public class CoralSubsystem extends SubsystemBase
     SmartDashboard.putNumber( "RightCoralEncoder:", m_rightCoralEncoder.getPosition() );
     SmartDashboard.putNumber( "RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );
 
-    SmartDashboard.putNumber( "PivotAbsoluteEncoder:", m_PivotCoralEncoder.getPosition() );
-    SmartDashboard.putNumber( "PivotCoralSpeed:", m_PivotCoralEncoder.getVelocity() );
+    
 
     SmartDashboard.putNumber( " LeftCoralCurrent", m_LeftCoralMotor.getOutputCurrent() );
     SmartDashboard.putNumber( "RightCoralCurrent", m_RightCoralMotor.getOutputCurrent() );
   
-    SmartDashboard.putNumber( "SetpointAngle", m_CoralPivotSetpoint.getDegrees() );
-    m_PivotCoralPIDController.setReference( m_CoralPivotSetpoint.getDegrees(),  ControlType.kPosition );
+    
   
   
   }
 
 /*********************** Helper Functions for Coral ***************************/
-public Rotation2d getPivotAngle()
-{
-  return Rotation2d.fromDegrees( m_PivotCoralEncoder.getPosition() );
-}  
 
-private boolean onTarget()
-{
-  return Math.abs( getError().getDegrees() ) < 1;
-}
-
-private Rotation2d getError()
-{
-  return getPivotAngle().minus( m_CoralPivotSetpoint );
-}
 
 
 public void runCoralMotor( double voltage )
@@ -139,64 +104,13 @@ public void runCoralMotor( double voltage )
       //m_RightCoralMotor.set( voltage );
     //}
     //stopCoral();
-  }  
-
-  public void runPivotCoralMotor( double voltage )
-  {
-    m_PivotCoralMotor.set( voltage );
-  }
-
-  public double getCoralPivotPosition()
-  {
-    return m_LeftCoralEncoder.getPosition();
-  }
-
-  public void resetCoralPivotPosition()
-  {
-    m_LeftCoralEncoder.setPosition( 0 );
-  }
-
-  public void stopCoralPivot()
-  {
-    m_PivotCoralMotor.set( 0 );
-  }
+  }    
 
   public void stopCoral()
   {
     m_LeftCoralMotor.set( 0 );
     m_RightCoralMotor.set( 0 );
-  }
-
-  private void setCoralPivotPosition( Rotation2d position )
-  {
-    // if( position.getDegrees() < 1 )
-    // {
-    //   position = Rotation2d.fromDegrees( 1 );
-    // }
-    // else if( position.getDegrees() > 200 )
-    // {
-    //   position = Rotation2d.fromDegrees( 190 );
-    // }
-
-    m_CoralPivotSetpoint = position;
-
-
-
-    //m_PivotCoralPIDController.setReference( position, ControlType.kPosition );
-  }
-
-  // private boolean currentLimitReached()
-  // {
-  //   if( ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) ||
-  //       ( m_LeftCoralMotor.getOutputCurrent() > Constants.CoralConstants.k_Coral_MaxCurrent ) )
-  //   {
-  //     return true;
-  //   }
-  //   else
-  //   {
-  //     return false;
-  //   }
-  // }
+  } 
 
   
 
@@ -211,82 +125,5 @@ public void runCoralMotor( double voltage )
     );
   }
 
-  public Command CoralPivotReefL1Cmd()
-  {
-    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleL1);
-  }
-
-  public Command CoralPivotReefL2L3Cmd()
-  {
-    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleL2);
-  }
-
-  public Command CoralPivotStowCmd()
-  {
-    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleStowed);
-  }
-
-  public Command CoralPivotL4Cmd()
-  {
-    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleL4);
-  }
-
-  public Command CoralPivotSourceCmd()
-  {
-    return PositionPivotCmd(Constants.CoralConstants.k_PivotCoralAngleSource );
-  }
-
-  private Command PositionPivotCmd( Rotation2d position )
-  {
-    
-    System.out.print( "Calling Pivot Position Command \r\n " );
-    return run( ()-> setCoralPivotPosition(position)).until( this::onTarget );
-  }
-
   
-
-  public Command defaultCommand()
-  {
-    return run
-    (
-      () ->
-      {
-        setCoralPivotPosition(m_CoralPivotSetpoint);
-      }
-    );
-  }
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /* Manual Lifing of Coral Pivot Command */
-  // public Command CoralPivotCmd( CommandXboxController controller )
-  // {
-  //   return new RunCommand
-  //   ( 
-  //     () -> this.runPivotCoralMotor
-  //     (
-  //       -MathUtil.applyDeadband
-  //       (
-  //         controller.getRightY(), 
-  //         OIConstants.kDriveDeadband
-  //       ) 
-  //       * .5
-  //     ), 
-  //     this 
-  //   );
-  // }
-
 }

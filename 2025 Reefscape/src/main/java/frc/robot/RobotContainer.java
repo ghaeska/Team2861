@@ -21,6 +21,7 @@ import frc.robot.Constants.DriveConstants;
 // import frc.robot.Constants.OIConstants;
 import frc.robot.SwerveConstants.OIConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -33,6 +34,8 @@ import java.util.List;
 /* Subsystem Imports */
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDsSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorSetpoint;
 //import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 
@@ -56,6 +59,7 @@ public class RobotContainer {
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
   private final CoralSubsystem m_coral = new CoralSubsystem();
   //private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
+  //private final LEDsSubsystem m_LED = new LEDsSubsystem();
   // TODO: climb system manipulator here.
 
   /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
@@ -89,15 +93,7 @@ public class RobotContainer {
     //m_Elevator.setDefaultCommand(m_Elevator.defaultCommand() );
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-   * subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-   * passing it to a
-   * {@link JoystickButton}.
-   */
+  /* Configure all the buttons for the controller. */
   private void configureButtonBindings() 
   {
     /************************* DriveTrain Commands ****************************/
@@ -108,33 +104,26 @@ public class RobotContainer {
     m_DriverController.start().onTrue(new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true));
 
     /************************** Elevator Commands *****************************/
-    /* Command to run the elevator with the left joystick of the op controller. */
-    /* *****Note: Must hold left trigger to do so. */
-    m_OperatorController.leftTrigger().whileTrue( m_Elevator.ElevatorManualCmd( m_OperatorController )  );
 
     /* Command to reset the elevator encoders. */
     m_OperatorController.back().whileTrue( new InstantCommand( m_Elevator::resetElevatorPosition ).ignoringDisable(true) );
 
-    /* Command to run elevator up with POV hat up. */
-    //m_OperatorController.povUp().whileTrue( m_Elevator.ElevatorManualUp( .1 ) );
+    /* POV up, run to L4 */
+    m_OperatorController.povUp().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );
+    /* POV right, run to L3 */
+    m_OperatorController.povRight().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l3 ) );
+    /* POV down, run to L2 */
+    m_OperatorController.povDown().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l2 ) );
+    /* POV left, run to l1 */
+    m_OperatorController.povLeft().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l1 ) );
+    /* left bumper, run to the stow positon. */
+    m_OperatorController.leftBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_stow ) );
+    /* right bumper, run to the feeder position */
+    m_OperatorController.rightBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
 
-    /* Command to run the elevator down with POV hat down. */
-    //m_OperatorController.povDown().whileTrue( m_Elevator.ElevatorManualDown( .1 ) );
+    
 
-    m_OperatorController.povUp().onTrue(m_Elevator.ElevatorToL4Cmd());
-    m_OperatorController.povRight().onTrue(m_Elevator.ElevatorToL3Cmd());
-    m_OperatorController.povDown().onTrue( m_Elevator.ElevatorToL2Cmd() );
-    m_OperatorController.povLeft().onTrue(  m_Elevator.ElevatorToL1Cmd());
-
-    m_DriverController.povUp().onTrue(m_coral.CoralPivotL4Cmd());
-    m_DriverController.povRight().onTrue(m_coral.CoralPivotSourceCmd());
-    m_DriverController.povDown().onTrue( m_coral.CoralPivotReefL2L3Cmd());
-    m_DriverController.povLeft().onTrue( m_coral.CoralPivotReefL1Cmd());
-
-    m_OperatorController.y().onTrue( m_Elevator.ElevatorToSourceCmd());
-
-
-
+    
     /*************************** Algae Commands *******************************/
     // m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
     // m_OperatorController.x().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
@@ -145,12 +134,10 @@ public class RobotContainer {
 
     /*************************** Coral Commands *******************************/
 
-    //m_OperatorController.rightTrigger().whileTrue(m_coral.CoralPivotCmd( m_OperatorController ) );
-
     m_OperatorController.a().whileTrue( m_coral.CoralRunMotorCmd( .4 ) );
     m_OperatorController.a().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
 
-    m_OperatorController.b().whileTrue( m_coral.CoralRunMotorCmd( -.8) );
+    m_OperatorController.b().whileTrue( m_coral.CoralRunMotorCmd( -.4) );
     m_OperatorController.b().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
 
 

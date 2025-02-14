@@ -91,6 +91,19 @@ public static final class MAXSwerveModule
       CoralSparkFlexConfig.idleMode( IdleMode.kBrake );
       CoralSparkFlexConfig.smartCurrentLimit( Constants.CoralConstants.k_Coral_MaxCurrent );
 
+      CoralSparkMaxConfig
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
+        // Set up the PID values for position control
+        .p( 0.1 ) // GTH:TODO: tune.
+        .outputRange( -1,1 )
+        .maxMotion
+        //set MAXMotion parameters for position control.
+        .maxVelocity( 1000 ) // GTH:TODO: tune. (rev has 2000)
+        .maxAcceleration( 5000 ) // GTH:TODO: tune. (rev has 10000)
+        .allowedClosedLoopError( 0.25 ); // GTH:TODO: tune. (rev has .25)
+
+      /* OLD DATA 
       CoralSparkMaxConfig.absoluteEncoder
       .inverted( true )
       .positionConversionFactor( 360 );
@@ -108,6 +121,7 @@ public static final class MAXSwerveModule
         Constants.CoralConstants.k_PivotCoralMotorD,
         Constants.CoralConstants.k_PivotCoralMotorFF
       );
+      */
       
     }
 
@@ -130,6 +144,21 @@ public static final class MAXSwerveModule
       ElevatorMotorCfg.inverted( true );
       
       /* Set the PID LOOP up for the Elevator. */
+      ElevatorMotorCfg
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
+        // Setup PID values
+        .p( 0.1 ) //GTH:TODO: tune.
+        .outputRange( -1, 1 )
+        //set MAXMotion parameters for position control.
+        .maxMotion
+        .maxVelocity( 4200 ) // GTH:TODO: tune. (rev has 4200)
+        .maxAcceleration( 6000 ) // GTH:TODO: tune. (rev has 6000)
+        .allowedClosedLoopError( 0.5 ); // GTH:TODO: tune. (rev has .5)
+
+
+
+      /* OLD DATA
       ElevatorMotorCfg.closedLoop
       .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
         .pidf
@@ -148,6 +177,7 @@ public static final class MAXSwerveModule
 
       //ElevatorMotorCfg.encoder
       //.inverted( true );
+      */
     }
   }
 }

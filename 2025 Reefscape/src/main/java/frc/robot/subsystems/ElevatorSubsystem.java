@@ -20,35 +20,55 @@ import frc.robot.SwerveConstants.OIConstants;
 import edu.wpi.first.math.MathUtil;
 
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.CoralConstants.PivotCoralSetpoints;
+import frc.robot.Constants.ElevatorConstants.ElevatorSetpoints;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Configs;
 
 public class ElevatorSubsystem extends SubsystemBase
 {
-    //Define the Motors
-    private final SparkMax m_LeftEleMotor;
-    private final SparkMax m_RightEleMotor;    
+  public enum ElevatorSetpoint
+  {
+    k_stow,
+    k_feederStation,
+    k_l1,
+    k_l2,
+    k_l3,
+    k_l4;
+  }
 
-    //Define spark pid controller.
-    private SparkClosedLoopController m_LeftElePIDController;
+  //Define the Motors
+  private final SparkMax m_LeftEleMotor;
+  private final SparkMax m_RightEleMotor;    
+  private final SparkMax m_PivotCoralMotor; 
 
-    //Define a relative encoder for both elevator motors
-    private RelativeEncoder m_LeftEleEncoder;
-    private RelativeEncoder m_RightEleEncoder;
+  //Define spark pid controller.
+  private SparkClosedLoopController m_LeftElePIDController;
+  private SparkClosedLoopController m_PivotCoralPIDController;
 
-    private double m_ElevatorSetpoint;
+  //Define a relative encoder for both elevator motors
+  private RelativeEncoder m_LeftEleEncoder;
+  private RelativeEncoder m_RightEleEncoder;
+  private RelativeEncoder m_PivotCoralEncoder;
+
+  private double m_ElevatorSetpoint;
+  private double m_PivotCoralSetpoint;
     
   public ElevatorSubsystem()
   {
     /* Assign the CAN Id's to the motors for the elevator. */
     m_LeftEleMotor  = new SparkMax( Constants.ElevatorConstants.k_LeftElevatorMotorCANId, MotorType.kBrushless );
     m_RightEleMotor = new SparkMax( Constants.ElevatorConstants.k_RightElevatorMotorCANId, MotorType.kBrushless );
+    m_PivotCoralMotor = new SparkMax( Constants.CoralConstants.k_PivotCoralMotorCANId, MotorType.kBrushless );
 
     /* Setup the Elevator Encoder. */
     m_LeftEleEncoder = m_LeftEleMotor.getEncoder();
     m_RightEleEncoder = m_RightEleMotor.getEncoder();
+    m_PivotCoralEncoder = m_PivotCoralMotor.getEncoder();
 
     /* Setup the Elevator PID Loop. */
     m_LeftElePIDController = m_LeftEleMotor.getClosedLoopController();
+    m_PivotCoralPIDController = m_PivotCoralMotor.getClosedLoopController();
 
     /* Configure the left elevator motor from the configs. */
     m_LeftEleMotor.configure
@@ -71,82 +91,51 @@ public class ElevatorSubsystem extends SubsystemBase
       PersistMode.kPersistParameters 
     );
 
-    //m_ElevatorSetpoint = m_LeftEleEncoder.getPosition();
-    //setElePosition( m_ElevatorSetpoint );
-    setElePosition( 0 );
+    /* Configure the Pivot motor. */
+    m_PivotCoralMotor.configure
+    (
+      Configs.CoralModule.CoralSparkMaxConfig, 
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters 
+    );
+
+    /* Zero out the encoders at startup. */
+    m_LeftEleEncoder.setPosition( 0 );
+    m_RightEleEncoder.setPosition( 0 );
+    m_PivotCoralEncoder.setPosition( 0 );
+
+
   }
 /************************** Smart Dashboard Values ****************************/
 @Override
   public void periodic() 
   {
-    // if( 0 )
-    // {
-    //   System.out.print( " Elevator PID Set Position: " );
-    //   System.out.print( m_ElevatorSetpoint );
-    //   System.out.print( " \r\n" );
-    // }
-   
-    m_LeftElePIDController.setReference( m_ElevatorSetpoint, ControlType.kPosition );
-
-    
+    moveToSetpoint();
 
     /* Print out the Elevator Encoder positions. */
-    SmartDashboard.putNumber("RightElevatorPosition:", m_RightEleEncoder.getPosition() );
-    SmartDashboard.putNumber("LeftElevatorPosition:", m_LeftEleEncoder.getPosition() );
+    SmartDashboard.putNumber( "RightElevatorPosition:", m_RightEleEncoder.getPosition() );
+    SmartDashboard.putNumber( "LeftElevatorPosition:", m_LeftEleEncoder.getPosition() );
+    SmartDashboard.putNumber( "CoralPivotPosition:", m_PivotCoralEncoder.getPosition() );
+
+    SmartDashboard.putNumber( "Target Coral Position:", m_PivotCoralSetpoint );
+    SmartDashboard.putNumber( "Target Elevator Position:", m_ElevatorSetpoint );
   }
 
 
 
 
 /********************* Helper Functions for Elevator **************************/
-    
-  private boolean onTarget()
+  private void moveToSetpoint()
   {
-    double error = getError();
-    return Math.abs( error ) < 1 ;
-  }
-
-  private double getError()
-  {
-    double error = m_LeftEleEncoder.getPosition() - m_ElevatorSetpoint;
-    return error;
-
-    //return m_LeftEleEncoder.getPosition().minus( m_ElevatorSetpoint );
-  }
+    m_LeftElePIDController.setReference( m_ElevatorSetpoint, ControlType.kMAXMotionPositionControl );
+    m_PivotCoralPIDController.setReference( m_PivotCoralSetpoint, ControlType.kMAXMotionPositionControl );
+  }    
 
 
-  public void runElevator( double voltage )
-  {
-    if( m_LeftEleEncoder.getPosition() > Constants.ElevatorConstants.k_Ele_MaxHeight )
-    {
-      if( voltage > 0 )
-      {
-        m_LeftEleMotor.set( 0 );
-      }
-      else
-      {
-        m_LeftEleMotor.set( voltage );
-      }
-      
-    }
-    else if( m_LeftEleEncoder.getPosition() < 0 )
-    {
-      if( voltage < 0 )
-      {
-        m_LeftEleMotor.set( 0 );
-      }
-      else
-      {
-        m_LeftEleMotor.set( voltage );
-      }
+  
 
-    }
-    else
-    {
-       m_LeftEleMotor.set( voltage );
-    }
-   
-  }
+  
+  
   public double getElevatorPosition()
   {
     return m_LeftEleEncoder.getPosition();
@@ -161,129 +150,61 @@ public class ElevatorSubsystem extends SubsystemBase
   {
     m_LeftEleEncoder.setPosition( 0 );
     m_RightEleEncoder.setPosition( 0 );
+    m_PivotCoralEncoder.setPosition( 0 );
   }
-
-  public void stopElevator()
-  {
-    m_LeftEleMotor.setVoltage( 0 );
-  }
-
-  private void setElePosition( double position )
-  {
-    //m_LeftElePIDController.setReference(position, ControlType.kPosition );
-    //m_LeftEleMotor.getClosedLoopController().setReference(position, ControlType.kPosition );
-    if( position < 0 )
-    {
-      position = 0;
-    }
-    else if( position > 90 )
-    {
-      position = 89;
-    }
-    
-    m_ElevatorSetpoint = position;  
-  }
+   
 
   /***************************** Commands **************************************/
-  /* Stow the Elevator Command */
-  public Command ElevatorToStowCmd()
+  public Command setElevatorSetpointCmd( ElevatorSetpoint setpoint )
   {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_StowHeight );
-  }
-
-  /* Lift to the coral Source Command. */
-  public Command ElevatorToSourceCmd()
-  {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_SrcHeight );
-  }
-  /* Lift to L1 reef Command. */
-  public Command ElevatorToL1Cmd()
-  {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_L1Height );
-  }
-  /* Lift to L2 reef Command. */
-  public Command ElevatorToL2Cmd()
-  {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_L2Height );
-  }
-  /* Lift to L3 reef Command. */
-  public Command ElevatorToL3Cmd()
-  {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_L3Height );
-  }
-  /* Lift to L4 reef Command. */
-  public Command ElevatorToL4Cmd()
-  {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_L4Height );
-  }
-  /* Lift to top Algea in reef Command. */
-  public Command ElevatorToTopAlgaeCmd()
-  {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_HighAlgaeHeight );
-  }
-  /* Lift to Proccessor Command. */
-  public Command ElevatorToProcessorCmd()
-  {
-    return PositionElevatorCmd( ElevatorConstants.k_Ele_ScoreAlgaeHeight );
-  }
-
-  /* Manual Up with button Command */
-  public Command ElevatorManualUp( double speed )
-  {
-    return new RunCommand( ()->this.runElevator( speed ), this );
-  }
-  /* Manual Down with Button Command */
-  public Command ElevatorManualDown( double speed )
-  {
-    return new RunCommand( ()->this.runElevator( -speed ), this );
-  }
-
-  /* Command that sets the position of the elevator */
-  private Command PositionElevatorCmd( double position )
-  {
-    //System.out.print( "Calling Elevator Position Command \r\n " );
-    return run( () -> setElePosition(position)).until( this::onTarget );
-  }
-
-  /* Default command, not really sure if we need to make this. */
-  public Command defaultCommand()
-  {
-    return run
-    ( 
+    return this.runOnce
+    (
       () -> 
       {
-        setElePosition( m_ElevatorSetpoint );
+        switch( setpoint )
+        {
+          case k_stow:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_stow;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_stow;
+            break;
+          case k_feederStation:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_feederStation;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_feederStation;
+            break;
+          case k_l1:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_l1;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_l1;
+
+            break;
+          case k_l2:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_l2;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_l2;
+
+            break;
+          case k_l3:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_l3;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_l3;
+
+            break;
+          case k_l4:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_l4;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_l4;
+
+            break;
+        }
       }
     );
   }
 
-  /* Manual Lifting of Elevator Command. */
-  public Command ElevatorManualCmd(CommandXboxController controller )
-  {
-    return run
-    ( () -> setElePosition
-      ( 
-        (-MathUtil.applyDeadband( controller.getLeftY(), OIConstants.kDriveDeadband ) * 0.5 )
-      )
-    );
-  }
 
-  // /* Manual Lifting of Elevator Command. */
-  // public Command ElevatorManualCmd(CommandXboxController controller )
-  // {
-  //   return new RunCommand
-  //   (
-  //     () -> this.runElevator
-  //     ( 
-  //       -MathUtil.applyDeadband
-  //       (
-  //         controller.getLeftY(), 
-  //         OIConstants.kDriveDeadband
-  //       ) 
-  //       * 1.0
-  //     ), 
-  //     this 
-  //   );
 
-  // }
+
+
+
+
+  
+
+  
+
+  
 }
