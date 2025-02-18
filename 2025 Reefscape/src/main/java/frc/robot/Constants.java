@@ -83,12 +83,18 @@ public static final boolean DEBUG_MODE = true;
     /* Pivot Angle Set points */
     public static final class PivotCoralSetpoints
     {
-      public static final double k_stow = 0;
-      public static final double k_feederStation = 0;
-      public static final double k_l1 = 0;
-      public static final double k_l2 = 0;
-      public static final double k_l3 = 0;
-      public static final double k_l4 = 0;
+      // public static final double k_stow = 12.0;
+      // public static final double k_feederStation = 10;
+      // public static final double k_l1 = 4.4;
+      // public static final double k_l2 = 6.0;
+      // public static final double k_l3 = 6.0;
+      // public static final double k_l4 = 5.0;
+      public static final double k_stow = 188;
+      public static final double k_feederStation = 152;
+      public static final double k_l1 = 110;
+      public static final double k_l2 = 90;
+      public static final double k_l3 = 90;
+      public static final double k_l4 = 120;//change flat
     }
 
     /* OLD DATA
@@ -124,11 +130,11 @@ public static final boolean DEBUG_MODE = true;
     public static final class ElevatorSetpoints
     {
       public static final double k_stow = 0;
-      public static final double k_feederStation = 9;
+      public static final double k_feederStation = 6;
       public static final double k_l1 = 0;
-      public static final double k_l2 = 38;
-      public static final double k_l3 = 62;
-      public static final double k_l4 = 80;
+      public static final double k_l2 = 30;
+      public static final double k_l3 = 58;
+      public static final double k_l4 = 86;
     }
 
     /* OLD way

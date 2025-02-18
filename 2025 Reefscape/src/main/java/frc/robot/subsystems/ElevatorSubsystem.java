@@ -6,7 +6,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -49,10 +49,12 @@ public class ElevatorSubsystem extends SubsystemBase
   //Define a relative encoder for both elevator motors
   private RelativeEncoder m_LeftEleEncoder;
   private RelativeEncoder m_RightEleEncoder;
-  private RelativeEncoder m_PivotCoralEncoder;
+  //private RelativeEncoder m_PivotCoralEncoder;
 
-  private double m_ElevatorSetpoint;
-  private double m_PivotCoralSetpoint;
+  private AbsoluteEncoder m_AbsoluteEncoder;
+
+  private double m_ElevatorSetpoint = Constants.ElevatorConstants.ElevatorSetpoints.k_stow;
+  private double m_PivotCoralSetpoint = Constants.CoralConstants.PivotCoralSetpoints.k_stow;
     
   public ElevatorSubsystem()
   {
@@ -64,7 +66,9 @@ public class ElevatorSubsystem extends SubsystemBase
     /* Setup the Elevator Encoder. */
     m_LeftEleEncoder = m_LeftEleMotor.getEncoder();
     m_RightEleEncoder = m_RightEleMotor.getEncoder();
-    m_PivotCoralEncoder = m_PivotCoralMotor.getEncoder();
+    //m_PivotCoralEncoder = m_PivotCoralMotor.getEncoder();
+
+    m_AbsoluteEncoder = m_PivotCoralMotor.getAbsoluteEncoder();
 
     /* Setup the Elevator PID Loop. */
     m_LeftElePIDController = m_LeftEleMotor.getClosedLoopController();
@@ -102,7 +106,7 @@ public class ElevatorSubsystem extends SubsystemBase
     /* Zero out the encoders at startup. */
     m_LeftEleEncoder.setPosition( 0 );
     m_RightEleEncoder.setPosition( 0 );
-    m_PivotCoralEncoder.setPosition( 0 );
+    //m_PivotCoralEncoder.setPosition( 0 );
 
 
   }
@@ -115,10 +119,12 @@ public class ElevatorSubsystem extends SubsystemBase
     /* Print out the Elevator Encoder positions. */
     SmartDashboard.putNumber( "RightElevatorPosition:", m_RightEleEncoder.getPosition() );
     SmartDashboard.putNumber( "LeftElevatorPosition:", m_LeftEleEncoder.getPosition() );
-    SmartDashboard.putNumber( "CoralPivotPosition:", m_PivotCoralEncoder.getPosition() );
+    //SmartDashboard.putNumber( "CoralPivotPosition:", m_PivotCoralEncoder.getPosition() );
 
     SmartDashboard.putNumber( "Target Coral Position:", m_PivotCoralSetpoint );
     SmartDashboard.putNumber( "Target Elevator Position:", m_ElevatorSetpoint );
+
+    SmartDashboard.putNumber( "Absolute Encoder Position", m_AbsoluteEncoder.getPosition() );
   }
 
 
@@ -150,7 +156,7 @@ public class ElevatorSubsystem extends SubsystemBase
   {
     m_LeftEleEncoder.setPosition( 0 );
     m_RightEleEncoder.setPosition( 0 );
-    m_PivotCoralEncoder.setPosition( 0 );
+    //m_PivotCoralEncoder.setPosition( 0 );
   }
    
 

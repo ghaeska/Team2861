@@ -134,10 +134,10 @@ public class RobotContainer {
 
     /*************************** Coral Commands *******************************/
 
-    m_OperatorController.a().whileTrue( m_coral.CoralRunMotorCmd( .4 ) );
+    m_OperatorController.a().whileTrue( m_coral.CoralRunMotorCmd( .1 ) );
     m_OperatorController.a().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
 
-    m_OperatorController.b().whileTrue( m_coral.CoralRunMotorCmd( -.4) );
+    m_OperatorController.b().whileTrue( m_coral.CoralRunMotorCmd( -.2) );
     m_OperatorController.b().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
 
 

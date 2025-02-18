@@ -101,7 +101,7 @@ public void runCoralMotor( double voltage )
     //if( !currentLimitReached()  )
     //{
       m_LeftCoralMotor.set( voltage );
-      //m_RightCoralMotor.set( voltage );
+      m_RightCoralMotor.set( voltage );
     //}
     //stopCoral();
   }    
