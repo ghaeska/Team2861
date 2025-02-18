@@ -38,6 +38,7 @@ import frc.robot.subsystems.LEDsSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorSetpoint;
 //import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.Vision.VisionSubsystem;
 
 /* Pathplanner Calls */
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -58,6 +59,8 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
   private final CoralSubsystem m_coral = new CoralSubsystem();
+  private final VisionSubsystem m_vision = new VisionSubsystem();
+
   //private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
   //private final LEDsSubsystem m_LED = new LEDsSubsystem();
   // TODO: climb system manipulator here.
@@ -85,13 +88,30 @@ public class RobotContainer {
       new RunCommand( () -> m_robotDrive.drive(
         -MathUtil.applyDeadband(m_DriverController.getLeftY(), OIConstants.kDriveDeadband),
         -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband),
+        //getDriveRotation(),
         -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband),
         true,
         true),
-        m_robotDrive ));
+        m_robotDrive ) );
 
     //m_Elevator.setDefaultCommand(m_Elevator.defaultCommand() );
   }
+
+  // private double getDriveRotation() 
+  // {
+  //   double controllerAngle = -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband) ;
+  //   if( m_DriverController.rightBumper().getAsBoolean() == true ) 
+  //   {
+  //     Double m_rot = m_vision.limelight_aim_proportional();
+      
+  //     return m_rot;
+      
+  //   } 
+  //   else 
+  //   {
+  //     return controllerAngle;
+  //   }
+  // }
 
   /* Configure all the buttons for the controller. */
   private void configureButtonBindings() 
@@ -101,7 +121,8 @@ public class RobotContainer {
     m_DriverController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
 
     /* Command to reset the robot heading when "start" gets pushed. */
-    m_DriverController.start().onTrue(new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true));
+    m_DriverController.start().onTrue(new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true) );
+    m_OperatorController.start().onTrue( new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true) );
 
     /************************** Elevator Commands *****************************/
 
@@ -121,6 +142,8 @@ public class RobotContainer {
     /* right bumper, run to the feeder position */
     m_OperatorController.rightBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
 
+
+
     
 
     
@@ -134,7 +157,7 @@ public class RobotContainer {
 
     /*************************** Coral Commands *******************************/
 
-    m_OperatorController.a().whileTrue( m_coral.CoralRunMotorCmd( .1 ) );
+    m_OperatorController.a().whileTrue( m_coral.CoralRunMotorCmd( .2 ) );
     m_OperatorController.a().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
 
     m_OperatorController.b().whileTrue( m_coral.CoralRunMotorCmd( -.2) );
