@@ -54,7 +54,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer 
+{
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
@@ -63,22 +64,47 @@ public class RobotContainer {
 
   //private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
   //private final LEDsSubsystem m_LED = new LEDsSubsystem();
+  //private final ClimbSubsystem m_climb = new ClimbSubsystem();
   // TODO: climb system manipulator here.
 
-  /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
+  private SendableChooser<Command> autoChooser;
 
 
   /* The controller that are used to control the robot.  Initialized here. */
   CommandXboxController m_DriverController = new CommandXboxController( OIConstants.kDriverControllerPort );
   CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
+
+  private void registerNamedCommands()
+  {
+    /* Add named commands here so that they can be used in autos. */
+    NamedCommands.registerCommand("Elevator stow", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_stow ) );
+    NamedCommands.registerCommand("Elevator L1", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l1 ) );
+    NamedCommands.registerCommand("Elevator L2", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l2 ) );
+    NamedCommands.registerCommand("Elevator L3", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l3 ) );
+    NamedCommands.registerCommand("Elevator L4", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );    
+    NamedCommands.registerCommand("Elevator Feeder", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
+
+    
+
+
+
+  }
+
+
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
-    // TODO: add auto chooser stuff here.
-    final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
+  public RobotContainer() 
+  {
+    /* Call the command to get the registered commands. */
+    registerNamedCommands();
 
-    // Configure the button bindings
+    /* Create a Auto Selector */
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Selector", autoChooser );
+
+    /* Configure the button bindings */
     configureButtonBindings();
 
     // Configure default commands
@@ -94,7 +120,6 @@ public class RobotContainer {
         true),
         m_robotDrive ) );
 
-    //m_Elevator.setDefaultCommand(m_Elevator.defaultCommand() );
   }
 
   // private double getDriveRotation() 
@@ -128,7 +153,6 @@ public class RobotContainer {
 
     /* Command to reset the elevator encoders. */
     m_OperatorController.back().whileTrue( new InstantCommand( m_Elevator::resetElevatorPosition ).ignoringDisable(true) );
-
     /* POV up, run to L4 */
     m_OperatorController.povUp().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );
     /* POV right, run to L3 */
@@ -141,11 +165,6 @@ public class RobotContainer {
     m_OperatorController.leftBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_stow ) );
     /* right bumper, run to the feeder position */
     m_OperatorController.rightBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
-
-
-
-    
-
     
     /*************************** Algae Commands *******************************/
     // m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
@@ -156,7 +175,6 @@ public class RobotContainer {
 
 
     /*************************** Coral Commands *******************************/
-
     m_OperatorController.a().whileTrue( m_coral.CoralRunMotorCmd( .2 ) );
     m_OperatorController.a().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
 
@@ -168,21 +186,21 @@ public class RobotContainer {
 
 
 
-    // TODO: Add more button bindings here.
   } 
 
-  private void configureNewCommands()
-  {
+  // private void configureNewCommands()
+  // {
 
-  }
+  // }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-
-   // TODO: Update this auto stuff.
-  //public Command getAutonomousCommand() { }
+  public Command getAutonomousCommand() 
+  { 
+    return autoChooser.getSelected();
+  }
 
 } 
