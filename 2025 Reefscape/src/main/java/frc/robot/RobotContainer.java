@@ -36,7 +36,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDsSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorSetpoint;
-//import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 
@@ -62,7 +62,7 @@ public class RobotContainer
   private final CoralSubsystem m_coral = new CoralSubsystem();
   private final VisionSubsystem m_vision = new VisionSubsystem();
 
-  //private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
+  private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
   //private final LEDsSubsystem m_LED = new LEDsSubsystem();
   //private final ClimbSubsystem m_climb = new ClimbSubsystem();
   // TODO: climb system manipulator here.
@@ -101,8 +101,8 @@ public class RobotContainer
     registerNamedCommands();
 
     /* Create a Auto Selector */
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Selector", autoChooser );
+    //autoChooser = AutoBuilder.buildAutoChooser();
+    //SmartDashboard.putData("Auto Selector", autoChooser );
 
     /* Configure the button bindings */
     configureButtonBindings();
@@ -165,13 +165,15 @@ public class RobotContainer
     m_OperatorController.leftBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_stow ) );
     /* right bumper, run to the feeder position */
     m_OperatorController.rightBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
+
+    m_DriverController.leftBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_LowA ) );
     
     /*************************** Algae Commands *******************************/
-    // m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
-    // m_OperatorController.x().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
+    m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
+    m_OperatorController.x().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
 
-    // m_OperatorController.y().whileTrue( m_Algae.IntakeAlgaeReverseCommand() );
-    // m_OperatorController.y().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
+    m_OperatorController.y().whileTrue( m_Algae.IntakeAlgaeReverseCommand() );
+    m_OperatorController.y().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
 
 
     /*************************** Coral Commands *******************************/

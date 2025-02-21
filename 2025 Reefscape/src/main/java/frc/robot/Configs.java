@@ -99,13 +99,15 @@ public static final class MAXSwerveModule
         .closedLoop
         .feedbackSensor( FeedbackSensor.kAbsoluteEncoder )
         // Set up the PID values for position control
-        .p( .003 ) // GTH:TODO: tune.
-        .outputRange( -1,1 )
-        .maxMotion
+        .p( .01 ) // GTH:TODO: tune.
+        .d(0.0)
+        //.velocityFF(.001)
+        .outputRange( -0.1,.1 );
+        //.maxMotion
         //set MAXMotion parameters for position control.
-        .maxVelocity( 2000 ) // GTH:TODO: tune. (rev has 2000)
-        .maxAcceleration( 10000 ) // GTH:TODO: tune. (rev has 10000)
-        .allowedClosedLoopError( 2 ); // GTH:TODO: tune. (rev has .25)
+        //.maxVelocity( 0 ) // GTH:TODO: tune. (rev has 2000)
+        //.maxAcceleration( 0 ) // GTH:TODO: tune. (rev has 10000)
+        //.allowedClosedLoopError( .5 ); // GTH:TODO: tune. (rev has .25)
 
       /* OLD DATA 
       CoralSparkMaxConfig.absoluteEncoder
@@ -152,13 +154,13 @@ public static final class MAXSwerveModule
         .closedLoop
         .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
         // Setup PID values
-        .p( 0.1 ) //GTH:TODO: tune.
-        .outputRange( -1, 1 )
+        .p( 0.10 ) //GTH:TODO: tune.
+        .outputRange( -.9, 1 );
         //set MAXMotion parameters for position control.
-        .maxMotion
-        .maxVelocity( 4200 ) // GTH:TODO: tune. (rev has 4200)
-        .maxAcceleration( 6000 ) // GTH:TODO: tune. (rev has 6000)
-        .allowedClosedLoopError( 0.5 ); // GTH:TODO: tune. (rev has .5)
+        //.maxMotion
+        //.maxVelocity( 4000 ) // GTH:TODO: tune. (rev has 4200)
+        //.maxAcceleration( 4000 ) // GTH:TODO: tune. (rev has 6000)
+        //.allowedClosedLoopError( 0.25 ); // GTH:TODO: tune. (rev has .5)
 
 
 

@@ -34,7 +34,9 @@ public class ElevatorSubsystem extends SubsystemBase
     k_l1,
     k_l2,
     k_l3,
-    k_l4;
+    k_l4,
+    k_LowA,
+    k_HighA;
   }
 
   //Define the Motors
@@ -133,8 +135,8 @@ public class ElevatorSubsystem extends SubsystemBase
 /********************* Helper Functions for Elevator **************************/
   private void moveToSetpoint()
   {
-    m_LeftElePIDController.setReference( m_ElevatorSetpoint, ControlType.kMAXMotionPositionControl );
-    m_PivotCoralPIDController.setReference( m_PivotCoralSetpoint, ControlType.kMAXMotionPositionControl );
+    m_LeftElePIDController.setReference( m_ElevatorSetpoint, ControlType.kPosition );
+    m_PivotCoralPIDController.setReference( m_PivotCoralSetpoint, ControlType.kPosition );
   }    
 
 
@@ -195,8 +197,10 @@ public class ElevatorSubsystem extends SubsystemBase
           case k_l4:
             m_ElevatorSetpoint = ElevatorSetpoints.k_l4;
             m_PivotCoralSetpoint = PivotCoralSetpoints.k_l4;
-
             break;
+          case k_LowA:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_LowA;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_stow;
         }
       }
     );
