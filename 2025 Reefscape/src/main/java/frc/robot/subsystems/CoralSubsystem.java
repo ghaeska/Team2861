@@ -23,10 +23,16 @@ import edu.wpi.first.math.MathUtil;
 
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Configs;
+import frc.robot.subsystems.LEDsSubsystem;
 
 
 public class CoralSubsystem extends SubsystemBase
 {
+  private boolean RightMotorRunning = false;
+  private boolean LeftMotorRunning = false;
+
+  public boolean CoralPossession = false;
+
   /* Define the motors */
   private final SparkFlex m_LeftCoralMotor;
   private final SparkFlex m_RightCoralMotor;
@@ -76,54 +82,112 @@ public class CoralSubsystem extends SubsystemBase
   public void periodic() 
   {
     /* Print out the Coral Encoder positions and velocities */
-    SmartDashboard.putNumber( "LeftCoralEncoder:", m_LeftCoralEncoder.getPosition() );
     SmartDashboard.putNumber( "LeftCoralSpeed:", m_LeftCoralEncoder.getVelocity() );
-
-    SmartDashboard.putNumber( "RightCoralEncoder:", m_rightCoralEncoder.getPosition() );
-    SmartDashboard.putNumber( "RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );
-
-    
+    SmartDashboard.putNumber( "RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );    
 
     SmartDashboard.putNumber( " LeftCoralCurrent", m_LeftCoralMotor.getOutputCurrent() );
     SmartDashboard.putNumber( "RightCoralCurrent", m_RightCoralMotor.getOutputCurrent() );
-  
-    
-  
+
+    SmartDashboard.putBoolean( "IsLeftMotorRunning?", LeftMotorRunning );
+    SmartDashboard.putBoolean( "IsRightMotorRunning?", RightMotorRunning );
+
+    SmartDashboard.putBoolean( "Coral Possession", CoralPossession );  
   
   }
 
 /*********************** Helper Functions for Coral ***************************/
+  public void runCoralMotor( double voltage, LEDsSubsystem LED)
+  {    
+    m_LeftCoralMotor.set( voltage );
+    m_RightCoralMotor.set( voltage );
+    RightMotorRunning = true;
+    LeftMotorRunning = true;
 
-
-
-public void runCoralMotor( double voltage )
+    if( CheckRightCoral() || CheckLeftCoral() )
+    {
+      stopCoral( LED );
+      CoralPossession = true;
+    }
+    else
+    {
+      CoralPossession = false;
+    }
+    
+  }
+  
+  public boolean CheckRightCoral()
   {
-    //if( !currentLimitReached()  )
-    //{
-      m_LeftCoralMotor.set( voltage );
-      m_RightCoralMotor.set( voltage );
-    //}
-    //stopCoral();
-  }    
+    boolean stopMotor = false;
+    if( RightMotorRunning == true )
+    {
+      /* Since the motor is running, check its speed. */
+      if( m_rightCoralEncoder.getVelocity() > 1 )
+      {
+        stopMotor = false;
+      }
+      else
+      {
+        stopMotor = true;
+      }
+    }
+    return stopMotor;
+  }
 
-  public void stopCoral()
+  public boolean CheckLeftCoral()
+  {
+    boolean stopMotor = false;
+    if( LeftMotorRunning == true )
+    {
+      /* Since the motor is running, check its speed. */
+      if( m_LeftCoralEncoder.getVelocity() > 1 )
+      {
+        stopMotor = false;
+      }
+      else
+      {
+        stopMotor = true;
+      }
+    }
+    return stopMotor;
+  }
+
+
+  public void stopCoral( LEDsSubsystem LED)
   {
     m_LeftCoralMotor.set( 0 );
     m_RightCoralMotor.set( 0 );
-  } 
 
-  
+    LeftMotorRunning = false;
+    RightMotorRunning = false;
+
+    if( CoralPossession)
+    {
+      LED.SetAllGreenCmd();
+    }
+    else
+    {
+      LED.SetAllRedCmd();
+    }
+  }   
 
 /****************************** Commands **************************************/
 
-  public Command CoralRunMotorCmd( double voltage)
+  public Command CoralRunMotorCmd( double voltage, LEDsSubsystem LED)
   {
     return new RunCommand
     ( 
-      () -> this.runCoralMotor( voltage ) , 
+      () -> this.runCoralMotor( voltage, LED ) , 
       this 
     );
   }
 
+  public Command CoralStopMotorCmd( LEDsSubsystem LED )
+  {
+    return new RunCommand
+    ( 
+      () -> this.stopCoral( LED ) , 
+      this 
+    );
+  }
   
 }

@@ -63,7 +63,7 @@ public class RobotContainer
   private final VisionSubsystem m_vision = new VisionSubsystem();
 
   private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
-  //private final LEDsSubsystem m_LED = new LEDsSubsystem();
+  private final LEDsSubsystem m_LED = new LEDsSubsystem();
   //private final ClimbSubsystem m_climb = new ClimbSubsystem();
   // TODO: climb system manipulator here.
 
@@ -166,7 +166,8 @@ public class RobotContainer
     /* right bumper, run to the feeder position */
     m_OperatorController.rightBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
 
-    m_DriverController.leftBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_LowA ) );
+    m_OperatorController.a().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_LowA ) );
+    m_OperatorController.b().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_HighA ) );
     
     /*************************** Algae Commands *******************************/
     m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
@@ -177,11 +178,33 @@ public class RobotContainer
 
 
     /*************************** Coral Commands *******************************/
-    m_OperatorController.a().whileTrue( m_coral.CoralRunMotorCmd( .2 ) );
-    m_OperatorController.a().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
+    /* Intake with left bumper for Left Coral */
+    m_DriverController.leftBumper().whileTrue
+    ( 
+      Commands.sequence
+      ( 
+        m_coral.CoralRunMotorCmd( .2, m_LED ),
+        m_LED.LED_LgreenRredCmd()
+      )    
+    );
+    m_DriverController.leftBumper().whileFalse( m_coral.CoralStopMotorCmd( m_LED ) );
 
-    m_OperatorController.b().whileTrue( m_coral.CoralRunMotorCmd( -.2) );
-    m_OperatorController.b().whileFalse( m_coral.CoralRunMotorCmd( 0 ) );
+    /* Intake with right bumper for Right Coral */
+    m_DriverController.rightBumper().whileTrue
+    ( 
+      Commands.sequence
+      (
+        m_coral.CoralRunMotorCmd( .2, m_LED ),
+        m_LED.LED_LredRgreenCmd()
+      )
+    );
+    m_DriverController.rightBumper().whileFalse( m_coral.CoralStopMotorCmd( m_LED ) );
+
+    /* Outake the coral. */
+    m_DriverController.rightTrigger().whileTrue( m_coral.CoralRunMotorCmd( -.2, m_LED) );
+    m_DriverController.rightTrigger().whileFalse( m_coral.CoralStopMotorCmd( m_LED ) );
+
+
 
 
     /*************************** Climb Commands *******************************/
