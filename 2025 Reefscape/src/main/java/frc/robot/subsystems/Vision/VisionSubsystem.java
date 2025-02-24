@@ -15,6 +15,7 @@ public class VisionSubsystem extends SubsystemBase
   private double tync; // Vertical offset from camera center in degrees
   private boolean hasTarget; // 
   private double targetID; // AprilTag ID number
+  private double targetYaw;
 
   public VisionSubsystem()
   {
@@ -28,7 +29,6 @@ public class VisionSubsystem extends SubsystemBase
     txnc = LimelightHelpers.getTXNC( "limelight" );
     tync = LimelightHelpers.getTYNC( "limelight" );
     targetID = LimelightHelpers.getFiducialID( "limelight" );
-
   }
 
   private void UpdateLLTables()
@@ -40,6 +40,7 @@ public class VisionSubsystem extends SubsystemBase
     txnc = LimelightHelpers.getTXNC( "limelight" );
     tync = LimelightHelpers.getTYNC( "limelight" );
     targetID = LimelightHelpers.getFiducialID( "limelight" );
+
 
   }
 
@@ -59,7 +60,7 @@ public class VisionSubsystem extends SubsystemBase
     // if it is too high, the robot will oscillate.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .035;
+    double kP = .005;
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
     // your limelight 3 feed, tx should return roughly 31 degrees.
@@ -74,15 +75,22 @@ public class VisionSubsystem extends SubsystemBase
     return targetingAngularVelocity;
   }
 
+  // public double limelight_turn_proportional()
+  // {
+  //   double kP = 0.01;
+  //   double targetYaw = LimelightHelpers.gety
+  // }
+
+  
   // simple proportional ranging control with Limelight's "ty" value
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
   public double limelight_range_proportional()
   {    
-    double kP = .1;
+    double kP = .01;
     double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
     targetingForwardSpeed *= SwerveConstants.DriveConstants.kMaxSpeedMetersPerSecond;
-    targetingForwardSpeed *= -1.0;
+    targetingForwardSpeed *= -0.6;
     return targetingForwardSpeed;
   }
 
@@ -102,28 +110,33 @@ public class VisionSubsystem extends SubsystemBase
     
   }
 
+  public double getLimelightTA()
+  {
+    return ta;
+  }
 
-/*
+
+
   public double getTargetAngle() 
   {
-    return NetworkTableInstance.getDefault().getTable("limelight-b").getEntry("tx").getDouble(0.0);
+    return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
   }
 
   public double getTargetTY() 
   {
-    return NetworkTableInstance.getDefault().getTable("limelight-b").getEntry("ty").getDouble(0.0);
+    return NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
   }
 
   public double getTargetTX() 
   {
-    return NetworkTableInstance.getDefault().getTable("limelight-b").getEntry("tx").getDouble(0.0);
+    return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
   }
 
   public double[] get3DPose() 
   {
-    return NetworkTableInstance.getDefault().getTable("limelight-b").getEntry("camtran").getDoubleArray(new double[6]);
+    return NetworkTableInstance.getDefault().getTable("limelight").getEntry("camtran").getDoubleArray(new double[6]);
   }
-*/
+
   
 }
 

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -81,7 +82,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Elevator L1", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l1 ) );
     NamedCommands.registerCommand("Elevator L2", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l2 ) );
     NamedCommands.registerCommand("Elevator L3", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l3 ) );
-    NamedCommands.registerCommand("Elevator L4", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );    
+    //NamedCommands.registerCommand("Elevator L4", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );    
     NamedCommands.registerCommand("Elevator Feeder", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
 
     
@@ -101,8 +102,8 @@ public class RobotContainer
     registerNamedCommands();
 
     /* Create a Auto Selector */
-    //autoChooser = AutoBuilder.buildAutoChooser();
-    //SmartDashboard.putData("Auto Selector", autoChooser );
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Selector", autoChooser );
 
     /* Configure the button bindings */
     configureButtonBindings();
@@ -112,31 +113,61 @@ public class RobotContainer
       // The left stick controls translation of the robot.
       // Turning is controlled by the X axis of the right stick.
       new RunCommand( () -> m_robotDrive.drive(
-        -MathUtil.applyDeadband(m_DriverController.getLeftY(), OIConstants.kDriveDeadband),
-        -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband),
-        //getDriveRotation(),
-        -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband),
+        getDriveForward(),
+        getDriveStrafe(),
+        getDriveRotation(),
         true,
-        true),
+        false),
         m_robotDrive ) );
 
   }
+  private double getDriveStrafe()
+  {
+    double controllerStrafe = -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband);
+    if( m_DriverController.leftTrigger().getAsBoolean() == true )
+    {
+      //check to see if the area is large enough to assume we are lined up.
+      double m_strafe = m_vision.getLimelightTA();
+      if( m_strafe >= 9.5 )
+      {
+        //we are close to on center, stop allowing strafe movements.
+        controllerStrafe = 0;
+      }      
+    }
+    return controllerStrafe;
+  }
 
-  // private double getDriveRotation() 
-  // {
-  //   double controllerAngle = -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband) ;
-  //   if( m_DriverController.rightBumper().getAsBoolean() == true ) 
-  //   {
-  //     Double m_rot = m_vision.limelight_aim_proportional();
+
+  private double getDriveForward()
+  {
+    double controllerForward = -MathUtil.applyDeadband(m_DriverController.getLeftY(), OIConstants.kDriveDeadband);
+    if( m_DriverController.leftTrigger().getAsBoolean() == true )
+    {
+      double m_fwd = m_vision.limelight_range_proportional();
+      return m_fwd;
+      //return controllerForward;
+    }
+    else 
+    {
+      return controllerForward;
+    }
+  }
+
+  private double getDriveRotation() 
+  {
+    double controllerAngle = -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband) ;
+    if( m_DriverController.leftTrigger().getAsBoolean() == true ) 
+    {
+      Double m_rot = m_vision.limelight_aim_proportional();
       
-  //     return m_rot;
+      return m_rot;
       
-  //   } 
-  //   else 
-  //   {
-  //     return controllerAngle;
-  //   }
-  // }
+    } 
+    else 
+    {
+      return controllerAngle;
+    }
+  }
 
   /* Configure all the buttons for the controller. */
   private void configureButtonBindings() 
@@ -154,7 +185,10 @@ public class RobotContainer
     /* Command to reset the elevator encoders. */
     m_OperatorController.back().whileTrue( new InstantCommand( m_Elevator::resetElevatorPosition ).ignoringDisable(true) );
     /* POV up, run to L4 */
-    m_OperatorController.povUp().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );
+    //m_OperatorController.povUp().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );
+    m_OperatorController.povUp().onTrue( Commands.sequence( m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_up ),
+                                                            Commands.waitSeconds( 1.0 ),
+                                                            m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_score ) ) );
     /* POV right, run to L3 */
     m_OperatorController.povRight().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l3 ) );
     /* POV down, run to L2 */
@@ -187,7 +221,7 @@ public class RobotContainer
         m_LED.LED_LgreenRredCmd()
       )    
     );
-    m_DriverController.leftBumper().whileFalse( m_coral.CoralStopMotorCmd( m_LED ) );
+    m_DriverController.leftBumper().whileFalse( m_coral.CoralRunMotorCmd( 0.0, m_LED ) );
 
     /* Intake with right bumper for Right Coral */
     m_DriverController.rightBumper().whileTrue
@@ -198,11 +232,11 @@ public class RobotContainer
         m_LED.LED_LredRgreenCmd()
       )
     );
-    m_DriverController.rightBumper().whileFalse( m_coral.CoralStopMotorCmd( m_LED ) );
+    m_DriverController.rightBumper().whileFalse( m_coral.CoralRunMotorCmd( 0.0, m_LED ) );
 
     /* Outake the coral. */
     m_DriverController.rightTrigger().whileTrue( m_coral.CoralRunMotorCmd( -.2, m_LED) );
-    m_DriverController.rightTrigger().whileFalse( m_coral.CoralStopMotorCmd( m_LED ) );
+    m_DriverController.rightTrigger().whileFalse( m_coral.CoralRunMotorCmd( 0.0, m_LED ) );
 
 
 

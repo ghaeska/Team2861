@@ -100,18 +100,22 @@ public class CoralSubsystem extends SubsystemBase
   {    
     m_LeftCoralMotor.set( voltage );
     m_RightCoralMotor.set( voltage );
-    RightMotorRunning = true;
-    LeftMotorRunning = true;
+    //RightMotorRunning = true;
+    //LeftMotorRunning = true;
 
-    if( CheckRightCoral() || CheckLeftCoral() )
-    {
-      stopCoral( LED );
-      CoralPossession = true;
-    }
-    else
-    {
-      CoralPossession = false;
-    }
+    // if( CheckRightCoral() || CheckLeftCoral() )
+    // {
+    //   stopCoral( LED );
+    //   //CoralPossession = true;
+    //   RightMotorRunning = false;
+    //   LeftMotorRunning = false;
+    // }
+    // else
+    // {
+    //   CoralPossession = false;
+    //   RightMotorRunning = true;
+    //   LeftMotorRunning = true;
+    // }
     
   }
   
@@ -157,17 +161,18 @@ public class CoralSubsystem extends SubsystemBase
     m_LeftCoralMotor.set( 0 );
     m_RightCoralMotor.set( 0 );
 
-    LeftMotorRunning = false;
-    RightMotorRunning = false;
+    //LeftMotorRunning = false;
+    //RightMotorRunning = false;
 
-    if( CoralPossession)
-    {
-      LED.SetAllGreenCmd();
-    }
-    else
-    {
-      LED.SetAllRedCmd();
-    }
+    //if( CoralPossession)
+    //{
+    //  LED.SetAllGreenCmd();
+      //CoralPossession = false;
+    //}
+    //else
+    //{
+    //  LED.SetAllRedCmd();
+    //}
   }   
 
 /****************************** Commands **************************************/

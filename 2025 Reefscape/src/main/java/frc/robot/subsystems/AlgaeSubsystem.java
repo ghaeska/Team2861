@@ -75,7 +75,7 @@ public class AlgaeSubsystem extends SubsystemBase
     SmartDashboard.putNumber("RightAlgaeEncoder:", m_RightAlgaeEncoder.getPosition() );
     SmartDashboard.putNumber("RightAlgaeSpeed:", m_RightAlgaeEncoder.getVelocity() );
 
-}
+  }
 
 
   /********************* Helper Functions for Algae *************************/

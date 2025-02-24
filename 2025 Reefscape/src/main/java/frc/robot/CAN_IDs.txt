@@ -18,12 +18,12 @@ Here is a master list of all CAN ID's that are used in our robot.
  |   11    |  Right Elevator Motor    |           Constants.java               |
  |   12    |  Left Algae Drive Motor  |           Constants.java               |
  |   13    | Right Algae Drive Motor  |           Constants.java               |
- |   14    |         Not Used         |                                        |Algae Pivot?
+ |   14    |       Climb Motor        |           Constants.java               |
  |   15    |     Left Coral Motor     |           Constants.java               |
  |   16    |    Right Coral Motor     |           Constants.java               |
- |   17    |    Coral Pivor Motor     |           Constants.java               |
- |   18    |         Not Used         |                                        |Climb?
- |   19    |         Not Used         |                                        |2nd Climb if needed?
+ |   17    |    Coral Pivot Motor     |           Constants.java               |
+ |   18    |         Not Used         |                                        |
+ |   19    |         Not Used         |                                        |
  |   20    |       Pidgeon 2.0        |        SwerveConstants.java            |
  |   21    |         Not Used         |                                        |
  |   50    |           PDH            |             No File                    |

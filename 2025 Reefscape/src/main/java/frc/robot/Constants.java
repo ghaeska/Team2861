@@ -52,6 +52,13 @@ public static final boolean DEBUG_MODE = true;
     public static final int k_Algae_MaxCurrent = 20;
   }
 
+  public static final class ClimbConstants
+  {
+    /* Climber Motor ID's */
+    public static final int k_ClimbMotorCANId = 14;
+    public static final int k_ClimbMaxCurrent = 40;
+  }
+
   public static final class CoralConstants
   {
     /* Coral Motor ID's */
@@ -60,10 +67,6 @@ public static final boolean DEBUG_MODE = true;
     public static final int k_PivotCoralMotorCANId = 17;
 
     public static final int k_Coral_MaxCurrent = 40;
-
-    /* Coral Beam Break Sensors */
-    public static final int k_DIO_LeftCoralSensorID = 1;
-    public static final int k_DIO_RightCoralSensorID = 2;
 
     /* Because the Coral is on a pivot, we need to have a PID to hold the position */
     public static final double k_PivotCoralMotorP  = 0.006;
@@ -118,7 +121,7 @@ public static final boolean DEBUG_MODE = true;
       public static final double k_l2 = 23;
       public static final double k_l3 = 51;
       public static final double k_l4 = 88;
-      public static final double k_LowA = 40;
+      public static final double k_LowA = 42;
       public static final double k_HighA = 70;
     }
   }

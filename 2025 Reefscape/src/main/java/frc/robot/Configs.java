@@ -61,6 +61,20 @@ public static final class MAXSwerveModule
         }
     }
 
+  public static final class ClimbModule
+  {
+    public static final SparkMaxConfig ClimbMotorConfig = new SparkMaxConfig();
+    static
+    {
+      /* ------------------ Climb Motor Configs. ------------------------- */
+      /* Set the idle mode to brake, so the climb cant backdrive */
+      ClimbMotorConfig.idleMode( IdleMode.kBrake );
+      /* set the smart current limit to 40A to prevent motor damage */
+      ClimbMotorConfig.smartCurrentLimit( Constants.ClimbConstants.k_ClimbMaxCurrent );
+    }
+
+  }
+
   public static final class AlgaeModule
   {
     public static final SparkMaxConfig AlgaeMotorConfig = new SparkMaxConfig();
@@ -155,7 +169,7 @@ public static final class MAXSwerveModule
         .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
         // Setup PID values
         .p( 0.10 ) //GTH:TODO: tune.
-        .outputRange( -.9, 1 );
+        .outputRange( -.8, .8 );
         //set MAXMotion parameters for position control.
         //.maxMotion
         //.maxVelocity( 4000 ) // GTH:TODO: tune. (rev has 4200)

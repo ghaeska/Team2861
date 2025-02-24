@@ -34,7 +34,8 @@ public class ElevatorSubsystem extends SubsystemBase
     k_l1,
     k_l2,
     k_l3,
-    k_l4,
+    k_l4_up,
+    k_l4_score,
     k_LowA,
     k_HighA;
   }
@@ -194,13 +195,23 @@ public class ElevatorSubsystem extends SubsystemBase
             m_PivotCoralSetpoint = PivotCoralSetpoints.k_l3;
 
             break;
-          case k_l4:
+          case k_l4_up:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_l4;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_feederStation;
+            break;
+          case k_l4_score:
             m_ElevatorSetpoint = ElevatorSetpoints.k_l4;
             m_PivotCoralSetpoint = PivotCoralSetpoints.k_l4;
             break;
           case k_LowA:
             m_ElevatorSetpoint = ElevatorSetpoints.k_LowA;
             m_PivotCoralSetpoint = PivotCoralSetpoints.k_stow;
+            break;
+          case k_HighA:
+            m_ElevatorSetpoint = ElevatorSetpoints.k_HighA;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_stow;
+            break;
+          
         }
       }
     );
