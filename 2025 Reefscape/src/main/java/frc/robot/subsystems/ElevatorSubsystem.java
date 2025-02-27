@@ -205,11 +205,11 @@ public class ElevatorSubsystem extends SubsystemBase
             break;
           case k_LowA:
             m_ElevatorSetpoint = ElevatorSetpoints.k_LowA;
-            m_PivotCoralSetpoint = PivotCoralSetpoints.k_stow;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_algae;
             break;
           case k_HighA:
             m_ElevatorSetpoint = ElevatorSetpoints.k_HighA;
-            m_PivotCoralSetpoint = PivotCoralSetpoints.k_stow;
+            m_PivotCoralSetpoint = PivotCoralSetpoints.k_algae;
             break;
           
         }

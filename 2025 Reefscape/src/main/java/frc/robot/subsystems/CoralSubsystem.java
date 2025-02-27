@@ -96,7 +96,7 @@ public class CoralSubsystem extends SubsystemBase
   }
 
 /*********************** Helper Functions for Coral ***************************/
-  public void runCoralMotor( double voltage, LEDsSubsystem LED)
+  public void runCoralMotor( double voltage )
   {    
     m_LeftCoralMotor.set( voltage );
     m_RightCoralMotor.set( voltage );
@@ -156,7 +156,7 @@ public class CoralSubsystem extends SubsystemBase
   }
 
 
-  public void stopCoral( LEDsSubsystem LED)
+  public void stopCoral()
   {
     m_LeftCoralMotor.set( 0 );
     m_RightCoralMotor.set( 0 );
@@ -177,20 +177,20 @@ public class CoralSubsystem extends SubsystemBase
 
 /****************************** Commands **************************************/
 
-  public Command CoralRunMotorCmd( double voltage, LEDsSubsystem LED)
+  public Command CoralRunMotorCmd( double voltage )
   {
     return new RunCommand
     ( 
-      () -> this.runCoralMotor( voltage, LED ) , 
+      () -> this.runCoralMotor( voltage ) , 
       this 
     );
   }
 
-  public Command CoralStopMotorCmd( LEDsSubsystem LED )
+  public Command CoralStopMotorCmd()
   {
     return new RunCommand
     ( 
-      () -> this.stopCoral( LED ) , 
+      () -> this.stopCoral() , 
       this 
     );
   }

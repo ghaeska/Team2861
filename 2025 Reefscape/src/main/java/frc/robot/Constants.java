@@ -92,6 +92,7 @@ public static final boolean DEBUG_MODE = true;
       public static final double k_l2 = 90;
       public static final double k_l3 = 90;
       public static final double k_l4 = 105;//change flat
+      public static final double k_algae = 160;
     }
   }
 
@@ -120,7 +121,7 @@ public static final boolean DEBUG_MODE = true;
       public static final double k_l1 = 0;
       public static final double k_l2 = 23;
       public static final double k_l3 = 51;
-      public static final double k_l4 = 88;
+      public static final double k_l4 = 89.5;
       public static final double k_LowA = 42;
       public static final double k_HighA = 70;
     }

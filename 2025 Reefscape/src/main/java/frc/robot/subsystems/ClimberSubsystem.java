@@ -59,14 +59,14 @@ public class ClimberSubsystem extends SubsystemBase
   }
 
   /***************************** Commands **************************************/
-  public Command ClimbCommand()
+  public Command ClimbCommand(double speed)
   {
-    return new RunCommand( ()->this.runClimber(0.2), this );
+    return new RunCommand( ()->this.runClimber( speed ), this );
   }
 
-  public Command UnclimbCommand()
+  public Command UnclimbCommand( double speed)
   {
-    return new RunCommand( ()->this.runClimber(-0.2), this );
+    return new RunCommand( ()->this.runClimber( -speed ), this );
   }
 
 

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants.ElevatorSetpoints;
 // import frc.robot.Constants.OIConstants;
 import frc.robot.SwerveConstants.OIConstants;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,6 +40,7 @@ import frc.robot.subsystems.LEDsSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorSetpoint;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 
 /* Pathplanner Calls */
@@ -65,8 +67,7 @@ public class RobotContainer
 
   private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
   private final LEDsSubsystem m_LED = new LEDsSubsystem();
-  //private final ClimbSubsystem m_climb = new ClimbSubsystem();
-  // TODO: climb system manipulator here.
+  private final ClimberSubsystem m_climb = new ClimberSubsystem();
 
   private SendableChooser<Command> autoChooser;
 
@@ -82,10 +83,20 @@ public class RobotContainer
     NamedCommands.registerCommand("Elevator L1", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l1 ) );
     NamedCommands.registerCommand("Elevator L2", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l2 ) );
     NamedCommands.registerCommand("Elevator L3", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l3 ) );
-    //NamedCommands.registerCommand("Elevator L4", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );    
+    NamedCommands.registerCommand("Elevator L4", Commands.sequence
+    ( m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_up ),
+      Commands.waitSeconds( 1.0 ),
+      m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_score ) ) );
+    NamedCommands.registerCommand( "Elevator Low Algae", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_LowA ) ); 
     NamedCommands.registerCommand("Elevator Feeder", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
-
+    NamedCommands.registerCommand( "Drive To Target", DriveToTargetCommand().withDeadline(Commands.waitSeconds(1.4) ) ); 
+    NamedCommands.registerCommand( "OutTake Coral", m_coral.CoralRunMotorCmd(-0.2).withDeadline(Commands.waitSeconds(1)) );
+    NamedCommands.registerCommand( "stop coral", m_coral.CoralStopMotorCmd().withDeadline(Commands.waitSeconds(0.01)));
+    NamedCommands.registerCommand( "Intake Algae", m_Algae.IntakeAlgaeForwardCommand().withDeadline(Commands.waitSeconds(1.5)));
+    NamedCommands.registerCommand( "StopAlgae", m_Algae.IntakeAlgaeStopCommand().withDeadline(Commands.waitSeconds(0.01)));
+    NamedCommands.registerCommand("DriveStop", DriveStop().withDeadline(Commands.waitSeconds( 0.01)));
     
+    //NamedCommands.registerCommand( , getAutonomousCommand());
 
 
 
@@ -121,6 +132,34 @@ public class RobotContainer
         m_robotDrive ) );
 
   }
+
+  private Command DriveStop()
+  {
+    return new RunCommand( 
+      () -> m_robotDrive.drive( 
+      0, 
+      0,
+      0, 
+      true, 
+      false), 
+      m_robotDrive );
+  }
+
+
+  private Command DriveToTargetCommand()
+  {
+    return new RunCommand( 
+      () -> m_robotDrive.drive( 
+      m_vision.limelight_range_proportional(), 
+      0,
+      m_vision.limelight_aim_proportional(), 
+      true, 
+      false), 
+      m_robotDrive );
+  }
+
+
+
   private double getDriveStrafe()
   {
     double controllerStrafe = -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband);
@@ -215,34 +254,52 @@ public class RobotContainer
     /* Intake with left bumper for Left Coral */
     m_DriverController.leftBumper().whileTrue
     ( 
-      Commands.sequence
+      Commands.parallel
       ( 
-        m_coral.CoralRunMotorCmd( .2, m_LED ),
+        m_coral.CoralRunMotorCmd( .2 ),
         m_LED.LED_LgreenRredCmd()
       )    
     );
-    m_DriverController.leftBumper().whileFalse( m_coral.CoralRunMotorCmd( 0.0, m_LED ) );
+    m_DriverController.leftBumper().whileFalse
+    (
+      Commands.parallel
+      (
+        m_coral.CoralRunMotorCmd( 0.0 ),
+        m_LED.LED_RedAllCmd()
+      ) 
+    );
 
     /* Intake with right bumper for Right Coral */
     m_DriverController.rightBumper().whileTrue
     ( 
-      Commands.sequence
+      Commands.parallel
       (
-        m_coral.CoralRunMotorCmd( .2, m_LED ),
+        m_coral.CoralRunMotorCmd( .2 ),
         m_LED.LED_LredRgreenCmd()
       )
     );
-    m_DriverController.rightBumper().whileFalse( m_coral.CoralRunMotorCmd( 0.0, m_LED ) );
 
+    m_DriverController.rightBumper().whileFalse
+    (
+      Commands.parallel
+      (
+        m_coral.CoralRunMotorCmd( 0.0 ),
+        m_LED.LED_RedAllCmd()
+      ) 
+    );
     /* Outake the coral. */
-    m_DriverController.rightTrigger().whileTrue( m_coral.CoralRunMotorCmd( -.2, m_LED) );
-    m_DriverController.rightTrigger().whileFalse( m_coral.CoralRunMotorCmd( 0.0, m_LED ) );
+    m_DriverController.rightTrigger().whileTrue( m_coral.CoralRunMotorCmd( -.2 ) );
+    m_DriverController.rightTrigger().whileFalse( m_coral.CoralRunMotorCmd( 0.0  ) );
 
 
 
 
     /*************************** Climb Commands *******************************/
+    m_OperatorController.rightTrigger().whileTrue( m_climb.ClimbCommand( 1.0 ) );
+    m_OperatorController.rightTrigger().whileFalse( m_climb.ClimbCommand( 0 ));
 
+    m_OperatorController.leftTrigger().whileTrue( m_climb.ClimbCommand( -1.0 ) );
+    m_OperatorController.leftTrigger().whileFalse( m_climb.ClimbCommand( 0 ) );
 
 
   } 

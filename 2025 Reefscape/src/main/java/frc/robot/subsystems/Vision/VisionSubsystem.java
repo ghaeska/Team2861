@@ -87,7 +87,7 @@ public class VisionSubsystem extends SubsystemBase
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
   public double limelight_range_proportional()
   {    
-    double kP = .01;
+    double kP = .005;
     double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
     targetingForwardSpeed *= SwerveConstants.DriveConstants.kMaxSpeedMetersPerSecond;
     targetingForwardSpeed *= -0.6;
@@ -113,6 +113,11 @@ public class VisionSubsystem extends SubsystemBase
   public double getLimelightTA()
   {
     return ta;
+  }
+
+  public boolean onTarget()
+  {
+    return Math.abs( getLimelightTA() ) >= 8.5;
   }
 
 
