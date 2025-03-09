@@ -12,6 +12,8 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,9 +22,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,6 +42,10 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 //import com.pathplanner.lib.util.PIDConstants;
 //import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.util.Units;
+
+import frc.robot.Constants;
+import frc.robot.SwerveConstants;
 import frc.robot.SwerveConstants.DriveConstants;
 import frc.robot.SwerveConstants.ModuleConstants;
 import frc.robot.subsystems.Vision.VisionSubsystem;
@@ -113,6 +121,7 @@ public class DriveSubsystem extends SubsystemBase
 
     /* Gyro Stuff */
   }
+
 
   @Override
   public void periodic() 
@@ -416,6 +425,18 @@ public class DriveSubsystem extends SubsystemBase
       m_rearLeft.getState(),
       m_rearRight.getState()
     };
+  }
+
+  private SwerveModulePosition[] getSwervePositions()
+  {
+    SwerveModulePosition[] positions = 
+    {
+      m_frontLeft.getPosition(), 
+      m_frontRight.getPosition(),
+      m_rearLeft.getPosition(),
+      m_rearRight.getPosition()
+    };
+    return positions;
   }
 
   private void configurePathPlanner()

@@ -1,10 +1,13 @@
 package frc.robot.subsystems.Vision;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveConstants;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class VisionSubsystem extends SubsystemBase
 {
@@ -15,7 +18,9 @@ public class VisionSubsystem extends SubsystemBase
   private double tync; // Vertical offset from camera center in degrees
   private boolean hasTarget; // 
   private double targetID; // AprilTag ID number
-  private double targetYaw;
+  public double[] latestVisionMeasurement;
+
+  private DriveSubsystem drive;
 
   public VisionSubsystem()
   {
@@ -40,13 +45,7 @@ public class VisionSubsystem extends SubsystemBase
     txnc = LimelightHelpers.getTXNC( "limelight" );
     tync = LimelightHelpers.getTYNC( "limelight" );
     targetID = LimelightHelpers.getFiducialID( "limelight" );
-
-
   }
-
-  
-
-
 
   /* Taken from LL github */
   // simple proportional turning control with Limelight.
@@ -55,31 +54,26 @@ public class VisionSubsystem extends SubsystemBase
   // "tx" value from the Limelight.
   public double limelight_aim_proportional()
   {    
+   
     // kP (constant of proportionality)
     // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
     // if it is too high, the robot will oscillate.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
     double kP = .005;
-
+    
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
     // your limelight 3 feed, tx should return roughly 31 degrees.
     double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
 
     // convert to radians per second for our drive method
-    targetingAngularVelocity *= SwerveConstants.DriveConstants.kMaxSpeedMetersPerSecond;
+    targetingAngularVelocity *= SwerveConstants.DriveConstants.kMaxAngularSpeed;
 
     //invert since tx is positive when the target is to the right of the crosshair
     targetingAngularVelocity *= -1.0;
 
     return targetingAngularVelocity;
   }
-
-  // public double limelight_turn_proportional()
-  // {
-  //   double kP = 0.01;
-  //   double targetYaw = LimelightHelpers.gety
-  // }
 
   
   // simple proportional ranging control with Limelight's "ty" value
@@ -98,16 +92,15 @@ public class VisionSubsystem extends SubsystemBase
   public void periodic() 
   {
     UpdateLLTables();
-
+      
+    //SmartDashboard.putNumberArray("LIMELIGHT VISION", latestVisionMeasurement);
     SmartDashboard.putNumber( "Limelight X: ", tx );
     SmartDashboard.putNumber( "Limelight Y: ", ty );
     SmartDashboard.putNumber( "Limelight A: ", ta );
     SmartDashboard.putNumber( "Limelight TxNC", txnc );
     SmartDashboard.putNumber( "Limelight TyNC", tync );
     SmartDashboard.putBoolean( "LimelightHasTarget", hasTarget );
-    SmartDashboard.putNumber( "Target ID", targetID );  
-
-    
+    SmartDashboard.putNumber( "Target ID", targetID );    
   }
 
   public double getLimelightTA()
@@ -140,8 +133,6 @@ public class VisionSubsystem extends SubsystemBase
   public double[] get3DPose() 
   {
     return NetworkTableInstance.getDefault().getTable("limelight").getEntry("camtran").getDoubleArray(new double[6]);
-  }
-
-  
+  }  
 }
 

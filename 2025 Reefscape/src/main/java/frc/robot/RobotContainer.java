@@ -95,11 +95,9 @@ public class RobotContainer
     NamedCommands.registerCommand( "Intake Algae", m_Algae.IntakeAlgaeForwardCommand().withDeadline(Commands.waitSeconds(1.5)));
     NamedCommands.registerCommand( "StopAlgae", m_Algae.IntakeAlgaeStopCommand().withDeadline(Commands.waitSeconds(0.01)));
     NamedCommands.registerCommand("DriveStop", DriveStop().withDeadline(Commands.waitSeconds( 0.01)));
+    NamedCommands.registerCommand(( "Outtake Algae"), m_Algae.IntakeAlgaeReverseCommand().withDeadline(Commands.waitSeconds(1.5)));
     
     //NamedCommands.registerCommand( , getAutonomousCommand());
-
-
-
   }
 
 
@@ -127,10 +125,22 @@ public class RobotContainer
         getDriveForward(),
         getDriveStrafe(),
         getDriveRotation(),
-        true,
+        DriveFieldRelative(),
         false),
         m_robotDrive ) );
 
+  }
+
+  private boolean DriveFieldRelative()
+  {
+    if( m_DriverController.leftTrigger().getAsBoolean() == true )
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
   }
 
   private Command DriveStop()
@@ -153,12 +163,10 @@ public class RobotContainer
       m_vision.limelight_range_proportional(), 
       0,
       m_vision.limelight_aim_proportional(), 
-      true, 
+      false, 
       false), 
       m_robotDrive );
   }
-
-
 
   private double getDriveStrafe()
   {
@@ -167,7 +175,7 @@ public class RobotContainer
     {
       //check to see if the area is large enough to assume we are lined up.
       double m_strafe = m_vision.getLimelightTA();
-      if( m_strafe >= 9.5 )
+      if( m_strafe >= 11.5 )
       {
         //we are close to on center, stop allowing strafe movements.
         controllerStrafe = 0;
@@ -175,7 +183,6 @@ public class RobotContainer
     }
     return controllerStrafe;
   }
-
 
   private double getDriveForward()
   {
