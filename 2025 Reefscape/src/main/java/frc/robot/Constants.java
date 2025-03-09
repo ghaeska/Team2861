@@ -24,6 +24,8 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants 
 {
+public static final boolean DEBUG_MODE = true;
+
   public static class Field 
   {
     public static final double k_width = Units.feetToMeters(54.0);
@@ -50,6 +52,13 @@ public final class Constants
     public static final int k_Algae_MaxCurrent = 20;
   }
 
+  public static final class ClimbConstants
+  {
+    /* Climber Motor ID's */
+    public static final int k_ClimbMotorCANId = 14;
+    public static final int k_ClimbMaxCurrent = 40;
+  }
+
   public static final class CoralConstants
   {
     /* Coral Motor ID's */
@@ -57,17 +66,13 @@ public final class Constants
     public static final int k_RightCoralMotorCANId = 16;
     public static final int k_PivotCoralMotorCANId = 17;
 
-    public static final int k_Coral_MaxCurrent = 30;
-
-    /* Coral Beam Break Sensors */
-    public static final int k_DIO_LeftCoralSensorID = 1;
-    public static final int k_DIO_RightCoralSensorID = 2;
+    public static final int k_Coral_MaxCurrent = 40;
 
     /* Because the Coral is on a pivot, we need to have a PID to hold the position */
-    public static final double k_PivotCoralMotorP  = 0.026;
+    public static final double k_PivotCoralMotorP  = 0.006;
     public static final double k_PivotCoralMotorI  = 0.00; 
     public static final double k_PivotCoralMotorD  = 0.00;
-    public static final double k_PivotCoralMotorFF = 0.001;
+    public static final double k_PivotCoralMotorFF = 0.00;
 
     public static final double k_PivotMinOutput = -0.5;
     public static final double k_PivotMaxOutput = 0.5;
@@ -79,13 +84,16 @@ public final class Constants
     public static final double k_PivotCoralEncoderOffset = 0.000000;
 
     /* Pivot Angle Set points */
-    public static final Rotation2d k_PivotCoralAngleStowed = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL1 = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL2 = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL3 = Rotation2d.fromDegrees( 0 );
-    public static final Rotation2d k_PivotCoralAngleL4 = Rotation2d.fromDegrees( 0 );
-
-
+    public static final class PivotCoralSetpoints
+    {
+      public static final double k_stow = 170;
+      public static final double k_feederStation = 145;
+      public static final double k_l1 = 110;
+      public static final double k_l2 = 90;
+      public static final double k_l3 = 90;
+      public static final double k_l4 = 105;//change flat
+      public static final double k_algae = 160;
+    }
   }
 
   public static final class ElevatorConstants
@@ -95,30 +103,28 @@ public final class Constants
     public static final int k_RightElevatorMotorCANId = 11;
 
     /* Elevator PID Settings */
-    public static final double k_Ele_PID_P = 0.027;
+    public static final double k_Ele_PID_P = 0.012;
     public static final double k_Ele_PID_I = 0;
     public static final double k_Ele_PID_D = 0.0;
-    public static final double k_Ele_PID_FF = 0.0085;
-    public static final double k_Ele_PID_IZone = 5.0;
-    public static final double k_Ele_PID_G = 0.5;
+    public static final double k_Ele_PID_FF = 0.0;
 
     public static final double k_Ele_MaxVelocity = 65;
     public static final double k_Ele_MaxAcceleration = 200;
 
     public static final int k_Ele_MaxCurrent = 40;
 
-    public static final double k_Ele_StowHeight = 0.0;
-    public static final double k_Ele_SrcHeight = 8.75;    
-    public static final double k_Ele_L1Height = 3.0;
-    public static final double k_Ele_L2Height = 5.5;
-    public static final double k_Ele_L3Height = 21.5;
-    public static final double k_Ele_L4Height = 52.5;
-    public static final double k_Ele_MaxHeight = 84;
-    //public static final double k_Ele_GroundAlgaeHeight = 0.0;
-    public static final double k_Ele_ScoreAlgaeHeight = 0.0;
-    //public static final double k_Ele_LowAlgaeHeight = 24.8;
-    public static final double k_Ele_HighAlgaeHeight = 40;
-
+    /* Pivot Angle Set points */
+    public static final class ElevatorSetpoints
+    {
+      public static final double k_stow = 0;
+      public static final double k_feederStation = 4;
+      public static final double k_l1 = 0;
+      public static final double k_l2 = 23;
+      public static final double k_l3 = 51;
+      public static final double k_l4 = 89.5;
+      public static final double k_LowA = 42;
+      public static final double k_HighA = 70;
+    }
   }
 
   public static final class AutoConstants 

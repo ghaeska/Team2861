@@ -9,14 +9,12 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -25,27 +23,28 @@ import edu.wpi.first.math.MathUtil;
 
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Configs;
+import frc.robot.subsystems.LEDsSubsystem;
 
 
 public class CoralSubsystem extends SubsystemBase
 {
+  private boolean RightMotorRunning = false;
+  private boolean LeftMotorRunning = false;
+
+  public boolean CoralPossession = false;
+
   /* Define the motors */
   private final SparkFlex m_LeftCoralMotor;
   private final SparkFlex m_RightCoralMotor;
-  private final SparkMax m_PivotCoralMotor;
+  //private final SparkMax m_PivotCoralMotor;
 
-  /* Define spark PID controller */
-  private SparkClosedLoopController m_PivotCoralPIDController;
+  
 
   /* Define Relative motor Encoders */
   private RelativeEncoder m_LeftCoralEncoder;
   private RelativeEncoder m_rightCoralEncoder;
 
-  /* Define Absolute Encoder for pivot */
-  private AbsoluteEncoder m_PivotCoralEncoder;
-
-  /* Define Rotation2d for Angular tracking */
-  private Rotation2d m_CoralPivotSetpoint = new Rotation2d();
+  
 
   public CoralSubsystem()
   {
@@ -53,9 +52,7 @@ public class CoralSubsystem extends SubsystemBase
     m_LeftCoralMotor = new SparkFlex(Constants.CoralConstants.k_LeftCoralMotorCANId, MotorType.kBrushless );
     m_RightCoralMotor = new SparkFlex(Constants.CoralConstants.k_RightCoralMotorCANId, MotorType.kBrushless );
 
-    /* Assign the Pivot Motor ID */
-    m_PivotCoralMotor = new SparkMax(Constants.CoralConstants.k_PivotCoralMotorCANId, MotorType.kBrushless );
-
+    
     /* Setup the motor Encoders. */
     m_LeftCoralEncoder = m_LeftCoralMotor.getEncoder();
     m_rightCoralEncoder = m_RightCoralMotor.getEncoder();
@@ -67,18 +64,16 @@ public class CoralSubsystem extends SubsystemBase
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
-
-    /* Configure the Pivot motor. */
-    m_PivotCoralMotor.configure
+    /* Configure the right motor */
+    m_RightCoralMotor.configure
     (
-      Configs.CoralModule.CoralSparkMaxConfig, 
+      Configs.CoralModule.CoralSparkFlexConfig
+      .inverted( true ), 
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
 
-    m_PivotCoralEncoder = m_PivotCoralMotor.getAbsoluteEncoder();
-
-    m_PivotCoralPIDController = m_LeftCoralMotor.getClosedLoopController();
+   
 
   }
 
@@ -87,72 +82,117 @@ public class CoralSubsystem extends SubsystemBase
   public void periodic() 
   {
     /* Print out the Coral Encoder positions and velocities */
-    SmartDashboard.putNumber("LeftCoralEncoder:", m_LeftCoralEncoder.getPosition() );
-    SmartDashboard.putNumber("LeftCoralSpeed:", m_LeftCoralEncoder.getVelocity() );
+    SmartDashboard.putNumber( "LeftCoralSpeed:", m_LeftCoralEncoder.getVelocity() );
+    SmartDashboard.putNumber( "RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );    
 
-    SmartDashboard.putNumber("RightCoralEncoder:", m_rightCoralEncoder.getPosition() );
-    SmartDashboard.putNumber("RightCoralSpeed:", m_rightCoralEncoder.getVelocity() );
+    SmartDashboard.putNumber( " LeftCoralCurrent", m_LeftCoralMotor.getOutputCurrent() );
+    SmartDashboard.putNumber( "RightCoralCurrent", m_RightCoralMotor.getOutputCurrent() );
 
-    SmartDashboard.putNumber("PivotAbsoluteEncoder:", m_PivotCoralEncoder.getPosition() );
-    SmartDashboard.putNumber("PivotCoralSpeed:", m_PivotCoralEncoder.getVelocity() );
+    SmartDashboard.putBoolean( "IsLeftMotorRunning?", LeftMotorRunning );
+    SmartDashboard.putBoolean( "IsRightMotorRunning?", RightMotorRunning );
+
+    SmartDashboard.putBoolean( "Coral Possession", CoralPossession );  
+  
   }
 
 /*********************** Helper Functions for Coral ***************************/
-  public void runLeftCoralMotor( double voltage )
-  {
+  public void runCoralMotor( double voltage )
+  {    
     m_LeftCoralMotor.set( voltage );
-  }
+    m_RightCoralMotor.set( voltage );
+    //RightMotorRunning = true;
+    //LeftMotorRunning = true;
 
-  public void runPivotCoralMotor( double voltage )
+    // if( CheckRightCoral() || CheckLeftCoral() )
+    // {
+    //   stopCoral( LED );
+    //   //CoralPossession = true;
+    //   RightMotorRunning = false;
+    //   LeftMotorRunning = false;
+    // }
+    // else
+    // {
+    //   CoralPossession = false;
+    //   RightMotorRunning = true;
+    //   LeftMotorRunning = true;
+    // }
+    
+  }
+  
+  public boolean CheckRightCoral()
   {
-    m_PivotCoralMotor.set( voltage );
+    boolean stopMotor = false;
+    if( RightMotorRunning == true )
+    {
+      /* Since the motor is running, check its speed. */
+      if( m_rightCoralEncoder.getVelocity() > 1 )
+      {
+        stopMotor = false;
+      }
+      else
+      {
+        stopMotor = true;
+      }
+    }
+    return stopMotor;
   }
 
-  public double getCoralPivotPosition()
+  public boolean CheckLeftCoral()
   {
-    return m_LeftCoralEncoder.getPosition();
+    boolean stopMotor = false;
+    if( LeftMotorRunning == true )
+    {
+      /* Since the motor is running, check its speed. */
+      if( m_LeftCoralEncoder.getVelocity() > 1 )
+      {
+        stopMotor = false;
+      }
+      else
+      {
+        stopMotor = true;
+      }
+    }
+    return stopMotor;
   }
 
-  public void resetCoralPivotPosition()
-  {
-    m_LeftCoralEncoder.setPosition( 0 );
-  }
 
-  public void stopCoralPivot()
-  {
-    m_PivotCoralMotor.set( 0 );
-  }
-
-  public void stopLeftCoral()
+  public void stopCoral()
   {
     m_LeftCoralMotor.set( 0 );
-  }
+    m_RightCoralMotor.set( 0 );
 
-  private void setCoralPivotPosition( double position )
-  {
-    m_PivotCoralPIDController.setReference( position, ControlType.kPosition );
-  }
+    //LeftMotorRunning = false;
+    //RightMotorRunning = false;
+
+    //if( CoralPossession)
+    //{
+    //  LED.SetAllGreenCmd();
+      //CoralPossession = false;
+    //}
+    //else
+    //{
+    //  LED.SetAllRedCmd();
+    //}
+  }   
 
 /****************************** Commands **************************************/
 
-
-
-  /* Manual Lifing of Coral Pivot Command */
-  public Command CoralPivotCmd( CommandXboxController controller )
+  public Command CoralRunMotorCmd( double voltage )
   {
     return new RunCommand
     ( 
-      () -> this.runPivotCoralMotor
-      (
-        -MathUtil.applyDeadband
-        (
-          controller.getRightY(), 
-          OIConstants.kDriveDeadband
-        ) 
-        * 1.0 
-      ), 
+      () -> this.runCoralMotor( voltage ) , 
       this 
     );
   }
 
+  public Command CoralStopMotorCmd()
+  {
+    return new RunCommand
+    ( 
+      () -> this.stopCoral() , 
+      this 
+    );
+  }
+  
 }

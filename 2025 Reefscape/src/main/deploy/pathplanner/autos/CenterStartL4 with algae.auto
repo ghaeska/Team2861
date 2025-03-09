@@ -1,0 +1,117 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start Center to Back"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive To Target"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveStop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator L4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "OutTake Coral"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "stop coral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Low Algae"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DriveFwdAlgae"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Algae"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Back Out Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator Feeder"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

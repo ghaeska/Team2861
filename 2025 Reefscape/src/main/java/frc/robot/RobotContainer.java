@@ -18,11 +18,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants.ElevatorSetpoints;
 // import frc.robot.Constants.OIConstants;
 import frc.robot.SwerveConstants.OIConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -33,8 +36,12 @@ import java.util.List;
 /* Subsystem Imports */
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDsSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorSetpoint;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.Vision.VisionSubsystem;
 
 /* Pathplanner Calls */
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -50,28 +57,64 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer 
+{
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
   private final CoralSubsystem m_coral = new CoralSubsystem();
-  private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
-  // TODO: climb system manipulator here.
+  private final VisionSubsystem m_vision = new VisionSubsystem();
 
-  /* TODO: Auto stuff here.  Line 69-99 in 2024 code. */
+  private final AlgaeSubsystem m_Algae = new AlgaeSubsystem();
+  private final LEDsSubsystem m_LED = new LEDsSubsystem();
+  private final ClimberSubsystem m_climb = new ClimberSubsystem();
+
+  private SendableChooser<Command> autoChooser;
 
 
   /* The controller that are used to control the robot.  Initialized here. */
   CommandXboxController m_DriverController = new CommandXboxController( OIConstants.kDriverControllerPort );
   CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
+
+  private void registerNamedCommands()
+  {
+    /* Add named commands here so that they can be used in autos. */
+    NamedCommands.registerCommand("Elevator stow", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_stow ) );
+    NamedCommands.registerCommand("Elevator L1", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l1 ) );
+    NamedCommands.registerCommand("Elevator L2", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l2 ) );
+    NamedCommands.registerCommand("Elevator L3", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l3 ) );
+    NamedCommands.registerCommand("Elevator L4", Commands.sequence
+    ( m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_up ),
+      Commands.waitSeconds( 1.0 ),
+      m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_score ) ) );
+    NamedCommands.registerCommand( "Elevator Low Algae", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_LowA ) ); 
+    NamedCommands.registerCommand("Elevator Feeder", m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
+    NamedCommands.registerCommand( "Drive To Target", DriveToTargetCommand().withDeadline(Commands.waitSeconds(1.4) ) ); 
+    NamedCommands.registerCommand( "OutTake Coral", m_coral.CoralRunMotorCmd(-0.2).withDeadline(Commands.waitSeconds(1)) );
+    NamedCommands.registerCommand( "stop coral", m_coral.CoralStopMotorCmd().withDeadline(Commands.waitSeconds(0.01)));
+    NamedCommands.registerCommand( "Intake Algae", m_Algae.IntakeAlgaeForwardCommand().withDeadline(Commands.waitSeconds(1.5)));
+    NamedCommands.registerCommand( "StopAlgae", m_Algae.IntakeAlgaeStopCommand().withDeadline(Commands.waitSeconds(0.01)));
+    NamedCommands.registerCommand("DriveStop", DriveStop().withDeadline(Commands.waitSeconds( 0.01)));
+    NamedCommands.registerCommand(( "Outtake Algae"), m_Algae.IntakeAlgaeReverseCommand().withDeadline(Commands.waitSeconds(1.5)));
+    
+    //NamedCommands.registerCommand( , getAutonomousCommand());
+  }
+
+
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
-    // TODO: add auto chooser stuff here.
-    final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
+  public RobotContainer() 
+  {
+    /* Call the command to get the registered commands. */
+    registerNamedCommands();
 
-    // Configure the button bindings
+    /* Create a Auto Selector */
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Selector", autoChooser );
+
+    /* Configure the button bindings */
     configureButtonBindings();
 
     // Configure default commands
@@ -79,23 +122,100 @@ public class RobotContainer {
       // The left stick controls translation of the robot.
       // Turning is controlled by the X axis of the right stick.
       new RunCommand( () -> m_robotDrive.drive(
-        -MathUtil.applyDeadband(m_DriverController.getLeftY(), OIConstants.kDriveDeadband),
-        -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband),
-        -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband),
-        true,
-        true),
-        m_robotDrive ));
+        getDriveForward(),
+        getDriveStrafe(),
+        getDriveRotation(),
+        DriveFieldRelative(),
+        false),
+        m_robotDrive ) );
+
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-   * subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-   * passing it to a
-   * {@link JoystickButton}.
-   */
+  private boolean DriveFieldRelative()
+  {
+    if( m_DriverController.leftTrigger().getAsBoolean() == true )
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+
+  private Command DriveStop()
+  {
+    return new RunCommand( 
+      () -> m_robotDrive.drive( 
+      0, 
+      0,
+      0, 
+      true, 
+      false), 
+      m_robotDrive );
+  }
+
+
+  private Command DriveToTargetCommand()
+  {
+    return new RunCommand( 
+      () -> m_robotDrive.drive( 
+      m_vision.limelight_range_proportional(), 
+      0,
+      m_vision.limelight_aim_proportional(), 
+      false, 
+      false), 
+      m_robotDrive );
+  }
+
+  private double getDriveStrafe()
+  {
+    double controllerStrafe = -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband);
+    if( m_DriverController.leftTrigger().getAsBoolean() == true )
+    {
+      //check to see if the area is large enough to assume we are lined up.
+      double m_strafe = m_vision.getLimelightTA();
+      if( m_strafe >= 11.5 )
+      {
+        //we are close to on center, stop allowing strafe movements.
+        controllerStrafe = 0;
+      }      
+    }
+    return controllerStrafe;
+  }
+
+  private double getDriveForward()
+  {
+    double controllerForward = -MathUtil.applyDeadband(m_DriverController.getLeftY(), OIConstants.kDriveDeadband);
+    if( m_DriverController.leftTrigger().getAsBoolean() == true )
+    {
+      double m_fwd = m_vision.limelight_range_proportional();
+      return m_fwd;
+      //return controllerForward;
+    }
+    else 
+    {
+      return controllerForward;
+    }
+  }
+
+  private double getDriveRotation() 
+  {
+    double controllerAngle = -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband) ;
+    if( m_DriverController.leftTrigger().getAsBoolean() == true ) 
+    {
+      Double m_rot = m_vision.limelight_aim_proportional();
+      
+      return m_rot;
+      
+    } 
+    else 
+    {
+      return controllerAngle;
+    }
+  }
+
+  /* Configure all the buttons for the controller. */
   private void configureButtonBindings() 
   {
     /************************* DriveTrain Commands ****************************/
@@ -103,25 +223,32 @@ public class RobotContainer {
     m_DriverController.rightStick().whileTrue( new RunCommand( () -> m_robotDrive.setX(), m_robotDrive ));
 
     /* Command to reset the robot heading when "start" gets pushed. */
-    m_DriverController.start().onTrue(new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true));
+    m_DriverController.start().onTrue(new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true) );
+    m_OperatorController.start().onTrue( new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true) );
 
     /************************** Elevator Commands *****************************/
-    /* Command to run the elevator with the left joystick of the op controller. */
-    /* *****Note: Must hold left trigger to do so. */
-    m_OperatorController.leftTrigger().whileTrue( m_Elevator.ElevatorManualCmd( m_OperatorController )  );
 
     /* Command to reset the elevator encoders. */
-    m_OperatorController.povLeft().whileTrue( new InstantCommand( m_Elevator::resetElevatorPosition ) );
+    m_OperatorController.back().whileTrue( new InstantCommand( m_Elevator::resetElevatorPosition ).ignoringDisable(true) );
+    /* POV up, run to L4 */
+    //m_OperatorController.povUp().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l4 ) );
+    m_OperatorController.povUp().onTrue( Commands.sequence( m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_up ),
+                                                            Commands.waitSeconds( 1.0 ),
+                                                            m_Elevator.setElevatorSetpointCmd(ElevatorSetpoint.k_l4_score ) ) );
+    /* POV right, run to L3 */
+    m_OperatorController.povRight().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l3 ) );
+    /* POV down, run to L2 */
+    m_OperatorController.povDown().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l2 ) );
+    /* POV left, run to l1 */
+    m_OperatorController.povLeft().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_l1 ) );
+    /* left bumper, run to the stow positon. */
+    m_OperatorController.leftBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_stow ) );
+    /* right bumper, run to the feeder position */
+    m_OperatorController.rightBumper().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_feederStation ) );
 
-    /* Command to run elevator up with POV hat up. */
-    //m_OperatorController.povUp().whileTrue( m_Elevator.ElevatorManualUp( .1 ) );
-
-    /* Command to run the elevator down with POV hat down. */
-    //m_OperatorController.povDown().whileTrue( m_Elevator.ElevatorManualDown( .1 ) );
-
-
-
-
+    m_OperatorController.a().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_LowA ) );
+    m_OperatorController.b().onTrue( m_Elevator.setElevatorSetpointCmd( ElevatorSetpoint.k_HighA ) );
+    
     /*************************** Algae Commands *******************************/
     m_OperatorController.x().whileTrue( m_Algae.IntakeAlgaeForwardCommand() );
     m_OperatorController.x().whileFalse( m_Algae.IntakeAlgaeStopCommand() );
@@ -131,28 +258,72 @@ public class RobotContainer {
 
 
     /*************************** Coral Commands *******************************/
+    /* Intake with left bumper for Left Coral */
+    m_DriverController.leftBumper().whileTrue
+    ( 
+      Commands.parallel
+      ( 
+        m_coral.CoralRunMotorCmd( .2 ),
+        m_LED.LED_LgreenRredCmd()
+      )    
+    );
+    m_DriverController.leftBumper().whileFalse
+    (
+      Commands.parallel
+      (
+        m_coral.CoralRunMotorCmd( 0.0 ),
+        m_LED.LED_RedAllCmd()
+      ) 
+    );
 
-    m_OperatorController.rightTrigger().whileTrue(m_coral.CoralPivotCmd( m_OperatorController ) );
+    /* Intake with right bumper for Right Coral */
+    m_DriverController.rightBumper().whileTrue
+    ( 
+      Commands.parallel
+      (
+        m_coral.CoralRunMotorCmd( .2 ),
+        m_LED.LED_LredRgreenCmd()
+      )
+    );
+
+    m_DriverController.rightBumper().whileFalse
+    (
+      Commands.parallel
+      (
+        m_coral.CoralRunMotorCmd( 0.0 ),
+        m_LED.LED_RedAllCmd()
+      ) 
+    );
+    /* Outake the coral. */
+    m_DriverController.rightTrigger().whileTrue( m_coral.CoralRunMotorCmd( -.2 ) );
+    m_DriverController.rightTrigger().whileFalse( m_coral.CoralRunMotorCmd( 0.0  ) );
+
+
+
 
     /*************************** Climb Commands *******************************/
+    m_OperatorController.rightTrigger().whileTrue( m_climb.ClimbCommand( 1.0 ) );
+    m_OperatorController.rightTrigger().whileFalse( m_climb.ClimbCommand( 0 ));
+
+    m_OperatorController.leftTrigger().whileTrue( m_climb.ClimbCommand( -1.0 ) );
+    m_OperatorController.leftTrigger().whileFalse( m_climb.ClimbCommand( 0 ) );
 
 
-
-    // TODO: Add more button bindings here.
   } 
 
-  private void configureNewCommands()
-  {
+  // private void configureNewCommands()
+  // {
 
-  }
+  // }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-
-   // TODO: Update this auto stuff.
-  //public Command getAutonomousCommand() { }
+  public Command getAutonomousCommand() 
+  { 
+    return autoChooser.getSelected();
+  }
 
 } 
