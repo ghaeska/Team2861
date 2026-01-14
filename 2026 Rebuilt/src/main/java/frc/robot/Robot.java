@@ -68,7 +68,7 @@ public class Robot extends TimedRobot
   public void autonomousInit() 
   {
     //TODO: Uncomment the following line for auto to work.
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) 

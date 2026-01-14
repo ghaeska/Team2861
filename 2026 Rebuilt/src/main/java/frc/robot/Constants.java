@@ -23,12 +23,25 @@ public final class Constants
     public static final double k_length = Units.feetToMeters(27.0);
   }
 
-  public static final class OIConstants 
+  public static final class DriveConstants 
   {
-    public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.05;
+    /* PID control values for auto turning */
+    public static final double k_turnPID_P = 0.00;
+    public static final double k_turnPID_I = 0.00;
+    public static final double k_turnPID_D = 0.00;
+    public static final double k_turnPID_F = 0.00;
+
     public static final double k_tolerance_degrees = 2.0f;
   }
+
+  public static final class OIConstants 
+  {
+    public static final int kDriverControllerPort = 0;    
+    public static final int k2ndDriverControllerPort = 1;
+    public static final double kDriveDeadband = 0.05; //0.1???
+    public static final double k_tolerance_degrees = 2.0f;
+  }
+
 
 /* Subsystem constants go down here. */
 
