@@ -134,22 +134,15 @@ public final class SwerveConstants
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction;
   }
 
-  // public static final class OIConstants 
-  // {
-  //   public static final int kDriverControllerPort = 0;
-  //   public static final int k2ndDriverControllerPort = 1;
-  //   public static final double kDriveDeadband = 0.1;
-  // }
-
-  // public static final class AutoConstants 
-  // {
-    
-  // }
-
   public static final class NeoMotorConstants 
   {
-    /* Free speed is from NEO Data Sheet REV-21-1650-DS */
-    public static final double kFreeSpeedRpm = 5676;
+    /* Free speed is from NEO V1.1 Data Sheet REV-21-1650-DS */
+    //public static final double kFreeSpeedRpm = 5676;
+
+    /* Free speed from NEO Vortex is 6784 RPM. */
+    public static final double kFreeSpeedRpm = 6784;
+
+
   }
 
 
