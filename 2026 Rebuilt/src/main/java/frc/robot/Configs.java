@@ -71,4 +71,91 @@ public static final class MAXSwerveModule
   /* Subsystem Configs */
     
   }
+
+public static final class ShooterModule
+  {
+    public static final SparkMaxConfig ShooterSparkMaxConfig = new SparkMaxConfig();
+    public static final SparkFlexConfig ShooterSparkFlexConfig = new SparkFlexConfig();
+
+    static
+    {
+      /* ------------------ Shooter Motor Configs. ------------------------- */
+      ShooterSparkMaxConfig.idleMode( IdleMode.kBrake );
+      ShooterSparkMaxConfig.smartCurrentLimit( Constants.ShooterConstants.k_Shooter_MaxCurrent );
+      ShooterSparkMaxConfig.inverted( true );
+
+      ShooterSparkFlexConfig.idleMode( IdleMode.kBrake );
+      ShooterSparkFlexConfig.smartCurrentLimit( Constants.ShooterConstants.k_Shooter_MaxCurrent );
+
+      ShooterSparkMaxConfig
+        .absoluteEncoder
+        .inverted(true)
+        .positionConversionFactor( 360 );
+      ShooterSparkMaxConfig
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kAbsoluteEncoder )
+        // Set up the PID values for position control
+        .p( .01 ) // GTH:TODO: tune.
+        .d(0.0)
+        //.velocityFF(.001)
+        .outputRange( -0.1,.1 );
+    }
+  }
+
+
+
+  public static final class FeedModule
+  {
+    public static final SparkMaxConfig FeedSparkMaxConfig = new SparkMaxConfig();
+    public static final SparkFlexConfig FeedSparkFlexConfig = new SparkFlexConfig();
+
+    static
+    {
+      /* ------------------ Intake Feed Motor Configs. ------------------------- */
+      FeedSparkMaxConfig.idleMode( IdleMode.kBrake );
+      FeedSparkMaxConfig.smartCurrentLimit( Constants.FeedConstants.k_Feed_MaxCurrent );
+      FeedSparkMaxConfig.inverted( true );
+
+      FeedSparkFlexConfig.idleMode( IdleMode.kBrake );
+      FeedSparkFlexConfig.smartCurrentLimit( Constants.FeedConstants.k_Feed_MaxCurrent );
+
+      FeedSparkMaxConfig
+        .absoluteEncoder
+        .inverted(true)
+        .positionConversionFactor( 360 );
+      FeedSparkMaxConfig
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kAbsoluteEncoder )
+        // Set up the PID values for position control
+        .p( .01 ) // GTH:TODO: tune.
+        .d(0.0)
+        //.velocityFF(.001)
+        .outputRange( -0.1,.1 );
+    }
+  }
+
+   public static final class IntakeModule
+  {
+    public static final SparkMaxConfig IntakeMotorCfg = new SparkMaxConfig();
+    
+    static 
+    {
+      /* ------------------ Intake Motor Configs. ------------------------- */
+
+      /* Set the Idle mode to brake so the motors dont move when powered. */
+      IntakeMotorCfg.idleMode( IdleMode.kBrake );
+      /* Set the Smart Current limit to 40A to prevent motor damage. */
+      IntakeMotorCfg.smartCurrentLimit( Constants.IntakeConstants.k_Int_MaxCurrent );
+      
+      IntakeMotorCfg.inverted( true );
+      
+      /* Set the PID LOOP up for the Elevator. */
+      IntakeMotorCfg
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
+        // Setup PID values
+        .p( 0.10 ) //GTH:TODO: tune.
+        .outputRange( -.8, .8 );
+    }
+  }
 }

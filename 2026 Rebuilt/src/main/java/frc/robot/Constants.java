@@ -32,7 +32,69 @@ public final class Constants
 
 /* Subsystem constants go down here. */
 
+  public static final class ShooterConstants
+  {
+    /* Shooter Motor ID's */
+    public static final int k_LeftShooterMotorCANId = 15;
+    public static final int k_RightShooterMotorCANId = 16;
 
+    public static final int k_Shooter_MaxCurrent = 40;
+
+  }
+
+public static final class FeedConstants
+  {
+    /* Feed Motor ID's */
+    
+    public static final int k_FeedIntMotorCANId = 17;
+
+    public static final int k_Feed_MaxCurrent = 40;
+
+    /* Because the Coral is on a pivot, we need to have a PID to hold the position */
+    public static final double k_FeedIntMotorP  = 0.006;
+    public static final double k_FeedIntMotorI  = 0.00; 
+    public static final double k_FeedIntMotorD  = 0.00;
+    public static final double k_FeedIntMotorFF = 0.00;
+
+    public static final double k_PivotMinOutput = -0.5;
+    public static final double k_PivotMaxOutput = 0.5;
+
+    /* Absolute Encoder for knowing exact angle */
+    public static final int k_FeedIntEncoderId = 0;
+
+    /* Absolute Encoder Offset */
+    public static final double k_FeedIntEncoderOffset = 0.000000;
+
+    /* Pivot Angle Set points */
+    public static final class FeedIntSetpoints
+    {
+       public static final double k_stow = 170;/* Redefine */
+    }
+  }
+
+public static final class IntakeConstants
+  {
+    /* Intake Motor ID's */
+    public static final int k_LeftIntakeMotorCANId = 10;
+    public static final int k_RightIntakeMotorCANId = 11;
+
+    /* Intake PID Settings */
+    public static final double k_Int_PID_P = 0.012;
+    public static final double k_Int_PID_I = 0;
+    public static final double k_Int_PID_D = 0.0;
+    public static final double k_Int_PID_FF = 0.0;
+
+    public static final double k_Int_MaxVelocity = 65;
+    public static final double k_Int_MaxAcceleration = 200;
+
+    public static final int k_Int_MaxCurrent = 40;
+
+    /* Pivot Angle Set points */
+    public static final class IntakeSetpoints
+    {
+       public static final double k_stow = 170;/* Redefine */
+    }
+  }
 
 
 
