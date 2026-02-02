@@ -22,27 +22,40 @@ import frc.robot.SwerveConstants.OIConstants;
 import edu.wpi.first.math.MathUtil;
 
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterConstants.ShooterSetpoints;
 import frc.robot.Configs;
 
 
 
 public class ShooterSubsystem extends SubsystemBase
 {
+   public enum ShooterSetpoint
+  {
+    k_shoot,
+    k_pass;
+  }
+
   private boolean RightMotorRunning = false;
   private boolean LeftMotorRunning = false;
 
-  public boolean CoralPossession = false;
+  public boolean FuelPossession = false;
 
   /* Define the motors */
   private final SparkFlex m_LeftShooterMotor;
   private final SparkFlex m_RightShooterMotor;
   //private final SparkMax m_PivotCoralMotor;
 
-  
+  /* Define spark pid controller */
+  private SparkClosedLoopController m_LeftShooterPIDController;
+  //private SparkClosedLoopController m_RightShooterPIDController;
+
 
   /* Define Relative motor Encoders */
   private RelativeEncoder m_LeftShooterEncoder;
-  private RelativeEncoder m_rightShooterEncoder;
+  private RelativeEncoder m_RightShooterEncoder;
+
+  private double m_ShooterSetpoint = Constants.ShooterConstants.ShooterSetpoints.k_shoot;
+  
 
   
 
@@ -55,7 +68,12 @@ public class ShooterSubsystem extends SubsystemBase
     
     /* Setup the motor Encoders. */
     m_LeftShooterEncoder = m_LeftShooterMotor.getEncoder();
-    m_rightShooterEncoder = m_RightShooterMotor.getEncoder();
+    m_RightShooterEncoder = m_RightShooterMotor.getEncoder();
+
+    /* Setup the Elevator PID Loop. */
+    m_LeftShooterPIDController = m_LeftShooterMotor.getClosedLoopController();
+    //m_RightShooterPIDController = m_RightShooterMotor.getClosedLoopController();
+
 
     /* Configure the left motor */
     m_LeftShooterMotor.configure
@@ -67,8 +85,9 @@ public class ShooterSubsystem extends SubsystemBase
     /* Configure the right motor */
     m_RightShooterMotor.configure
     (
-      Configs.ShooterModule.ShooterSparkFlexConfig
-      .inverted( true ), 
+      Configs.ShooterModule.ShooterSparkFlexConfig.follow
+      (Constants.ShooterConstants.k_LeftShooterMotorCANId, 
+        true),
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
@@ -81,25 +100,30 @@ public class ShooterSubsystem extends SubsystemBase
 @Override
   public void periodic() 
   {
-    /* Print out the Coral Encoder positions and velocities */
-    SmartDashboard.putNumber( "LeftCoralSpeed:", m_LeftShooterEncoder.getVelocity() );
-    SmartDashboard.putNumber( "RightCoralSpeed:", m_rightShooterEncoder.getVelocity() );    
+    /* Print out the Shooter Encoder positions and velocities */
+    SmartDashboard.putNumber( "LeftShooterSpeed:", m_LeftShooterEncoder.getVelocity() );
+    SmartDashboard.putNumber( "RightShooterSpeed:", m_RightShooterEncoder.getVelocity() );    
 
-    SmartDashboard.putNumber( " LeftCoralCurrent", m_LeftShooterMotor.getOutputCurrent() );
-    SmartDashboard.putNumber( "RightCoralCurrent", m_RightShooterMotor.getOutputCurrent() );
+    SmartDashboard.putNumber( " LeftShooterCurrent", m_LeftShooterMotor.getOutputCurrent() );
+    SmartDashboard.putNumber( "RightShooterCurrent", m_RightShooterMotor.getOutputCurrent() );
 
     SmartDashboard.putBoolean( "IsLeftMotorRunning?", LeftMotorRunning );
     SmartDashboard.putBoolean( "IsRightMotorRunning?", RightMotorRunning );
 
-    SmartDashboard.putBoolean( "Coral Possession", CoralPossession );  
+    SmartDashboard.putBoolean( "Fuel Possession", FuelPossession );  
   
   }
 
-/*********************** Helper Functions for Coral ***************************/
-  public void runCoralMotor( double voltage )
-  {    
-    m_LeftShooterMotor.set( voltage );
-    m_RightShooterMotor.set( voltage );
+/*********************** Helper Functions for Shooter ***************************/
+  
+  
+     private void moveToSetpoint()
+    {
+     m_LeftShooterPIDController.setReference( m_ShooterSetpoint, ControlType.kPosition );
+     
+    }    
+  
+
     //RightMotorRunning = true;
     //LeftMotorRunning = true;
 
@@ -117,15 +141,15 @@ public class ShooterSubsystem extends SubsystemBase
     //   LeftMotorRunning = true;
     // }
     
-  }
+
   
-  public boolean CheckRightCoral()
+/*   public boolean CheckRightCoral()
   {
     boolean stopMotor = false;
     if( RightMotorRunning == true )
     {
-      /* Since the motor is running, check its speed. */
-      if( m_rightShooterEncoder.getVelocity() > 1 )
+      /* Since the motor is running, check its speed. 
+      if( m_RightShooterEncoder.getVelocity() > 1 )
       {
         stopMotor = false;
       }
@@ -142,7 +166,7 @@ public class ShooterSubsystem extends SubsystemBase
     boolean stopMotor = false;
     if( LeftMotorRunning == true )
     {
-      /* Since the motor is running, check its speed. */
+      // Since the motor is running, check its speed. 
       if( m_LeftShooterEncoder.getVelocity() > 1 )
       {
         stopMotor = false;
@@ -154,9 +178,9 @@ public class ShooterSubsystem extends SubsystemBase
     }
     return stopMotor;
   }
+*/
 
-
-  public void stopCoral()
+  public void stopShooter()
   {
     m_LeftShooterMotor.set( 0 );
     m_RightShooterMotor.set( 0 );
@@ -177,22 +201,22 @@ public class ShooterSubsystem extends SubsystemBase
 
 /****************************** Commands **************************************/
 
-  public Command CoralRunMotorCmd( double voltage )
+ public Command setShooterSetpointCmd( ShooterSetpoint setpoint )
   {
-    return new RunCommand
-    ( 
-      () -> this.runCoralMotor( voltage ) , 
-      this 
+    return this.runOnce
+    (
+      () -> 
+      {
+        switch( setpoint )
+        {
+          case k_shoot:
+            m_ShooterSetpoint = ShooterSetpoints.k_shoot;
+            break;
+            case k_pass:
+            m_ShooterSetpoint = ShooterSetpoints.k_pass;
+            break;
+        }
+      }
     );
   }
-
-  public Command CoralStopMotorCmd()
-  {
-    return new RunCommand
-    ( 
-      () -> this.stopCoral() , 
-      this 
-    );
-  }
-  
 }

@@ -40,6 +40,14 @@ public final class Constants
 
     public static final int k_Shooter_MaxCurrent = 40;
 
+    /* Pivot Angle Set points */
+    public static final class ShooterSetpoints
+    {
+      public static final double k_pass = 5000;
+      public static final double k_shoot = 5000;
+  
+    }
+
   }
 
 public static final class FeedConstants
