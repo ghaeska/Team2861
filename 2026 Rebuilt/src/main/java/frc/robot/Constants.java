@@ -35,8 +35,8 @@ public final class Constants
   public static final class ShooterConstants
   {
     /* Shooter Motor ID's */
-    public static final int k_LeftShooterMotorCANId = 15;
-    public static final int k_RightShooterMotorCANId = 16;
+    public static final int k_LeftShooterMotorCANId = 15; //Redefine
+    public static final int k_RightShooterMotorCANId = 16; //Redefine
 
     public static final int k_Shooter_MaxCurrent = 40;
 
@@ -54,7 +54,7 @@ public static final class FeedConstants
   {
     /* Feed Motor ID's */
     
-    public static final int k_FeedIntMotorCANId = 17;
+    public static final int k_FeedIntMotorCANId = 17; //Redefine
 
     public static final int k_Feed_MaxCurrent = 40;
 
@@ -76,15 +76,15 @@ public static final class FeedConstants
     /* Pivot Angle Set points */
     public static final class FeedIntSetpoints
     {
-       public static final double k_stow = 170;/* Redefine */
+       public static final double k_Stow = 170;/* Redefine */
     }
   }
 
 public static final class IntakeConstants
   {
     /* Intake Motor ID's */
-    public static final int k_LeftIntakeMotorCANId = 10;
-    public static final int k_RightIntakeMotorCANId = 11;
+    public static final int k_LeftIntakeMotorCANId = 10; //Redefine
+    public static final int k_RightIntakeMotorCANId = 11; //Redefine
 
     /* Intake PID Settings */
     public static final double k_Int_PID_P = 0.012;
@@ -100,7 +100,9 @@ public static final class IntakeConstants
     /* Pivot Angle Set points */
     public static final class IntakeSetpoints
     {
-       public static final double k_stow = 170;/* Redefine */
+       public static final double k_Stow = 170;/* Redefine */
+       public static final double k_MiniStow = 170;/* Redefine */
+       public static final double k_Ground = 170;/* Redefine */
     }
   }
 

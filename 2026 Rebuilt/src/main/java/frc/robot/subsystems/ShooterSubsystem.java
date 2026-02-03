@@ -35,11 +35,6 @@ public class ShooterSubsystem extends SubsystemBase
     k_pass;
   }
 
-  private boolean RightMotorRunning = false;
-  private boolean LeftMotorRunning = false;
-
-  public boolean FuelPossession = false;
-
   /* Define the motors */
   private final SparkFlex m_LeftShooterMotor;
   private final SparkFlex m_RightShooterMotor;
@@ -70,22 +65,17 @@ public class ShooterSubsystem extends SubsystemBase
     m_LeftShooterEncoder = m_LeftShooterMotor.getEncoder();
     m_RightShooterEncoder = m_RightShooterMotor.getEncoder();
 
-    /* Setup the Elevator PID Loop. */
-    m_LeftShooterPIDController = m_LeftShooterMotor.getClosedLoopController();
-    //m_RightShooterPIDController = m_RightShooterMotor.getClosedLoopController();
-
-
     /* Configure the left motor */
     m_LeftShooterMotor.configure
     (
-      Configs.ShooterModule.ShooterSparkFlexConfig, 
+      Configs.ShooterModule.ShooterSparkMaxConfig, 
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
     /* Configure the right motor */
     m_RightShooterMotor.configure
     (
-      Configs.ShooterModule.ShooterSparkFlexConfig.follow
+      Configs.ShooterModule.ShooterSparkMaxConfig.follow
       (Constants.ShooterConstants.k_LeftShooterMotorCANId, 
         true),
       ResetMode.kResetSafeParameters,
@@ -103,19 +93,16 @@ public class ShooterSubsystem extends SubsystemBase
     /* Print out the Shooter Encoder positions and velocities */
     SmartDashboard.putNumber( "LeftShooterSpeed:", m_LeftShooterEncoder.getVelocity() );
     SmartDashboard.putNumber( "RightShooterSpeed:", m_RightShooterEncoder.getVelocity() );    
-
-    SmartDashboard.putNumber( " LeftShooterCurrent", m_LeftShooterMotor.getOutputCurrent() );
-    SmartDashboard.putNumber( "RightShooterCurrent", m_RightShooterMotor.getOutputCurrent() );
-
-    SmartDashboard.putBoolean( "IsLeftMotorRunning?", LeftMotorRunning );
-    SmartDashboard.putBoolean( "IsRightMotorRunning?", RightMotorRunning );
-
-    SmartDashboard.putBoolean( "Fuel Possession", FuelPossession );  
   
   }
 
 /*********************** Helper Functions for Shooter ***************************/
   
+public void setVoltage(double voltage)
+  {
+    m_LeftShooterMotor.setVoltage( voltage );
+    m_RightShooterMotor.setVoltage( voltage );
+  }
   
      private void moveToSetpoint()
     {

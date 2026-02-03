@@ -29,7 +29,9 @@ public class IntakeSubsystem extends SubsystemBase
 {
   public enum IntakeSetpoint
   {
-    
+    k_Stow,
+    k_MiniStow,
+    k_Ground;
   }
 
   //Define the Motors
@@ -44,13 +46,16 @@ public class IntakeSubsystem extends SubsystemBase
   //Define a relative encoder for both elevator motors
   private RelativeEncoder m_LeftIntEncoder;
   private RelativeEncoder m_RightIntEncoder;
-  //private RelativeEncoder m_FeedIntEncoder;
+  private RelativeEncoder m_FeedIntEncoder;
 
   private AbsoluteEncoder m_AbsoluteEncoder;
 
+  /*Define Spark PID Loops */
+  private SparkClosedLoopController m_IntPIDController;
 
-  private double m_IntakeSetpoint = Constants.IntakeConstants.IntakeSetpoints.k_stow;
-  private double m_FeedIntSetpoint = Constants.FeedConstants.FeedIntSetpoints.k_stow;
+
+  private double m_IntakeSetpoint = Constants.IntakeConstants.IntakeSetpoints.k_Stow;
+  private double m_FeedIntSetpoint = Constants.FeedConstants.FeedIntSetpoints.k_Stow;
 
   public IntakeSubsystem()
   {
@@ -59,12 +64,12 @@ public class IntakeSubsystem extends SubsystemBase
     m_RightIntMotor = new SparkMax( Constants.IntakeConstants.k_RightIntakeMotorCANId, MotorType.kBrushless );
     m_FeedIntMotor = new SparkMax( Constants.FeedConstants.k_FeedIntMotorCANId, MotorType.kBrushless );
 
-    /* Setup the Elevator Encoder. */
-    m_LeftIntEncoder = m_LeftIntMotor.getEncoder();
-    m_RightIntEncoder = m_RightIntMotor.getEncoder();
-    //m_FeedIntEncoder = m_FeedIntMotor.getEncoder();
+    /* Setup the Intake Encoder. */
+    //m_LeftIntEncoder = m_LeftIntMotor.getEncoder();
+    //m_RightIntEncoder = m_RightIntMotor.getEncoder();
+    m_FeedIntEncoder = m_FeedIntMotor.getEncoder();
 
-    m_AbsoluteEncoder = m_FeedIntMotor.getAbsoluteEncoder();
+ //   m_AbsoluteEncoder = m_FeedIntMotor.getAbsoluteEncoder();
 
     /* Setup the Elevator PID Loop. */
     m_LeftIntPIDController = m_LeftIntMotor.getClosedLoopController();
@@ -78,7 +83,7 @@ public class IntakeSubsystem extends SubsystemBase
       PersistMode.kPersistParameters 
     );
 
-    /* Configure the right elevator motor from the configs. */
+    /* Configure the right intake motor from the configs. */
     m_RightIntMotor.configure
     (
       /* The right motor has to follow the left, set that up. */
@@ -112,13 +117,13 @@ public class IntakeSubsystem extends SubsystemBase
   {
     moveToSetpoint();
 
-    /* Print out the Elevator Encoder positions. */
-    SmartDashboard.putNumber( "RightElevatorPosition:", m_RightIntEncoder.getPosition() );
-    SmartDashboard.putNumber( "LeftElevatorPosition:", m_LeftIntEncoder.getPosition() );
+    /* Print out the Intake Encoder positions. */
+    SmartDashboard.putNumber( "RightIntakePosition:", m_RightIntEncoder.getPosition() );
+    SmartDashboard.putNumber( "LeftIntakePosition:", m_LeftIntEncoder.getPosition() );
     //SmartDashboard.putNumber( "CoralPivotPosition:", m_FeedIntEncoder.getPosition() );
 
-    SmartDashboard.putNumber( "Target Coral Position:", m_FeedIntSetpoint );
-    SmartDashboard.putNumber( "Target Elevator Position:", m_IntakeSetpoint );
+    SmartDashboard.putNumber( "Target Feed Position:", m_FeedIntSetpoint );
+    SmartDashboard.putNumber( "Target Intake Position:", m_IntakeSetpoint );
 
     SmartDashboard.putNumber( "Absolute Encoder Position", m_AbsoluteEncoder.getPosition() );
   }
@@ -126,38 +131,21 @@ public class IntakeSubsystem extends SubsystemBase
 
 
 
-/********************* Helper Functions for Elevator **************************/
+/********************* Helper Functions for Intake **************************/
   private void moveToSetpoint()
   {
     m_LeftIntPIDController.setReference( m_IntakeSetpoint, ControlType.kPosition );
     m_FeedIntPIDController.setReference( m_FeedIntSetpoint, ControlType.kPosition );
   }    
-
-
-  
-
-  
-  
-  public double getElevatorPosition()
-  {
-    return m_LeftIntEncoder.getPosition();
-  }
-
-  public double getElevatorVelocity()
-  {
-    return m_LeftIntEncoder.getVelocity();
-  }
-
-  public void resetElevatorPosition()
-  {
-    m_LeftIntEncoder.setPosition( 0 );
-    m_RightIntEncoder.setPosition( 0 );
-    //m_FeedIntEncoder.setPosition( 0 );
-  }
    
+  public void setVoltage( double voltage)
+    {
+      m_LeftIntMotor.setVoltage( voltage );
+      m_RightIntMotor.setVoltage( voltage );
+    }
 
   /***************************** Commands **************************************/
-  public Command setElevatorSetpointCmd( IntakeSetpoint setpoint )
+  public Command setIntakeSetpointCmd( IntakeSetpoint setpoint )
   {
     return this.runOnce
     (
@@ -165,7 +153,15 @@ public class IntakeSubsystem extends SubsystemBase
       {
         switch( setpoint )
         {
-          
+          case k_Stow:
+            m_IntakeSetpoint = IntakeSetpoints.k_Stow;
+            break;
+          case k_MiniStow:
+            m_IntakeSetpoint = IntakeSetpoints.k_MiniStow;
+            break;
+          case k_Ground:
+            m_IntakeSetpoint = IntakeSetpoints.k_Ground;
+            break;
           
         }
       }
