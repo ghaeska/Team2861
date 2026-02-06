@@ -11,14 +11,14 @@ Anytime we update the code to use a new motor with a CAN ID, it is expected that
 | CAN ID: |          SYSTEM:         |                  FILE                  |
 +---------+--------------------------+----------------------------------------+
 |    0    |         Not Used         |                                        |
-|    1    | Front Left Turning Motor |        SwerveConstants.java            |
-|    2    | Front Left Driving Motor |        SwerveConstants.java            | 
-|    3    | Front Right Turning Motor|        SwerveConstants.java            |
-|    4    | Front Right Driving Motor|        SwerveConstants.java            | 
-|    5    | Back Left Turning Motor  |        SwerveConstants.java            |
-|    6    | Back Left Driving Motor  |        SwerveConstants.java            | 
-|    7    | Back Right Turning Motor |        SwerveConstants.java            |
-|    8    | Back Right Driving Motor |        SwerveConstants.java            |
+|    3    | Front Left Turning Motor |        SwerveConstants.java            |
+|    27   | Front Left Driving Motor |        SwerveConstants.java            | 
+|    1    | Front Right Turning Motor|        SwerveConstants.java            |
+|    24   | Front Right Driving Motor|        SwerveConstants.java            | 
+|    4    | Back Left Turning Motor  |        SwerveConstants.java            |
+|    25   | Back Left Driving Motor  |        SwerveConstants.java            | 
+|    2    | Back Right Turning Motor |        SwerveConstants.java            |
+|    26   | Back Right Driving Motor |        SwerveConstants.java            |
 |    9    |         Not Used         |                                        |
 |   10    |         Not Used         |                                        |
 |   11    |         Not Used         |                                        |

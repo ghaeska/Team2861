@@ -35,8 +35,8 @@ public final class Constants
   public static final class ShooterConstants
   {
     /* Shooter Motor ID's */
-    public static final int k_LeftShooterMotorCANId = 15; //Redefine
-    public static final int k_RightShooterMotorCANId = 16; //Redefine
+    public static final int k_LeftShooterMotorCANId = 14; //Redefine
+    public static final int k_RightShooterMotorCANId = 10; //Redefine
 
     public static final int k_Shooter_MaxCurrent = 40;
 
