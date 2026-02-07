@@ -18,7 +18,7 @@ Anytime we update the code to use a new motor with a CAN ID, it is expected that
 |    4    | Back Left Turning Motor  |        SwerveConstants.java            |
 |    25   | Back Left Driving Motor  |        SwerveConstants.java            | 
 |    2    | Back Right Turning Motor |        SwerveConstants.java            |
-|    26   | Back Right Driving Motor |        SwerveConstants.java            |
+|    21   | Back Right Driving Motor |        SwerveConstants.java            |
 |    9    |         Not Used         |                                        |
 |   10    |         Not Used         |                                        |
 |   11    |         Not Used         |                                        |

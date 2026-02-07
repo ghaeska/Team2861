@@ -95,7 +95,7 @@ public final class SwerveConstants
     public static final int kFrontLeftDrivingCanId  = 27;
     public static final int kRearLeftDrivingCanId   = 25;
     public static final int kFrontRightDrivingCanId = 24;
-    public static final int kRearRightDrivingCanId  = 26;
+    public static final int kRearRightDrivingCanId  = 21;
 
     public static final int kFrontLeftTurningCanId  = 3;
     public static final int kRearLeftTurningCanId   = 4;
