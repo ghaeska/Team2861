@@ -66,5 +66,51 @@ public class Configs
   }
 
   /* Subsystem Configs */
+  public static final class IntakeModule
+  {
+    public static final SparkMaxConfig IntakeArmMotorConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig IntakeRollerMotorConfig = new SparkMaxConfig();
+    static
+    {
+      /* ------------------ Intake Arm Motor Configs. ------------------------- */
+      /* Set the idle mode to coast, so it gives if we hit the intake. */
+      IntakeArmMotorConfig.idleMode( IdleMode.kCoast );
+      /* set the smart current limit to 30A to prevent motor damage */
+      IntakeArmMotorConfig.smartCurrentLimit( Constants.IntakeConstants.k_IntakeArm_MaxCurrent );
+
+       /* ------------------ Intake Roller Motor Configs. ------------------------- */
+       /* Set the idle mode to Brake, so it can hold a ball in place. */
+      IntakeRollerMotorConfig.idleMode( IdleMode.kCoast );
+      /* set the smart current limit to 30A to prevent motor damage */
+      IntakeRollerMotorConfig.smartCurrentLimit( Constants.IntakeConstants.k_IntakeRoller_MaxCurrent );
+    
+      /* this was taken from last years elevator. */
+      IntakeArmMotorConfig
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
+        .p( 0.1 )
+        .outputRange( -0.2, 0.2 );    
+    }
+  }
+
+  public static final class ShooterModule
+  {
+    public static final SparkMaxConfig ShooterMotorConfig = new SparkMaxConfig();
+    static
+    {
+      /* ------------------ Shooter Motor Configs. ------------------------- */
+      /* Set the idle mode to coast, the wheels dont need to slow all the way down. */
+      ShooterMotorConfig.idleMode( IdleMode.kCoast );
+      /* set the smart current limit to 40A to prevent motor damage */
+      ShooterMotorConfig.smartCurrentLimit( Constants.ShooterConstants.k_Shooter_MaxCurrent );
+    
+      /* this was taken from last years elevator. */
+      ShooterMotorConfig
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
+        .p( 0.0001 )
+        .outputRange( -1, 1 );    
+    }
+  }
     
 }
