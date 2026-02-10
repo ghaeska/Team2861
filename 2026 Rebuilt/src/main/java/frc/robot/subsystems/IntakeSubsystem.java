@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -14,6 +15,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,13 +29,14 @@ public class IntakeSubsystem extends SubsystemBase
   {
     k_Stow,
     k_MiniStow,
-    k_Ground;
+    k_Ground,
+    k_Jog;
   }
 
   /* Define the Motors */
   private final SparkMax m_LeftIntakeArmMotor;
   private final SparkMax m_RightIntakeArmMotor;
-  private final SparkMax m_IntakeRollerMotor;
+  private final SparkFlex m_IntakeRollerMotor;
 
   /* Define the relative encoders for the intake. */
   private RelativeEncoder m_LeftIntakeArmEncoder;
@@ -45,14 +48,15 @@ public class IntakeSubsystem extends SubsystemBase
   //private SparkClosedLoopController m_IntakeRollerPIDController;
 
   /* Setpoint Tracker for PID Loops */
-  private double m_IntakeSetpoint = IntakeArmSetpoints.k_Stow;
+  private double m_IntakeAngleSetpoint = IntakeArmSetpoints.k_Stow;
+  private double m_IntakeSpeedSetpoint = 0;
 
   public IntakeSubsystem()
   {
     /* Setup the motors */
     m_LeftIntakeArmMotor  = new SparkMax( Constants.IntakeConstants.k_LeftIntakeArmMotorCANId, MotorType.kBrushless );
     m_RightIntakeArmMotor = new SparkMax( Constants.IntakeConstants.k_RightIntakeArmMotorCANId, MotorType.kBrushless );
-    m_IntakeRollerMotor   = new SparkMax( Constants.IntakeConstants.k_IntakeRollerMotorCANId, MotorType.kBrushless );
+    m_IntakeRollerMotor   = new SparkFlex( Constants.IntakeConstants.k_IntakeRollerMotorCANId, MotorType.kBrushless );
 
     /* Need to setup an encoder, dont think we will need one. */
     m_LeftIntakeArmEncoder  = m_LeftIntakeArmMotor.getEncoder();
@@ -91,13 +95,15 @@ public class IntakeSubsystem extends SubsystemBase
       ResetMode.kResetSafeParameters, 
       PersistMode.kPersistParameters
     );
+
+    setDefaultCommand( setIntakeArmSetpointCmd( IntakeArmSetpoint.k_Stow ) );
   }
 
   /************************** Smart Dashboard Values ****************************/
 @Override
   public void periodic() 
   {
-    moveToSetpoint();
+    moveIntakeToSetpoint();
 
     /* Print out the Algae Encoder positions and velocities */
     SmartDashboard.putNumber( "LeftIntakeArmEncoder:", m_LeftIntakeArmEncoder.getPosition() );
@@ -112,19 +118,19 @@ public class IntakeSubsystem extends SubsystemBase
   }
 
   /********************* Helper Functions for Intake *************************/
-  public double getPosition()
+  public double getIntakePosition()
   {
     /* Just do left arm values as the right arm follows it. */
     return m_LeftIntakeArmEncoder.getPosition();
   }
 
-  public double getVelocity()
+  public double getIntakeVelocity()
   {
     /* Just do left arm values as the right arm follows it. */
     return m_LeftIntakeArmEncoder.getVelocity();
   }
 
-  public void resetPosition()
+  public void resetIntakePosition()
   {
     /* Just do left arm values as the right arm follows it. */
     m_LeftIntakeArmEncoder.setPosition( IntakeArmSetpoints.k_Stow );
@@ -134,15 +140,15 @@ public class IntakeSubsystem extends SubsystemBase
 
   }
 
-  public void setVoltage( double voltage )
+  public void setIntakeVoltage( double voltage )
   {
     m_LeftIntakeArmMotor.setVoltage( voltage );
     m_RightIntakeArmMotor.setVoltage( voltage );
   }
 
-  public void moveToSetpoint()
+  public void moveIntakeToSetpoint()
   {
-    m_IntakeArmPIDController.setSetpoint( m_IntakeSetpoint, ControlType.kPosition );
+    m_IntakeArmPIDController.setSetpoint( m_IntakeAngleSetpoint, ControlType.kPosition );
   }
 
 
@@ -159,15 +165,22 @@ public class IntakeSubsystem extends SubsystemBase
         switch( setpoint )
         {
           case k_Stow:
-            m_IntakeSetpoint = IntakeArmSetpoints.k_Stow;
+            m_IntakeAngleSetpoint = IntakeArmSetpoints.k_Stow;
+            m_IntakeSpeedSetpoint = 0;
             break;
           
           case k_MiniStow:
-            m_IntakeSetpoint = IntakeArmSetpoints.k_MiniStow;
+            m_IntakeAngleSetpoint = IntakeArmSetpoints.k_MiniStow;
+            m_IntakeSpeedSetpoint = 4;
             break;
 
           case k_Ground:
-            m_IntakeSetpoint = IntakeArmSetpoints.k_Ground;
+            m_IntakeAngleSetpoint = IntakeArmSetpoints.k_Ground;
+            m_IntakeSpeedSetpoint = 4;
+            break;
+          case k_Jog:
+            m_IntakeAngleSetpoint = IntakeArmSetpoints.k_Jog;
+            m_IntakeSpeedSetpoint = 4;
             break;
         }
         
@@ -176,8 +189,42 @@ public class IntakeSubsystem extends SubsystemBase
     );
   }
 
+  public Command runIntakeCommand()
+  {
+    return Commands.startEnd
+    ( 
+      () -> m_IntakeRollerMotor.setVoltage( 4 ), 
+      () -> m_IntakeRollerMotor.setVoltage( 0 )
+    );
+  }
 
+  public Command revIntakeCommand()
+  {
+    return Commands.startEnd
+    ( 
+      () -> m_IntakeRollerMotor.setVoltage( -4 ), 
+      () -> m_IntakeRollerMotor.setVoltage( 0 )
+    );
+  }
 
+  public Command runIntakeVoltageCommand( double voltage)
+  {
+    return Commands.startEnd
+    ( 
+      () -> m_IntakeRollerMotor.setVoltage( voltage ), 
+      () -> m_IntakeRollerMotor.setVoltage( 0 )
+    );
+  }
+
+  public Command jogIntakeUpDownCommand() 
+  {
+    return Commands.sequence
+    (
+      setIntakeArmSetpointCmd( IntakeArmSetpoint.k_Ground ).withTimeout(0.5),
+      setIntakeArmSetpointCmd( IntakeArmSetpoint.k_Jog ).withTimeout(0.5)
+    )
+    .repeatedly();
+  }
 
 
 }

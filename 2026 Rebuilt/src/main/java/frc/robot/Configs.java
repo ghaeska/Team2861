@@ -69,7 +69,7 @@ public class Configs
   public static final class IntakeModule
   {
     public static final SparkMaxConfig IntakeArmMotorConfig = new SparkMaxConfig();
-    public static final SparkMaxConfig IntakeRollerMotorConfig = new SparkMaxConfig();
+    public static final SparkFlexConfig IntakeRollerMotorConfig = new SparkFlexConfig();
     static
     {
       /* ------------------ Intake Arm Motor Configs. ------------------------- */
@@ -80,7 +80,7 @@ public class Configs
 
        /* ------------------ Intake Roller Motor Configs. ------------------------- */
        /* Set the idle mode to Brake, so it can hold a ball in place. */
-      IntakeRollerMotorConfig.idleMode( IdleMode.kCoast );
+      IntakeRollerMotorConfig.idleMode( IdleMode.kBrake );
       /* set the smart current limit to 30A to prevent motor damage */
       IntakeRollerMotorConfig.smartCurrentLimit( Constants.IntakeConstants.k_IntakeRoller_MaxCurrent );
     
@@ -90,6 +90,43 @@ public class Configs
         .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
         .p( 0.1 )
         .outputRange( -0.2, 0.2 );    
+    }
+  }
+
+  public static final class HopperModule
+  {
+    public static final SparkMaxConfig HopperMotorConfig = new SparkMaxConfig();
+    static
+    {
+      /* ------------------ Hopper Motor Configs. ------------------------- */
+      /* Set the idle mode to brake, the wheels and rollers stop right away . */
+      HopperMotorConfig.idleMode( IdleMode.kBrake );
+      /* set the smart current limit to 40A to prevent motor damage */
+      HopperMotorConfig.smartCurrentLimit( Constants.HopperConstants.k_Shooter_MaxCurrent );
+    }
+  }
+
+  public static final class ShooterHoodModule
+  {
+    public static final SparkMaxConfig ShooterHoodMotorConfig = new SparkMaxConfig();
+    static
+    {
+      /* ------------------ Shooter Motor Configs. ------------------------- */
+      /* Set the idle mode to brake, try to hold the position. */
+      ShooterHoodMotorConfig.idleMode( IdleMode.kBrake );
+      /* set the smart current limit to 40A to prevent motor damage */
+      ShooterHoodMotorConfig.smartCurrentLimit( Constants.ShooterHoodConstants.k_ShooterHood_MaxCurrent );
+    
+      /* Comment. */
+      ShooterHoodMotorConfig
+        .absoluteEncoder
+        .inverted( false )
+        .positionConversionFactor( 360 );
+      ShooterHoodMotorConfig
+        .closedLoop
+        .feedbackSensor( FeedbackSensor.kAbsoluteEncoder )
+        .p( 0.0001 )
+        .outputRange( -.1, .1 );    
     }
   }
 

@@ -48,9 +48,9 @@ public final class Constants
 public static final class IntakeConstants
 {
   /* Intake Motor ID's */
-  public static final int k_LeftIntakeArmMotorCANId   = 10;
-  public static final int k_RightIntakeArmMotorCANId  = 11;
-  public static final int k_IntakeRollerMotorCANId    = 12;
+  public static final int k_LeftIntakeArmMotorCANId   = 11;
+  public static final int k_RightIntakeArmMotorCANId  = 12;
+  public static final int k_IntakeRollerMotorCANId    = 13;
   
   public static final int k_IntakeArm_MaxCurrent      = 20;
   public static final int k_IntakeRoller_MaxCurrent   = 20;
@@ -75,6 +75,7 @@ public static final class IntakeConstants
     public static final double k_Stow     = 0;  //update to tested value
     public static final double k_MiniStow = 1;  //update to tested value
     public static final double k_Ground   = 2;  //update to tested value
+    public static final double k_Jog      = 3;
   }
 
 }
@@ -83,7 +84,7 @@ public static final class ShooterConstants
 {
   /* Intake Motor ID's */
   public static final int k_LeftShooterMotorCANId   = 10;  //update
-  public static final int k_RightShooterMotorCANId  = 11;  //update
+  public static final int k_RightShooterMotorCANId  = 14;  //update
   
   public static final int k_Shooter_MaxCurrent      = 40;
 
@@ -91,10 +92,32 @@ public static final class ShooterConstants
   {
     public static final double k_shoot = 5000;// update
     public static final double k_pass = 5000;//update
+    public static final double k_stop = 0;
+  }
+}
+
+public static final class ShooterHoodConstants
+{
+  /* Intake Motor ID's */
+  public static final int k_ShooterHoodMotorCANId   = 30;  //update
+  
+  public static final int k_ShooterHood_MaxCurrent      = 20;
+
+  public static final class ShooterHoodSetpoints
+  {
+    public static final double k_HoodMax = 0;// update
+    public static final double k_HoodMin = 0;//update
   }
 }
 
 
+public static final class HopperConstants
+{
+/* Hopper Motor ID */
+  public static final int k_HopperMotorCANId   = 20;  //update
+
+  public static final int k_Shooter_MaxCurrent      = 40;
+}
 
 
 

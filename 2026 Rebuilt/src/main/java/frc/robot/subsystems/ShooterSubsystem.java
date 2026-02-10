@@ -25,7 +25,8 @@ public class ShooterSubsystem  extends SubsystemBase
   public enum ShooterSetpoint
   {
     k_Shoot,
-    k_Pass;
+    k_Pass,
+    k_Stop;
   }
 
   /* Define the Motors */
@@ -76,6 +77,9 @@ public class ShooterSubsystem  extends SubsystemBase
       ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters 
     );
+
+    /* Set the default command to stop the shooter. */
+    setDefaultCommand( setShooterSetpointCmd( ShooterSetpoint.k_Stop ) );
 
   }
 
@@ -139,6 +143,8 @@ public class ShooterSubsystem  extends SubsystemBase
           case k_Shoot:
             m_ShooterSetpoint = ShooterSpeedSetpoints.k_shoot;
             break;
+          case k_Stop:
+            m_ShooterSetpoint = ShooterSpeedSetpoints.k_stop;
 
         }
         
