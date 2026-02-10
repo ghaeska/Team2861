@@ -86,8 +86,8 @@ public class RobotContainer
 
     /* Create an Auto Selector */
     // Once we have more code added and start doing more Auto Routines, we will need to add a AutoChooser.
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Selector", autoChooser );
+    //autoChooser = AutoBuilder.buildAutoChooser();
+    //SmartDashboard.putData("Auto Selector", autoChooser );
 
     /* Configure the button bindings */ 
     configureButtonBindings();

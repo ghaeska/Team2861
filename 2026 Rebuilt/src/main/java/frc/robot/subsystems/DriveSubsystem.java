@@ -115,7 +115,7 @@ public class DriveSubsystem extends SubsystemBase
     {
       e.printStackTrace();
     }
-    configurePathPlanner();
+    //configurePathPlanner();
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
 

@@ -11,18 +11,18 @@ Anytime we update the code to use a new motor with a CAN ID, it is expected that
 | CAN ID: |          SYSTEM:         |                  FILE                  |
 +---------+--------------------------+----------------------------------------+
 |    0    |         Not Used         |                                        |
-|    1    | Front Left Turning Motor |        SwerveConstants.java            |
-|    2    | Front Left Driving Motor |        SwerveConstants.java            | 
-|    3    | Front Right Turning Motor|        SwerveConstants.java            |
-|    4    | Front Right Driving Motor|        SwerveConstants.java            | 
-|    5    | Back Left Turning Motor  |        SwerveConstants.java            |
-|    6    | Back Left Driving Motor  |        SwerveConstants.java            | 
-|    7    | Back Right Turning Motor |        SwerveConstants.java            |
-|    8    | Back Right Driving Motor |        SwerveConstants.java            |
+|    3    | Front Left Turning Motor |        SwerveConstants.java            |
+|    27   | Front Left Driving Motor |        SwerveConstants.java            | 
+|    1    | Front Right Turning Motor|        SwerveConstants.java            |
+|    24   | Front Right Driving Motor|        SwerveConstants.java            | 
+|    4    | Back Left Turning Motor  |        SwerveConstants.java            |
+|    25   | Back Left Driving Motor  |        SwerveConstants.java            | 
+|    2    | Back Right Turning Motor |        SwerveConstants.java            |
+|    21   | Back Right Driving Motor |        SwerveConstants.java            |
 |    9    |         Not Used         |                                        |
-|   10    |  Left Intake Arm Motor   |                                        |
-|   11    |  Right Intake Arm Motor  |                                        |
-|   12    |   Intake Roller Motor    |                                        |
+|   10    |         Not Used         |                                        |
+|   11    |         Not Used         |                                        |
+|   12    |         Not Used         |                                        |
 |   13    |         Not Used         |                                        |
 |   14    |         Not Used         |                                        |
 |   15    |         Not Used         |                                        |
@@ -34,13 +34,3 @@ Anytime we update the code to use a new motor with a CAN ID, it is expected that
 |   21    |         Not Used         |                                        |
 |   50    |           PDH            |             No File                    |
 +---------+------------------+--------------------------------+---------------+
-
-
-
-8 drive motors
-3 intake motors
-2 shooter motors
-1 hood angle motor
-3 hopper motors
-2 climber motors
-
