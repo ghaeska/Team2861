@@ -5,6 +5,9 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
 /*
@@ -17,6 +20,13 @@ import edu.wpi.first.math.util.Units;
 */
 public final class Constants 
 {
+  
+
+
+
+
+
+
   public static class Field 
   {
     public static final double k_width = Units.feetToMeters(54.0);
@@ -94,6 +104,37 @@ public static final class ShooterConstants
     public static final double k_pass = 5000;//update
     public static final double k_stop = 0;
   }
+
+  public static final Transform3d BALL_TRANSFORM_LEFT = new Transform3d(-0.24, 0.09, 0.5, Rotation3d.kZero);
+  public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(-0.24, 0, 0.5, Rotation3d.kZero);
+  public static final Transform3d BALL_TRANSFORM_RIGHT = new Transform3d(-0.24, -0.09, 0.5, Rotation3d.kZero);
+
+  public static final InterpolatingDoubleTreeMap DISTANCE_TO_RPS = new InterpolatingDoubleTreeMap();
+  static 
+  {
+    DISTANCE_TO_RPS.put(2.07, 38.0);
+    DISTANCE_TO_RPS.put(2.41, 41.0);
+    DISTANCE_TO_RPS.put(3.20, 45.0);
+    DISTANCE_TO_RPS.put(3.87, 49.0);
+    DISTANCE_TO_RPS.put(4.57, 52.0);
+    DISTANCE_TO_RPS.put(4.92, 58.0);
+  }
+
+
+  public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
+  static 
+  {
+    DISTANCE_TO_SHOT_SPEED.put(2.07, 7.0);
+    // DISTANCE_TO_SHOT_SPEED.put(2.41, 41.0);
+    // DISTANCE_TO_SHOT_SPEED.put(3.20, 45.0);
+    // DISTANCE_TO_SHOT_SPEED.put(3.87, 49.0);
+    // DISTANCE_TO_SHOT_SPEED.put(4.57, 52.0);
+    DISTANCE_TO_SHOT_SPEED.put(4.92, 9.0);
+    // DISTANCE_TO_SHOT_SPEED.put(0.0, 7.0);
+    // DISTANCE_TO_SHOT_SPEED.put(5.0, 8.25);
+    // DISTANCE_TO_SHOT_SPEED.put(10.0, 10.0);
+  }
+
 }
 
 public static final class ShooterHoodConstants
@@ -107,6 +148,33 @@ public static final class ShooterHoodConstants
   {
     public static final double k_HoodMax = 0;// update
     public static final double k_HoodMin = 0;//update
+  }
+
+  public static final InterpolatingDoubleTreeMap DISTANCE_TO_HOOD_ANGLE = new InterpolatingDoubleTreeMap();
+  static 
+  {
+    DISTANCE_TO_HOOD_ANGLE.put(2.07, 2.878);
+    DISTANCE_TO_HOOD_ANGLE.put(2.41, 2.853);
+    DISTANCE_TO_HOOD_ANGLE.put(3.20, 2.764);
+    DISTANCE_TO_HOOD_ANGLE.put(3.87, 2.764);
+    DISTANCE_TO_HOOD_ANGLE.put(4.57, 2.764);
+    DISTANCE_TO_HOOD_ANGLE.put(4.92, 2.694);
+  }
+
+  public static double getHoodAngle(double targetPitch) 
+  {
+    return targetPitch + Math.PI / 2.0;
+  }
+
+  public static final InterpolatingDoubleTreeMap SHOT_ANGLE_TO_HOOD_ANGLE = new InterpolatingDoubleTreeMap();
+  static 
+  {
+    SHOT_ANGLE_TO_HOOD_ANGLE.put(Units.degreesToRadians(59), 2.878);
+    SHOT_ANGLE_TO_HOOD_ANGLE.put(Units.degreesToRadians(45), 2.7);
+    SHOT_ANGLE_TO_HOOD_ANGLE.put(Units.degreesToRadians(40), 2.6);
+    SHOT_ANGLE_TO_HOOD_ANGLE.put(Units.degreesToRadians(38), 2.5);
+    SHOT_ANGLE_TO_HOOD_ANGLE.put(Units.degreesToRadians(37), 2.4);
+    SHOT_ANGLE_TO_HOOD_ANGLE.put(Units.degreesToRadians(30), 2.3);
   }
 }
 

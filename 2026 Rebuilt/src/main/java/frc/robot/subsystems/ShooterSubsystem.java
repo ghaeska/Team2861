@@ -5,6 +5,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import java.util.function.Supplier;
+
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 
@@ -153,6 +155,18 @@ public class ShooterSubsystem  extends SubsystemBase
     );
 
   }
+
+  public Command spinAtVelocityCommand(Supplier<Double> goalVelocitySupplier) {
+        return run
+        (
+          () -> 
+          {
+              m_ShooterSetpoint = goalVelocitySupplier.get();
+              //primaryMotor.setControl(velocityRequest.withVelocity(goalVelocitySupplier.get()));
+          }
+        );
+    }
+
 
 
 

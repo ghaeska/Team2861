@@ -4,6 +4,9 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import java.util.function.Supplier;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
@@ -107,13 +110,14 @@ public class ShooterHoodSubsystem  extends SubsystemBase
     );
   }
 
-  public Command moveToSpecificPositionCmd( double setpoint )
+  public Command moveToSpecificPositionCmd( Supplier<Double> goalPositionSupplier )
   {
-    return this.runOnce 
+    return this.runOnce
     (
       () -> 
       {
-        m_ShooterHoodSetpoint = setpoint;
+        m_ShooterHoodSetpoint = goalPositionSupplier.get();
+        //m_ShooterHoodSetpoint = setpoint;
       }
 
     );

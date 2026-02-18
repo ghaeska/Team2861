@@ -18,6 +18,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -35,9 +36,16 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+import java.util.function.Supplier;
 
 /* Subsystem Imports */
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.HopperSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterHoodSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShotCalcSubsystem;
+import frc.robot.subsystems.SuperSubsystem;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 
 /* Pathplanner Imports */
@@ -59,14 +67,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 */
 public class RobotContainer 
 {
-  /* Subsytem initilization */
-  // TODO: Add Robot subsystems here.  Arms, elevators, vision systems.... also our auto chooser.
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final VisionSubsystem m_vision = new VisionSubsystem();
+  /*************************** Subsytem initilization *****************/
+  /* Initilize the drive subsystem. */
+  DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  /* Initilize the Vision subsystem. */
+  VisionSubsystem m_vision = new VisionSubsystem();
+  //private final VisionSubsystem m_vision = new VisionSubsystem();
+  /* Initilize the shooter subsystem. */
+  ShooterSubsystem m_shooter = new ShooterSubsystem();
+  /* Initilize the shooter hood subsystem. */
+  ShooterHoodSubsystem m_shooterHood = new ShooterHoodSubsystem();
+  /* Initilize the hopper subsystem. */
+  HopperSubsystem m_hopper = new HopperSubsystem();
+  /* Initilize the intake subsystem. */
+  IntakeSubsystem m_intake = new IntakeSubsystem();
+  /* Initilize the shot calculator subsystem. */
+  ShotCalcSubsystem m_shotCalc = new ShotCalcSubsystem( m_robotDrive );
+  /* Initilize the SuperStructure subsystem. */
+  SuperSubsystem m_superSubsystem = new SuperSubsystem( m_robotDrive,
+                                                        m_shooter,
+                                                        m_shooterHood,
+                                                        m_hopper,
+                                                        m_intake,
+                                                        m_shotCalc );
 
   /* Create the Autochooser on the new smartdashboard. */
   private SendableChooser<Command> autoChooser;
 
+  /* Make our shooting target the center of the hub. */
+  private final Pose3d target = FieldConstants.Hub.CENTER;
+  private final Supplier<Double> distance = () -> m_robotDrive.getPose().getTranslation()
+            .getDistance(target.getTranslation().toTranslation2d());
 
   /* The controller that are used to control the robot.  Initialized here. */
   CommandXboxController m_DriverController = new CommandXboxController( OIConstants.kDriverControllerPort );
@@ -76,6 +108,10 @@ public class RobotContainer
   private void registerNamedCommands()
   {
     //This is blank for now, until we make commands to be used with pathplanner.
+    NamedCommands.registerCommand( "Drive To Target", m_robotDrive.DriveToTargetCommand( m_vision ).withDeadline(Commands.waitSeconds(1.4) ) ); 
+    NamedCommands.registerCommand("DriveStop", m_robotDrive.DriveStop().withDeadline(Commands.waitSeconds( 0.01)));
+    
+  
   }
 
   /* The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -92,107 +128,20 @@ public class RobotContainer
     /* Configure the button bindings */ 
     configureButtonBindings();
 
+
     /* Add Default Commands here. */
     m_robotDrive.setDefaultCommand(
       // The left stick controls translation of the robot.
       // Turning is controlled by the X axis of the right stick.
       new RunCommand( () -> m_robotDrive.drive(
-        getDriveForward(),
-        getDriveStrafe(),
-        getDriveRotation(),
-        DriveFieldRelative(),
+        m_robotDrive.getDriveForward( m_DriverController, m_vision ),
+        m_robotDrive.getDriveStrafe( m_DriverController, m_vision ),
+        m_robotDrive.getDriveRotation( m_DriverController, m_vision ),
+        m_robotDrive.DriveFieldRelative( m_DriverController ),
         false),
         m_robotDrive ) );
   }
 
-  // GTH:TODO get this function into the drivesubsystem.
-  private boolean DriveFieldRelative()
-  {
-    if( m_DriverController.leftTrigger().getAsBoolean() == true )
-    {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
-  }
-
-  // GTH:TODO get this function into the drivesubsystem.
-  private Command DriveStop()
-  {
-    return new RunCommand( 
-      () -> m_robotDrive.drive( 
-      0, 
-      0,
-      0, 
-      true, 
-      false), 
-      m_robotDrive );
-  }
-
-  // GTH:TODO get this function into the drivesubsystem.
-  private Command DriveToTargetCommand()
-  {
-    return new RunCommand( 
-      () -> m_robotDrive.drive( 
-      m_vision.limelight_range_proportional(), 
-      0,
-      m_vision.limelight_aim_proportional(), 
-      false, 
-      false), 
-      m_robotDrive );
-  }
-
-  // GTH:TODO get this function into the drivesubsystem.
-  private double getDriveStrafe()
-  {
-    double controllerStrafe = -MathUtil.applyDeadband(m_DriverController.getLeftX(), OIConstants.kDriveDeadband);
-    if( m_DriverController.leftTrigger().getAsBoolean() == true )
-    {
-      //check to see if the area is large enough to assume we are lined up.
-      double m_strafe = m_vision.getLimelightTA();
-      if( m_strafe >= 11.5 )
-      {
-        //we are close to on center, stop allowing strafe movements.
-        controllerStrafe = 0;
-      }      
-    }
-    return controllerStrafe;
-  }
-
-  // GTH:TODO get this function into the drivesubsystem.
-  private double getDriveForward()
-  {
-    double controllerForward = -MathUtil.applyDeadband(m_DriverController.getLeftY(), OIConstants.kDriveDeadband);
-    if( m_DriverController.leftTrigger().getAsBoolean() == true )
-    {
-      double m_fwd = m_vision.limelight_range_proportional();
-      return m_fwd;
-      //return controllerForward;
-    }
-    else 
-    {
-      return controllerForward;
-    }
-  }
-
-  // GTH:TODO get this function into the drivesubsystem.
-  private double getDriveRotation() 
-  {
-    double controllerAngle = -MathUtil.applyDeadband(m_DriverController.getRightX(), OIConstants.kDriveDeadband) ;
-    if( m_DriverController.leftTrigger().getAsBoolean() == true ) 
-    {
-      Double m_rot = m_vision.limelight_aim_proportional();
-      
-      return m_rot;
-      
-    } 
-    else 
-    {
-      return controllerAngle;
-    }
-  }
 
   /* Configure all the buttons for the controller. */
   private void configureButtonBindings() 
