@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -30,6 +31,10 @@ public class Robot extends TimedRobot
 
     /* Add Limelight Camera Network ports to forward, here. */
     // TODO: Add limelight cameras here.  Last year we did one, this year we have two!
+    for( int port = 5800; port <= 5809; port++ ) 
+    {
+      PortForwarder.add( port, "limelight.local", port );
+    }
 
     /* Init the Robot Container, so our button bindings and Autos are added to the robot. */
     m_robotContainer = new RobotContainer();

@@ -11,6 +11,8 @@ import frc.robot.Constants;
 
 public class Configs 
 {
+  private static final double nominalVoltage = 12.0; // Volts
+
   /* MAXSwerve Configs */
   public static final class MAXSwerveModule 
   {
@@ -23,7 +25,6 @@ public class Configs
       double drivingFactor = ModuleConstants.kWheelDiameterMeters * Math.PI
                 / ModuleConstants.kDrivingMotorReduction;
       double turningFactor = 2 * Math.PI;
-      double nominalVoltage = 12.0;
       double drivingVelocityFeedForward = nominalVoltage / ModuleConstants.kDriveWheelFreeSpeedRps;
       
       /* Driving Motor Configs. */
@@ -141,12 +142,28 @@ public class Configs
       /* set the smart current limit to 40A to prevent motor damage */
       ShooterMotorConfig.smartCurrentLimit( Constants.ShooterConstants.k_Shooter_MaxCurrent );
     
+      /* If we want to change from RPM to RPS, we can change with these lines. */
+      // ShooterMotorConfig
+      //   .alternateEncoder
+      //   .positionConversionFactor(0);
       /* this was taken from last years elevator. */
       ShooterMotorConfig
         .closedLoop
         .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
         .p( 0.0001 )
-        .outputRange( -1, 1 );    
+        .outputRange( -1, 1 );
+
+      ShooterMotorConfig
+        .closedLoop
+          .maxMotion
+            .cruiseVelocity( 5000 )
+            .maxAcceleration( 10000 )
+            .allowedProfileError( 1 );
+      
+      ShooterMotorConfig
+        .closedLoop
+          .feedForward
+            .kV( nominalVoltage / Constants.Motors.Neo2_0MotorConstants.k_NeoKv );
     }
   }
     

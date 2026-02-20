@@ -35,12 +35,12 @@ public class IntakeSubsystem extends SubsystemBase
 
   /* Define the Motors */
   private final SparkMax m_LeftIntakeArmMotor;
-  private final SparkMax m_RightIntakeArmMotor;
+  // private final SparkMax m_RightIntakeArmMotor;
   private final SparkFlex m_IntakeRollerMotor;
 
   /* Define the relative encoders for the intake. */
   private RelativeEncoder m_LeftIntakeArmEncoder;
-  private RelativeEncoder m_RightIntakeArmEncoder;
+  // private RelativeEncoder m_RightIntakeArmEncoder;
   private RelativeEncoder m_IntakeRollerEncoder;
 
   /* Define Spark PID Loops */
@@ -55,12 +55,12 @@ public class IntakeSubsystem extends SubsystemBase
   {
     /* Setup the motors */
     m_LeftIntakeArmMotor  = new SparkMax( Constants.IntakeConstants.k_LeftIntakeArmMotorCANId, MotorType.kBrushless );
-    m_RightIntakeArmMotor = new SparkMax( Constants.IntakeConstants.k_RightIntakeArmMotorCANId, MotorType.kBrushless );
+    // m_RightIntakeArmMotor = new SparkMax( Constants.IntakeConstants.k_RightIntakeArmMotorCANId, MotorType.kBrushless );
     m_IntakeRollerMotor   = new SparkFlex( Constants.IntakeConstants.k_IntakeRollerMotorCANId, MotorType.kBrushless );
 
     /* Need to setup an encoder, dont think we will need one. */
     m_LeftIntakeArmEncoder  = m_LeftIntakeArmMotor.getEncoder();
-    m_RightIntakeArmEncoder = m_RightIntakeArmMotor.getEncoder();
+    // m_RightIntakeArmEncoder = m_RightIntakeArmMotor.getEncoder();
     m_IntakeRollerEncoder   = m_IntakeRollerMotor.getEncoder();
 
     /* Setup a PID loop. */
@@ -76,17 +76,17 @@ public class IntakeSubsystem extends SubsystemBase
     );
 
     /* Configure the Right Intake Arm Motor */
-    m_RightIntakeArmMotor.configure
-    (
-      /* The right motor has to follow the left, set that up. */
-      Configs.IntakeModule.IntakeArmMotorConfig.follow
-      ( 
-        Constants.IntakeConstants.k_RightIntakeArmMotorCANId, 
-        false
-      ),
-      ResetMode.kResetSafeParameters,
-      PersistMode.kPersistParameters 
-    );
+    // m_RightIntakeArmMotor.configure
+    // (
+    //   /* The right motor has to follow the left, set that up. */
+    //   Configs.IntakeModule.IntakeArmMotorConfig.follow
+    //   ( 
+    //     Constants.IntakeConstants.k_RightIntakeArmMotorCANId, 
+    //     false
+    //   ),
+    //   ResetMode.kResetSafeParameters,
+    //   PersistMode.kPersistParameters 
+    // );
 
     /* Configure the Intake Roller Motor */
     m_IntakeRollerMotor.configure
@@ -104,16 +104,20 @@ public class IntakeSubsystem extends SubsystemBase
   public void periodic() 
   {
     moveIntakeToSetpoint();
+    
+    /* Print out the Intake important data. */
+    /* Left intake Motor Data. */
+    SmartDashboard.putNumber( "Intake | Arm | Position:", m_LeftIntakeArmEncoder.getPosition() );
+    SmartDashboard.putNumber( "Intake | Arm | Velocity:", m_LeftIntakeArmEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Intake | Arm | Applied Output", m_LeftIntakeArmMotor.getAppliedOutput());
+    SmartDashboard.putNumber( "Intake | Arm | Current", m_LeftIntakeArmMotor.getOutputCurrent());
 
-    /* Print out the Algae Encoder positions and velocities */
-    SmartDashboard.putNumber( "LeftIntakeArmEncoder:", m_LeftIntakeArmEncoder.getPosition() );
-    SmartDashboard.putNumber( "LeftIntakeArmSpeed:", m_LeftIntakeArmEncoder.getVelocity() );
+    /* Intake Roller Motor Data. */
+    SmartDashboard.putNumber( "Intake | Roller | Position:", m_IntakeRollerEncoder.getPosition() );
+    SmartDashboard.putNumber( "Intake | Roller | Velocity:", m_IntakeRollerEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Intake | Roller | Applied Output", m_IntakeRollerMotor.getAppliedOutput());
+    SmartDashboard.putNumber( "Intake | Roller | Current", m_IntakeRollerMotor.getOutputCurrent());
 
-    SmartDashboard.putNumber( "RightIntakeArmEncoder:", m_RightIntakeArmEncoder.getPosition() );
-    SmartDashboard.putNumber( "RightIntakeArmSpeed:", m_RightIntakeArmEncoder.getVelocity() );
-
-    SmartDashboard.putNumber( "IntakeRollerEncoder:", m_IntakeRollerEncoder.getPosition() );
-    SmartDashboard.putNumber( "IntakeRollerSpeed:", m_IntakeRollerEncoder.getVelocity() );
 
   }
 
@@ -134,7 +138,7 @@ public class IntakeSubsystem extends SubsystemBase
   {
     /* Just do left arm values as the right arm follows it. */
     m_LeftIntakeArmEncoder.setPosition( IntakeArmSetpoints.k_Stow );
-    m_RightIntakeArmEncoder.setPosition( IntakeArmSetpoints.k_Stow );
+    // m_RightIntakeArmEncoder.setPosition( IntakeArmSetpoints.k_Stow );
 
     
 
@@ -143,7 +147,7 @@ public class IntakeSubsystem extends SubsystemBase
   public void setIntakeVoltage( double voltage )
   {
     m_LeftIntakeArmMotor.setVoltage( voltage );
-    m_RightIntakeArmMotor.setVoltage( voltage );
+    // m_RightIntakeArmMotor.setVoltage( voltage );
   }
 
   public void moveIntakeToSetpoint()

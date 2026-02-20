@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.utils.ChassisAccelerations;
+import frc.robot.utils.MAXSwerveModule;
 import frc.robot.utils.SwerveUtils;
 
 /* Pathplanner Imports */
@@ -55,6 +56,7 @@ import frc.robot.SwerveConstants.ModuleConstants;
 //import frc.robot.subsystems.Vision.VisionSubsystem;
 import frc.robot.subsystems.Vision.LimelightHelpers;
 import frc.robot.subsystems.Vision.VisionSubsystem;
+import frc.robot.subsystems.Vision.LimelightHelpers.PoseEstimate;
 
 public class DriveSubsystem extends SubsystemBase
 {
@@ -101,7 +103,7 @@ public class DriveSubsystem extends SubsystemBase
   //     });
 
 
-
+  /* Initilize the settings for the swerve pose estimator. */
   private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
     DriveConstants.kDriveKinematics, 
     Rotation2d.fromDegrees( m_gyro.getYaw().getValueAsDouble() ), 
@@ -134,7 +136,7 @@ public class DriveSubsystem extends SubsystemBase
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() 
-  {    
+  {
     try
     { 
       m_robotconfig = RobotConfig.fromGUISettings();
@@ -263,7 +265,12 @@ public class DriveSubsystem extends SubsystemBase
    */
   public void resetOdometry(Pose2d pose) 
   {
-    m_poseEstimator.resetPose( pose );
+    m_poseEstimator.resetPosition( getRotation(), 
+                                   getSwervePositions(), 
+                                   new Pose2d( pose.getTranslation(), getRotation() ) );
+
+
+    //m_poseEstimator.resetPose( pose );
 
     // m_odometry.resetPosition
     // (
@@ -648,8 +655,6 @@ public class DriveSubsystem extends SubsystemBase
 
   private void configurePathPlanner()
   {
-    
-
     AutoBuilder.configure(
       this::getPose,
       this::resetOdometry, 

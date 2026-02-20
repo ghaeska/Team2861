@@ -55,10 +55,12 @@ public class HopperSubsystem extends SubsystemBase
 @Override
   public void periodic() 
   {
-    /* Print out the Algae Encoder positions and velocities */
-    SmartDashboard.putNumber( "HopperEncoder:", m_HopperEncoder.getPosition() );
-    SmartDashboard.putNumber( "HopperSpeed:", m_HopperEncoder.getVelocity() );
-
+    /* Print out the Hopper important data. */
+    /* Hopper Motor Data. */
+    SmartDashboard.putNumber( "Hopper | Position:", m_HopperEncoder.getPosition() );
+    SmartDashboard.putNumber( "Hopper | Velocity:", m_HopperEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Hopper | Applied Output", m_HopperMotor.getAppliedOutput());
+    SmartDashboard.putNumber( "Hopper | Current", m_HopperMotor.getOutputCurrent());
   }
 
   /********************* Helper Functions for Intake *************************/

@@ -20,7 +20,21 @@ import edu.wpi.first.math.util.Units;
 */
 public final class Constants 
 {
-  
+  public static class Motors
+  {
+    public static final class NeoVortexMotorConstants 
+    {
+      public static final double k_VortexFreeSpeedRpm = 6784;
+      public static final double k_VortexKv = 565;   // rpm/V
+    }
+
+    public static final class Neo2_0MotorConstants 
+    {
+      public static final double k_NeoFreeSpeedRpm = 5676;
+      public static final double k_NeoKv = 473;   // rpm/V
+    }
+
+  }
 
 
 
@@ -96,10 +110,13 @@ public static final class ShooterConstants
   public static final int k_LeftShooterMotorCANId   = 10;  //update
   public static final int k_RightShooterMotorCANId  = 14;  //update
   
-  public static final int k_Shooter_MaxCurrent      = 40;
+  public static final int k_Shooter_MaxCurrent      = 80;
 
   public static final class ShooterSpeedSetpoints
   {
+    /* Our shooter is configured with a Velocity Control. */
+    /* Rev's velocity control is based on RPM. */
+    /* We are currently using a NEO 2.0 which has a Top RPM:  5676 RPM */
     public static final double k_shoot = 5000;// update
     public static final double k_pass = 5000;//update
     public static final double k_stop = 0;

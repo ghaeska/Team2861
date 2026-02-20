@@ -89,16 +89,22 @@ public class ShooterSubsystem  extends SubsystemBase
 @Override
   public void periodic() 
   {
+    /* Set our Shooter motor to the desired setpoint.  We do this check every 20ms. */
     moveToSetpoint();
 
-    /* Print out the Algae Encoder positions and velocities */
-    SmartDashboard.putNumber( "LeftShooterEncoder:", m_LeftShooterEncoder.getPosition() );
-    SmartDashboard.putNumber( "LeftShooterSpeed:", m_LeftShooterEncoder.getVelocity() );
+    /* Print out the Shooter important data. */
+    /* Left shooter Motor Data. */
+    SmartDashboard.putNumber( "Shooter Left | Flywheel | Position:", m_LeftShooterEncoder.getPosition() );
+    SmartDashboard.putNumber( "Shooter Left | Flywheel | Velocity:", m_LeftShooterEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Shooter Left | Flywheel | Applied Output", m_LeftShooterMotor.getAppliedOutput());
+    SmartDashboard.putNumber( "Shooter Left | Flywheel | Current", m_LeftShooterMotor.getOutputCurrent());
 
-    SmartDashboard.putNumber( "RightShooterEncoder:", m_RightShooterEncoder.getPosition() );
-    SmartDashboard.putNumber( "RightShooterSpeed:", m_RightShooterEncoder.getVelocity() );
+    /* Right Shooter Motor Data. */
+    SmartDashboard.putNumber( "Shooter Right | Flywheel | Position:", m_RightShooterEncoder.getPosition() );
+    SmartDashboard.putNumber( "Shooter Right | Flywheel | Velocity:", m_RightShooterEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Shooter Right | Flywheel | Applied Output", m_RightShooterMotor.getAppliedOutput());
+    SmartDashboard.putNumber( "Shooter Right | Flywheel | Current", m_RightShooterMotor.getOutputCurrent());
 
-    
 
   }
 
@@ -125,7 +131,7 @@ public class ShooterSubsystem  extends SubsystemBase
 
   public void moveToSetpoint()
   {
-    m_ShooterPIDController.setSetpoint( m_ShooterSetpoint, ControlType.kVelocity );
+    m_ShooterPIDController.setSetpoint( m_ShooterSetpoint, ControlType.kMAXMotionVelocityControl );
   }
 
 
@@ -156,6 +162,7 @@ public class ShooterSubsystem  extends SubsystemBase
 
   }
 
+  /* Using Rev's system has veloicty supplied at RPM. */
   public Command spinAtVelocityCommand(Supplier<Double> goalVelocitySupplier) {
         return run
         (

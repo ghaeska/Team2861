@@ -76,12 +76,16 @@ public class ShooterHoodSubsystem  extends SubsystemBase
   {
     moveHoodToSetpoint();
 
-    /* Print out the Shooter Encoder positions and velocities */
-    SmartDashboard.putNumber( "ShooterHoodEncoder:", m_ShooterHoodEncoder.getPosition() );
-    SmartDashboard.putNumber( "ShooterHoodSpeed:", m_ShooterHoodEncoder.getVelocity() );
+    /* Print out the Shooter Hood important data. */
+    /* Shooter Hood Motor Data. */
+    SmartDashboard.putNumber( "Shooter Hood | Motor | Position:", m_ShooterHoodEncoder.getPosition() );
+    SmartDashboard.putNumber( "Shooter Hood | Motor | Velocity:", m_ShooterHoodEncoder.getVelocity() );
+    SmartDashboard.putNumber( "Shooter Hood | Motor | Applied Output", m_ShooterHoodMotor.getAppliedOutput());
+    SmartDashboard.putNumber( "Shooter Hood | Motor | Current", m_ShooterHoodMotor.getOutputCurrent());
 
-    SmartDashboard.putNumber( "Target Hood Position:", m_ShooterHoodSetpoint );
-    SmartDashboard.putNumber( "Absolute Encoder Position", m_HoodAngleEncoder.getPosition() );
+    SmartDashboard.putNumber( "Shooter Hood | ABS Encoder | Target Setpoint:", m_ShooterHoodSetpoint );
+    SmartDashboard.putNumber( "Shooter Hood | ABS Encoder | Actual Setpoint:", m_HoodAngleEncoder.getPosition() );
+
   }
 
   private void moveHoodToSetpoint()
