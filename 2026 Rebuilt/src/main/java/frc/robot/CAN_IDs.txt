@@ -11,6 +11,41 @@ Anytime we update the code to use a new motor with a CAN ID, it is expected that
 | CAN ID: |          SYSTEM:         |                  FILE                  |
 +---------+--------------------------+----------------------------------------+
 |    0    |         Not Used         |                                        |
+|    6    | Front Right Turning Motor|        SwerveConstants.java            |
+|    7    | Back Right Turning Motor |        SwerveConstants.java            |
+|    5    | Front Left Turning Motor |        SwerveConstants.java            |
+|    8    | Back Left Turning Motor  |        SwerveConstants.java            |
+
+
+|    20   | Back Right Driving Motor |        SwerveConstants.java            |
+|    23   | Front Right Driving Motor|        SwerveConstants.java            | 
+|    22   | Back Left Driving Motor  |        SwerveConstants.java            | 
+|    25   | Front Left Driving Motor |        SwerveConstants.java            | 
+
+|    9    |         Not Used         |                                        |
+|   10    |      Intake Motor       |                                        |
+|   11    |         Not Used         |                                        |
+|   12    |         Shooter Right         |                                        |
+|   13    |         Shooter Hood        |                                        |
+|   14    |             |                                        |
+|   15    |         Hopper         |                                        |
+|   16    |         Intake Pivot         |                                        |
+|   17    |         Climber         |                                        |
+|   18    |         Shooter Left         |                                        |
+|   19    |         Not Used         |                                        |
+
+|   21    |         Not Used         |                                        |
+|   50    |           PDH            |             No File                    |
+|   55    |       Pidgeon 2.0        |        SwerveConstants.java            |
++---------+------------------+--------------------------------+---------------+
+
+
+
+-------------------------------- Master List Bumper Bot------------------------
++---------+--------------------------+----------------------------------------+
+| CAN ID: |          SYSTEM:         |                  FILE                  |
++---------+--------------------------+----------------------------------------+
+|    0    |         Not Used         |                                        |
 |    1    | Front Right Turning Motor|        SwerveConstants.java            |
 |    2    | Back Right Turning Motor |        SwerveConstants.java            |
 |    3    | Front Left Turning Motor |        SwerveConstants.java            |

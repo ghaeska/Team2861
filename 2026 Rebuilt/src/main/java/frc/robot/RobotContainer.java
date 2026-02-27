@@ -46,6 +46,7 @@ import frc.robot.subsystems.ShooterHoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShotCalcSubsystem;
 import frc.robot.subsystems.SuperSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.ShooterSetpoint;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 
 /* Pathplanner Imports */
@@ -102,7 +103,7 @@ public class RobotContainer
 
   /* The controller that are used to control the robot.  Initialized here. */
   CommandXboxController m_DriverController = new CommandXboxController( OIConstants.kDriverControllerPort );
-  CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
+  //CommandXboxController m_OperatorController = new CommandXboxController( OIConstants.k2ndDriverControllerPort );
 
   /* Named Commands used in Auto */
   private void registerNamedCommands()
@@ -152,8 +153,24 @@ public class RobotContainer
 
     /* Command to reset the robot heading when "start" gets pushed. */
     m_DriverController.start().onTrue(new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true) );
-    m_OperatorController.start().onTrue( new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true) );
+    //m_OperatorController.start().onTrue( new InstantCommand( m_robotDrive::zeroHeading ).ignoringDisable(true) );
     
+    //Supplier<Double> velocity = 5000;
+    m_DriverController.a().whileTrue( m_shooter.setShooterSetpointCmd( ShooterSetpoint.k_Shoot ) );
+    m_DriverController.b().whileTrue( m_shooter.setShooterSetpointCmd( ShooterSetpoint.k_Stop ));
+
+
+    m_DriverController.x().whileTrue(( m_intake.runIntakeCommand()));
+    //m_DriverController.y().whileTrue(( m_intake.))
+    // m_DriverController.b().onTrue( m_shooter.setVoltage(6) );
+    // m_DriverController.b().whileFalse( m_shooter.setVoltage(0));
+
+    //m_DriverController.x().whileTrue( m_shooter.ShooterForwardCommand() );
+    //m_DriverController.x().whileFalse( m_shooter.ShooterStopCommand() );
+    m_DriverController.leftBumper().whileTrue( m_hopper.revHopperCommand() );
+
+    m_DriverController.leftTrigger().onTrue( m_shooter.decreaseFlywheelSpeedCmd() );
+    m_DriverController.rightTrigger().onTrue( m_shooter.increaseFlywheelSpeedCmd() );
   }
 
   /* Send Commands to the Auto Chooser.  */

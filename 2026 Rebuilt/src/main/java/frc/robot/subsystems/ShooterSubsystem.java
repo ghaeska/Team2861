@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -43,7 +44,7 @@ public class ShooterSubsystem  extends SubsystemBase
   private SparkClosedLoopController m_ShooterPIDController;
 
   /* Setpoint Tracker for PID Loops */
-  private double m_ShooterSetpoint = ShooterSpeedSetpoints.k_shoot;
+  private double m_ShooterSetpoint = Constants.ShooterConstants.ShooterSpeedSetpoints.k_stop;
 
   public ShooterSubsystem()
   {
@@ -73,7 +74,7 @@ public class ShooterSubsystem  extends SubsystemBase
       /* The right motor has to follow the left, set that up. */
       Configs.ShooterModule.ShooterMotorConfig.follow
       ( 
-        Constants.ShooterConstants.k_RightShooterMotorCANId, 
+        Constants.ShooterConstants.k_LeftShooterMotorCANId, 
         true
       ),
       ResetMode.kResetSafeParameters,
@@ -81,7 +82,7 @@ public class ShooterSubsystem  extends SubsystemBase
     );
 
     /* Set the default command to stop the shooter. */
-    setDefaultCommand( setShooterSetpointCmd( ShooterSetpoint.k_Stop ) );
+    //setDefaultCommand( setShooterSetpointCmd( ShooterSetpoint.k_Shoot ) );
 
   }
 
@@ -98,6 +99,8 @@ public class ShooterSubsystem  extends SubsystemBase
     SmartDashboard.putNumber( "Shooter Left | Flywheel | Velocity:", m_LeftShooterEncoder.getVelocity() );
     SmartDashboard.putNumber( "Shooter Left | Flywheel | Applied Output", m_LeftShooterMotor.getAppliedOutput());
     SmartDashboard.putNumber( "Shooter Left | Flywheel | Current", m_LeftShooterMotor.getOutputCurrent());
+
+    SmartDashboard.putNumber( "Shooter | Flywheel | Target", m_ShooterSetpoint );
 
     /* Right Shooter Motor Data. */
     SmartDashboard.putNumber( "Shooter Right | Flywheel | Position:", m_RightShooterEncoder.getPosition() );
@@ -131,8 +134,36 @@ public class ShooterSubsystem  extends SubsystemBase
 
   public void moveToSetpoint()
   {
-    m_ShooterPIDController.setSetpoint( m_ShooterSetpoint, ControlType.kMAXMotionVelocityControl );
+    m_ShooterPIDController.setSetpoint( m_ShooterSetpoint, ControlType.kVelocity );
   }
+
+  // private void setFlywheelVelocity( double velocity )
+  // {
+  //   m_ShooterPIDController.setSetpoint(velocity, ControlType.kVelocity );
+  // }
+
+  public Command increaseFlywheelSpeedCmd()
+  {
+    return this.runOnce
+    (
+      () ->
+      {
+        m_ShooterSetpoint = m_ShooterSetpoint + 25;
+      }
+    );
+  }
+
+  public Command decreaseFlywheelSpeedCmd()
+  {
+    return this.runOnce
+    (
+      () ->
+      {
+        m_ShooterSetpoint = m_ShooterSetpoint - 25;
+      }
+    );
+  }
+
 
 
  /***************************** Commands **************************************/
@@ -146,14 +177,13 @@ public class ShooterSubsystem  extends SubsystemBase
         {
           case k_Pass:
             m_ShooterSetpoint = ShooterSpeedSetpoints.k_pass;
-            break;
-          
+            break;          
           case k_Shoot:
             m_ShooterSetpoint = ShooterSpeedSetpoints.k_shoot;
             break;
           case k_Stop:
             m_ShooterSetpoint = ShooterSpeedSetpoints.k_stop;
-
+            break;
         }
         
       }
@@ -173,6 +203,19 @@ public class ShooterSubsystem  extends SubsystemBase
           }
         );
     }
+
+
+    /* Intake Algae Command */
+  public Command ShooterForwardCommand()
+  {
+    return new RunCommand(()->this.setVoltage(.5), this );
+  }
+
+  /* Stop Algae Command */
+  public Command ShooterStopCommand()
+  {
+    return new RunCommand(()->this.setVoltage(0), this );
+  }
 
 
 

@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -70,7 +71,7 @@ public class Configs
   public static final class IntakeModule
   {
     public static final SparkMaxConfig IntakeArmMotorConfig = new SparkMaxConfig();
-    public static final SparkFlexConfig IntakeRollerMotorConfig = new SparkFlexConfig();
+    public static final SparkMaxConfig IntakeRollerMotorConfig = new SparkMaxConfig();
     static
     {
       /* ------------------ Intake Arm Motor Configs. ------------------------- */
@@ -103,7 +104,7 @@ public class Configs
       /* Set the idle mode to brake, the wheels and rollers stop right away . */
       HopperMotorConfig.idleMode( IdleMode.kBrake );
       /* set the smart current limit to 40A to prevent motor damage */
-      HopperMotorConfig.smartCurrentLimit( Constants.HopperConstants.k_Shooter_MaxCurrent );
+      HopperMotorConfig.smartCurrentLimit( Constants.HopperConstants.k_Hopper_MaxCurrent );
     }
   }
 
@@ -112,7 +113,7 @@ public class Configs
     public static final SparkMaxConfig ShooterHoodMotorConfig = new SparkMaxConfig();
     static
     {
-      /* ------------------ Shooter Motor Configs. ------------------------- */
+      /* ------------------ Shooter Hood Motor Configs. ------------------------- */
       /* Set the idle mode to brake, try to hold the position. */
       ShooterHoodMotorConfig.idleMode( IdleMode.kBrake );
       /* set the smart current limit to 40A to prevent motor damage */
@@ -137,33 +138,37 @@ public class Configs
     static
     {
       /* ------------------ Shooter Motor Configs. ------------------------- */
+
+      double ShooterVelocityFeedForward = nominalVoltage / Constants.ShooterConstants.k_ShooterFreeSpeedRps;
+      
       /* Set the idle mode to coast, the wheels dont need to slow all the way down. */
       ShooterMotorConfig.idleMode( IdleMode.kCoast );
       /* set the smart current limit to 40A to prevent motor damage */
       ShooterMotorConfig.smartCurrentLimit( Constants.ShooterConstants.k_Shooter_MaxCurrent );
+      ShooterMotorConfig.inverted(true);
+      ShooterMotorConfig.voltageCompensation( nominalVoltage );
+
+      /* Uncomment this to see if it will fix the issue. */
+      ShooterMotorConfig
+        .encoder
+          .positionConversionFactor( 1 )
+          .velocityConversionFactor( 1 );
     
-      /* If we want to change from RPM to RPS, we can change with these lines. */
-      // ShooterMotorConfig
-      //   .alternateEncoder
-      //   .positionConversionFactor(0);
+      
       /* this was taken from last years elevator. */
       ShooterMotorConfig
         .closedLoop
         .feedbackSensor( FeedbackSensor.kPrimaryEncoder )
-        .p( 0.0001 )
+        .p( 0.0005 )
+        .i( 0 )
+        .d( 0 )
         .outputRange( -1, 1 );
 
       ShooterMotorConfig
         .closedLoop
-          .maxMotion
-            .cruiseVelocity( 5000 )
-            .maxAcceleration( 10000 )
-            .allowedProfileError( 1 );
-      
-      ShooterMotorConfig
-        .closedLoop
           .feedForward
-            .kV( nominalVoltage / Constants.Motors.Neo2_0MotorConstants.k_NeoKv );
+            //.kV( nominalVoltage / Constants.Motors.Neo2_0MotorConstants.k_NeoKv );
+            .kV( ShooterVelocityFeedForward );
     }
   }
     

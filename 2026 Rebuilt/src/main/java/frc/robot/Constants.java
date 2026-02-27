@@ -72,12 +72,12 @@ public final class Constants
 public static final class IntakeConstants
 {
   /* Intake Motor ID's */
-  public static final int k_LeftIntakeArmMotorCANId   = 11;
-  public static final int k_RightIntakeArmMotorCANId  = 12;
-  public static final int k_IntakeRollerMotorCANId    = 13;
+  public static final int k_LeftIntakeArmMotorCANId   = 16;
+  //public static final int k_RightIntakeArmMotorCANId  = 12;
+  public static final int k_IntakeRollerMotorCANId    = 10;
   
-  public static final int k_IntakeArm_MaxCurrent      = 20;
-  public static final int k_IntakeRoller_MaxCurrent   = 20;
+  public static final int k_IntakeArm_MaxCurrent      = 40;
+  public static final int k_IntakeRoller_MaxCurrent   = 40;
 
   /* The following is from a different team not sure how to do it. */
   // public static enum IntakeArmPosition
@@ -107,18 +107,24 @@ public static final class IntakeConstants
 public static final class ShooterConstants
 {
   /* Intake Motor ID's */
-  public static final int k_LeftShooterMotorCANId   = 10;  //update
-  public static final int k_RightShooterMotorCANId  = 14;  //update
+  public static final int k_LeftShooterMotorCANId   = 18;  //update
+  public static final int k_RightShooterMotorCANId  = 12;  //update
   
-  public static final int k_Shooter_MaxCurrent      = 80;
+  public static final int k_Shooter_MaxCurrent      = 40;
+
+  public static final double k_ShooterMotorFreeSpeedRps = Constants.Motors.Neo2_0MotorConstants.k_NeoFreeSpeedRpm/60;
+  public static final double k_shooterWheelCircumferenceMeters = 0.0762 * Math.PI;
+  public static final double k_ShooterMotorGearing = 1.6;//(.208);
+
+  public static final double k_ShooterFreeSpeedRps = ( k_ShooterMotorFreeSpeedRps * k_shooterWheelCircumferenceMeters ) / k_ShooterMotorGearing;
 
   public static final class ShooterSpeedSetpoints
   {
     /* Our shooter is configured with a Velocity Control. */
     /* Rev's velocity control is based on RPM. */
     /* We are currently using a NEO 2.0 which has a Top RPM:  5676 RPM */
-    public static final double k_shoot = 5000;// update
-    public static final double k_pass = 5000;//update
+    public static final double k_shoot = 150;// update
+    public static final double k_pass = 50;//update
     public static final double k_stop = 0;
   }
 
@@ -157,7 +163,7 @@ public static final class ShooterConstants
 public static final class ShooterHoodConstants
 {
   /* Intake Motor ID's */
-  public static final int k_ShooterHoodMotorCANId   = 30;  //update
+  public static final int k_ShooterHoodMotorCANId   = 13;  //update
   
   public static final int k_ShooterHood_MaxCurrent      = 20;
 
@@ -199,9 +205,9 @@ public static final class ShooterHoodConstants
 public static final class HopperConstants
 {
 /* Hopper Motor ID */
-  public static final int k_HopperMotorCANId   = 20;  //update
+  public static final int k_HopperMotorCANId   = 15;  //update
 
-  public static final int k_Shooter_MaxCurrent      = 40;
+  public static final int k_Hopper_MaxCurrent      = 40;
 }
 
 

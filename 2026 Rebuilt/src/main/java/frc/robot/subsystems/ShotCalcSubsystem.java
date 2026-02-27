@@ -14,6 +14,7 @@ import static frc.robot.Constants.ShooterConstants.DISTANCE_TO_SHOT_SPEED;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.FieldConstants;
@@ -30,6 +31,11 @@ public class ShotCalcSubsystem extends SubsystemBase
   private double targetDistance = 0.0;
   private double targetSpeedRps = 8;
 
+  // public enum TargetLocations
+  // {
+  //   hub_center;
+  // } 
+
   public ShotCalcSubsystem( DriveSubsystem drivesubsystem )
   {
     this.drivesubsystem = drivesubsystem;
@@ -41,6 +47,10 @@ public class ShotCalcSubsystem extends SubsystemBase
 
     targetDistance = drivetrainPose.getTranslation().getDistance(targetLocation.toPose2d().getTranslation());
     targetSpeedRps = DISTANCE_TO_SHOT_SPEED.get(targetDistance);
+
+    SmartDashboard.putNumber( "Shot Calc | Target | Distance:", targetDistance );
+    //SmartDashboard.putData( "Shot Calc | Target | Location:", hub_center );
+    SmartDashboard.putNumber( "Shot Calc | Target | RPS:", targetSpeedRps );
 
     Pose3d shooterPose = new Pose3d(drivetrainPose).plus(BALL_TRANSFORM_CENTER);
 

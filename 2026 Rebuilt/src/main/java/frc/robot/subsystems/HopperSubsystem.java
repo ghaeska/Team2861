@@ -102,7 +102,7 @@ public class HopperSubsystem extends SubsystemBase
   {
     return Commands.startEnd
     ( 
-      () -> m_HopperMotor.setVoltage( -4 ), 
+      () -> m_HopperMotor.setVoltage( -8 ), 
       () -> m_HopperMotor.setVoltage( 0 )    
     );
   }

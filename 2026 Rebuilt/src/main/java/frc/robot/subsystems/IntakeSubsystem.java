@@ -36,7 +36,7 @@ public class IntakeSubsystem extends SubsystemBase
   /* Define the Motors */
   private final SparkMax m_LeftIntakeArmMotor;
   // private final SparkMax m_RightIntakeArmMotor;
-  private final SparkFlex m_IntakeRollerMotor;
+  private final SparkMax m_IntakeRollerMotor;
 
   /* Define the relative encoders for the intake. */
   private RelativeEncoder m_LeftIntakeArmEncoder;
@@ -56,7 +56,7 @@ public class IntakeSubsystem extends SubsystemBase
     /* Setup the motors */
     m_LeftIntakeArmMotor  = new SparkMax( Constants.IntakeConstants.k_LeftIntakeArmMotorCANId, MotorType.kBrushless );
     // m_RightIntakeArmMotor = new SparkMax( Constants.IntakeConstants.k_RightIntakeArmMotorCANId, MotorType.kBrushless );
-    m_IntakeRollerMotor   = new SparkFlex( Constants.IntakeConstants.k_IntakeRollerMotorCANId, MotorType.kBrushless );
+    m_IntakeRollerMotor   = new SparkMax( Constants.IntakeConstants.k_IntakeRollerMotorCANId, MotorType.kBrushless );
 
     /* Need to setup an encoder, dont think we will need one. */
     m_LeftIntakeArmEncoder  = m_LeftIntakeArmMotor.getEncoder();
@@ -194,6 +194,15 @@ public class IntakeSubsystem extends SubsystemBase
   }
 
   public Command runIntakeCommand()
+  {
+    return Commands.startEnd
+    ( 
+      () -> m_IntakeRollerMotor.setVoltage( 4 ), 
+      () -> m_IntakeRollerMotor.setVoltage( 0 )
+    );
+  }
+
+  public Command StopIntakeCommand()
   {
     return Commands.startEnd
     ( 

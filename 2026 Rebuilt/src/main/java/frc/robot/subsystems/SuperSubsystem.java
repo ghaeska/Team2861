@@ -89,10 +89,13 @@ public class SuperSubsystem extends SubsystemBase
 
   public Command passCommand() 
   {
-    return Commands.parallel(
-            shooter.spinAtVelocityCommand(() -> 70.0).asProxy(),
-            shooterHood.moveToSpecificPositionCmd(
-                    () -> SHOT_ANGLE_TO_HOOD_ANGLE.get(Units.degreesToRadians(40.0))).asProxy())
+//     return Commands.parallel(
+//             shooter.spinAtVelocityCommand(() -> 200.0).asProxy(),
+//             shooterHood.moveToSpecificPositionCmd(
+//                     () -> SHOT_ANGLE_TO_HOOD_ANGLE.get(Units.degreesToRadians(40.0))).asProxy())
+//             .andThen(useRequirement());
+        return runOnce( () ->
+            shooter.spinAtVelocityCommand(() -> 2000.0).asProxy())
             .andThen(useRequirement());
   }
 

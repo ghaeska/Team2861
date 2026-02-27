@@ -92,15 +92,15 @@ public final class SwerveConstants
 
 
     /* SPARK MAX CAN IDs */
-    public static final int kFrontLeftDrivingCanId  = 27;
-    public static final int kRearLeftDrivingCanId   = 25;
-    public static final int kFrontRightDrivingCanId = 24;
-    public static final int kRearRightDrivingCanId  = 21;
+    public static final int kFrontLeftDrivingCanId  = 26;
+    public static final int kRearLeftDrivingCanId   = 22;
+    public static final int kFrontRightDrivingCanId = 23;
+    public static final int kRearRightDrivingCanId  = 20;
 
-    public static final int kFrontLeftTurningCanId  = 3;
-    public static final int kRearLeftTurningCanId   = 4;
-    public static final int kFrontRightTurningCanId = 2;
-    public static final int kRearRightTurningCanId  = 1;
+    public static final int kFrontLeftTurningCanId  = 5;
+    public static final int kRearLeftTurningCanId   = 8;
+    public static final int kFrontRightTurningCanId = 6;
+    public static final int kRearRightTurningCanId  = 7;
 
     /* Gyro CAN ID */
     public static final boolean kGyroReversed       = true;
