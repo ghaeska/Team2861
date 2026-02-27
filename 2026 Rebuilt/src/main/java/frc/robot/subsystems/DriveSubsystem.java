@@ -49,6 +49,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.util.Units;
 
 import frc.robot.Constants;
+import frc.robot.FieldConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.SwerveConstants;
 import frc.robot.SwerveConstants.DriveConstants;
@@ -203,59 +204,97 @@ public class DriveSubsystem extends SubsystemBase
       }
     );
 
-    // boolean useMegaTag2 = true; //set to false to use MegaTag1
-    // boolean doRejectUpdate = false;
-    // if(useMegaTag2 == false)
-    // {
-    //   LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    boolean useMegaTag2 = true; //set to false to use MegaTag1
+    boolean doRejectUpdate = false;
+    if(useMegaTag2 == false)
+    {
+      LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       
-    //   if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
-    //   {
-    //     if(mt1.rawFiducials[0].ambiguity > .7)
-    //     {
-    //       doRejectUpdate = true;
-    //     }
+      /* Check if mt1 is null before we try and use it. */
+      if( mt1 == null )
+      {
+        System.out.println("MT1 is null, skipping.");
+        return;
+      }
+      else
+      {
+        if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+        {
+          if(mt1.rawFiducials[0].ambiguity > .7)
+          {
+            doRejectUpdate = true;
+          }
 
-    //     if(mt1.rawFiducials[0].distToCamera > 3)
-    //     {
-    //       doRejectUpdate = true;
-    //     }
-    //   }
+          if(mt1.rawFiducials[0].distToCamera > 3)
+          {
+            doRejectUpdate = true;
+          }
 
-    //   if(mt1.tagCount == 0)
-    //   {
-    //     doRejectUpdate = true;
-    //   }
+          /* Check to see if the pose is within the field. */
+          if( mt1.pose.getX() < 0.0 || 
+              mt1.pose.getX() > FieldConstants.FIELD_LENGTH ||
+              mt1.pose.getY() < 0.0 ||
+              mt1.pose.getY() > FieldConstants.FIELD_WIDTH )
+          {
+            doRejectUpdate = true; 
+          }
+        }
 
-    //   if(!doRejectUpdate)
-    //   {
-    //     m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
-    //     m_poseEstimator.addVisionMeasurement(
-    //         mt1.pose,
-    //         mt1.timestampSeconds);
-    //   }
-    // }
-    // else if (useMegaTag2 == true)
-    // {
-    //   LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-    //   LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    //   if(Math.abs(getTurnRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-    //   {
-    //     doRejectUpdate = true;
-    //   }
-    //   if(mt2.tagCount == 0)
-    //   {
-    //     doRejectUpdate = true;
-    //   }
-    //   if(!doRejectUpdate)
-    //   {
-    //     m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-    //     m_poseEstimator.addVisionMeasurement(
-    //         mt2.pose,
-    //         mt2.timestampSeconds);
-    //   }
-    // }
-    
+        if(mt1.tagCount == 0)
+        {
+          doRejectUpdate = true;
+        }
+
+        if(!doRejectUpdate)
+        {
+          m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+          m_poseEstimator.addVisionMeasurement(
+              mt1.pose,
+              mt1.timestampSeconds);
+        }
+      }      
+    }
+    else if (useMegaTag2 == true)
+    {
+      LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+      
+      /* Check if mt2 is null before we try and use it. */
+      if( mt2 == null )
+      {
+        System.out.println("MT1 is null, skipping.");
+        return;
+      }
+      else
+      {
+        if(Math.abs(getTurnRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        {
+          doRejectUpdate = true;
+        }
+
+        if(mt2.tagCount == 0)
+        {
+          doRejectUpdate = true;
+        }
+
+        /* Check to see if the pose is within the field. */
+          if( mt2.pose.getX() < 0.0 || 
+              mt2.pose.getX() > FieldConstants.FIELD_LENGTH ||
+              mt2.pose.getY() < 0.0 ||
+              mt2.pose.getY() > FieldConstants.FIELD_WIDTH )
+          {
+            doRejectUpdate = true; 
+          }
+
+        if(!doRejectUpdate)
+        {
+          m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+          m_poseEstimator.addVisionMeasurement(
+              mt2.pose,
+              mt2.timestampSeconds);
+        }
+      }      
+    }    
   }  
   
   /**

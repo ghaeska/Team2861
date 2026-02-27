@@ -41,11 +41,11 @@ public final class Constants
 
 
 
-  public static class Field 
-  {
-    public static final double k_width = Units.feetToMeters(54.0);
-    public static final double k_length = Units.feetToMeters(27.0);
-  }
+  //public static class Field 
+  // {
+  //   public static final double k_width = Units.feetToMeters(54.0);
+  //   public static final double k_length = Units.feetToMeters(27.0);
+  // }
 
   public static final class DriveConstants 
   {
@@ -123,9 +123,9 @@ public static final class ShooterConstants
     /* Our shooter is configured with a Velocity Control. */
     /* Rev's velocity control is based on RPM. */
     /* We are currently using a NEO 2.0 which has a Top RPM:  5676 RPM */
-    public static final double k_shoot = 150;// update
-    public static final double k_pass = 50;//update
-    public static final double k_stop = 0;
+    public static final double k_shoot = 150.0;// update
+    public static final double k_pass = 50.0;//update
+    public static final double k_stop = 0.0;
   }
 
   public static final Transform3d BALL_TRANSFORM_LEFT = new Transform3d(-0.24, 0.09, 0.5, Rotation3d.kZero);
